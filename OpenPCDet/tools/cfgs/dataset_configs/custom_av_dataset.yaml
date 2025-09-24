@@ -1,5 +1,6 @@
 DATASET: 'CustomAvDataset'
-DATA_PATH: '../data/custom_av'
+# DATA_PATH: '../data/custom_av'
+DATA_PATH: /workspace/dataset/custom_av
 
 POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]
 

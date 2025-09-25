@@ -1,4 +1,7 @@
 OpenPCDet/data/
 build/
-OpenPCDet/output/
+OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt
+OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/og_ckpt
+OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/tensorboard
 OpenPCDet/tools/train_utils/__pycache__
+OpenPCDet/tools/result.pkl

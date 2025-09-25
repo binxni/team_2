@@ -76,7 +76,7 @@ def parse_config():
     args = parser.parse_args()
     args.cfg_file = "cfgs/custom_av/centerpoint_pillar_1x_long_epoch.yaml"
     args.ckpt = "../output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/checkpoint_epoch_80.pth"
-    args.data_path = "../data/custom_av"
+    args.data_path = "/workspace/dataset/custom_av"
 
     cfg_from_yaml_file(args.cfg_file, cfg)
     return args, cfg

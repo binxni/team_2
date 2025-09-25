@@ -1,0 +1,208 @@
+2025-09-24 10:11:48,027   INFO  Weights & Biases initialized with project: OpenPCDet
+2025-09-24 10:11:48,028   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20250924_101146
+2025-09-24 10:11:48,028   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-09-24 10:11:49,796   INFO  Database filter by min points Vehicle: 408812 => 400637
+2025-09-24 10:11:49,820   INFO  Database filter by min points Pedestrian: 156474 => 151690
+2025-09-24 10:11:49,824   INFO  Database filter by min points Cyclist: 13581 => 13273
+2025-09-24 10:11:49,844   INFO  Loading Custom AV dataset.
+2025-09-24 10:11:50,024   INFO  Total samples for Custom AV dataset: 16896
+2025-09-24 10:11:50,149   INFO  ==> Loading parameters from checkpoint /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/checkpoint_epoch_85.pth to CPU
+2025-09-24 10:11:50,189   INFO  ==> Loading optimizer parameters from checkpoint /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/checkpoint_epoch_85.pth to CPU
+==> Checkpoint trained from version: pcdet+0.6.0+0000000
+2025-09-24 10:11:50,201   INFO  ==> Done
+2025-09-24 10:11:50,325   INFO  ----------- Model CenterPoint created, param count: 5223979 -----------
+2025-09-24 10:11:50,325   INFO  DistributedDataParallel(
+  (module): CenterPoint(
+    (vfe): PillarVFE(
+      (pfn_layers): ModuleList(
+        (0): PFNLayer(
+          (linear): Linear(in_features=9, out_features=32, bias=False)
+          (norm): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+        (1): PFNLayer(
+          (linear): Linear(in_features=64, out_features=64, bias=False)
+          (norm): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (backbone_3d): None
+    (map_to_bev_module): PointPillarScatter()
+    (pfe): None
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (2): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): Sequential(
+          (0): ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(4, 4), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(384, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): None
+    (roi_head): None
+  )
+)
+2025-09-24 10:11:50,328   INFO  **********************Start training custom_av/centerpoint_pillar_1x_long_epoch(default)**********************
+epochs:   0%|                                                                                                           | 0/1 [00:00<?, ?it/s]2025-09-24 10:14:05,278   INFO  Train:   86/86 (100%) [   0/16896 (  0%)]  Loss: 2.021 (2.02)  LR: 5.666e-04  Time cost: 00:00/3:40:53 [02:14/3:40:53]  Acc_iter 118273      Data time: 0.08(0.08)  Forward time: 0.71(0.71)  Batch time: 0.78(0.78)
+2025-09-24 10:14:10,715   INFO  Train:   86/86 (100%) [  27/16896 (  0%)]  Loss: 2.241 (2.53)  LR: 5.667e-04  Time cost: 00:06/1:02:27 [02:20/1:02:27]  Acc_iter 118300      Data time: 0.00(0.01)  Forward time: 0.20(0.22)  Batch time: 0.20(0.22)
+2025-09-24 10:14:20,978   INFO  Train:   86/86 (100%) [  77/16896 (  0%)]  Loss: 2.158 (2.41)  LR: 5.669e-04  Time cost: 00:16/59:14 [02:30/59:14]  Acc_iter 118350      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-24 10:14:21,071   INFO
+2025-09-24 10:14:31,570   INFO  Train:   86/86 (100%) [ 127/16896 (  1%)]  Loss: 3.528 (2.39)  LR: 5.671e-04  Time cost: 00:27/59:07 [02:41/59:07]  Acc_iter 118400      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.21)
+2025-09-24 10:14:42,194   INFO  Train:   86/86 (100%) [ 177/16896 (  1%)]  Loss: 2.190 (2.40)  LR: 5.674e-04  Time cost: 00:37/59:01 [02:51/59:01]  Acc_iter 118450      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.21)
+2025-09-24 10:14:52,852   INFO  Train:   86/86 (100%) [ 227/16896 (  1%)]  Loss: 2.358 (2.43)  LR: 5.676e-04  Time cost: 00:48/58:55 [03:02/58:55]  Acc_iter 118500      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.21)
+2025-09-24 10:14:52,927   INFO
+2025-09-24 10:15:03,601   INFO  Train:   86/86 (100%) [ 277/16896 (  2%)]  Loss: 2.566 (2.43)  LR: 5.678e-04  Time cost: 00:59/58:53 [03:13/58:53]  Acc_iter 118550      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.21)
+epochs:   0%|                                                                                                           | 0/1 [03:19<?, ?it/s]
+Traceback (most recent call last):
+  File "train.py", line 282, in <module>
+    main()
+  File "train.py", line 221, in main
+    train_model(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 198, in train_model
+    result = train_one_epoch(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 64, in train_one_epoch
+    scaler.scale(loss).backward()
+  File "/usr/local/lib/python3.8/dist-packages/torch/_tensor.py", line 525, in backward
+    torch.autograd.backward(
+  File "/usr/local/lib/python3.8/dist-packages/torch/autograd/__init__.py", line 267, in backward
+    _engine_run_backward(
+  File "/usr/local/lib/python3.8/dist-packages/torch/autograd/graph.py", line 744, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "train.py", line 282, in <module>
+[rank0]:     main()
+[rank0]:   File "train.py", line 221, in main
+[rank0]:     train_model(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 198, in train_model
+[rank0]:     result = train_one_epoch(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 64, in train_one_epoch
+[rank0]:     scaler.scale(loss).backward()
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/_tensor.py", line 525, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/autograd/__init__.py", line 267, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/autograd/graph.py", line 744, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]: KeyboardInterrupt

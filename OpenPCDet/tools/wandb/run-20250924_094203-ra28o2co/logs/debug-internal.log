@@ -1,0 +1,6 @@
+{"time":"2025-09-24T09:42:03.698631351Z","level":"INFO","msg":"stream: starting","core version":"0.22.0"}
+{"time":"2025-09-24T09:42:04.133481601Z","level":"INFO","msg":"stream: created new stream","id":"ra28o2co"}
+{"time":"2025-09-24T09:42:04.133538537Z","level":"INFO","msg":"stream: started","id":"ra28o2co"}
+{"time":"2025-09-24T09:42:04.13355871Z","level":"INFO","msg":"writer: started","stream_id":"ra28o2co"}
+{"time":"2025-09-24T09:42:04.133609605Z","level":"INFO","msg":"sender: started","stream_id":"ra28o2co"}
+{"time":"2025-09-24T09:42:04.1335907Z","level":"INFO","msg":"handler: started","stream_id":"ra28o2co"}

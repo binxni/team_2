@@ -1,0 +1,39 @@
+2025-09-24 09:20:39,074   INFO  Weights & Biases initialized with project: OpenPCDet
+2025-09-24 09:20:39,074   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20250924_092004
+2025-09-24 09:20:39,074   INFO  ----------- Create dataloader & network & optimizer -----------
+Traceback (most recent call last):
+  File "train.py", line 282, in <module>
+    main()
+  File "train.py", line 163, in main
+    train_set, train_loader, train_sampler = build_dataloader(
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/__init__.py", line 62, in build_dataloader
+    dataset = __all__[dataset_cfg.DATASET](
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/custom_av/custom_av_dataset.py", line 24, in __init__
+    super().__init__(
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/dataset.py", line 31, in __init__
+    self.data_augmentor = DataAugmentor(
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/data_augmentor.py", line 24, in __init__
+    cur_augmentor = getattr(self, cur_cfg.NAME)(config=cur_cfg)
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/data_augmentor.py", line 40, in gt_sampling
+    db_sampler = database_sampler.DataBaseSampler(
+  File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/database_sampler.py", line 35, in __init__
+    sampler_cfg.DB_INFO_PATH[0] = sampler_cfg.BACKUP_DB_INFO['DB_INFO_PATH']
+AttributeError: 'EasyDict' object has no attribute 'BACKUP_DB_INFO'
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "train.py", line 282, in <module>
+[rank0]:     main()
+[rank0]:   File "train.py", line 163, in main
+[rank0]:     train_set, train_loader, train_sampler = build_dataloader(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/__init__.py", line 62, in build_dataloader
+[rank0]:     dataset = __all__[dataset_cfg.DATASET](
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/custom_av/custom_av_dataset.py", line 24, in __init__
+[rank0]:     super().__init__(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/dataset.py", line 31, in __init__
+[rank0]:     self.data_augmentor = DataAugmentor(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/data_augmentor.py", line 24, in __init__
+[rank0]:     cur_augmentor = getattr(self, cur_cfg.NAME)(config=cur_cfg)
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/data_augmentor.py", line 40, in gt_sampling
+[rank0]:     db_sampler = database_sampler.DataBaseSampler(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/datasets/augmentor/database_sampler.py", line 35, in __init__
+[rank0]:     sampler_cfg.DB_INFO_PATH[0] = sampler_cfg.BACKUP_DB_INFO['DB_INFO_PATH']
+[rank0]: AttributeError: 'EasyDict' object has no attribute 'BACKUP_DB_INFO'

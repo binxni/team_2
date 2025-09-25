@@ -1,0 +1,262 @@
+2025-09-25 01:14:20,156   INFO  Weights & Biases initialized with project: OpenPCDet
+2025-09-25 01:14:20,156   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20250925_011418
+2025-09-25 01:14:20,156   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-09-25 01:14:21,965   INFO  Database filter by min points Vehicle: 408812 => 400637
+2025-09-25 01:14:21,989   INFO  Database filter by min points Pedestrian: 156474 => 151690
+2025-09-25 01:14:21,993   INFO  Database filter by min points Cyclist: 13581 => 13273
+2025-09-25 01:14:22,014   INFO  Loading Custom AV dataset.
+2025-09-25 01:14:22,201   INFO  Total samples for Custom AV dataset: 16896
+2025-09-25 01:14:22,409   INFO  ==> Loading parameters from checkpoint /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/checkpoint_epoch_85.pth to CPU
+2025-09-25 01:14:22,461   INFO  ==> Loading optimizer parameters from checkpoint /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/checkpoint_epoch_85.pth to CPU
+==> Checkpoint trained from version: pcdet+0.6.0+0000000
+2025-09-25 01:14:22,473   INFO  ==> Done
+2025-09-25 01:14:22,590   INFO  ----------- Model CenterPoint created, param count: 5223979 -----------
+2025-09-25 01:14:22,591   INFO  DistributedDataParallel(
+  (module): CenterPoint(
+    (vfe): PillarVFE(
+      (pfn_layers): ModuleList(
+        (0): PFNLayer(
+          (linear): Linear(in_features=9, out_features=32, bias=False)
+          (norm): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+        (1): PFNLayer(
+          (linear): Linear(in_features=64, out_features=64, bias=False)
+          (norm): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (backbone_3d): None
+    (map_to_bev_module): PointPillarScatter()
+    (pfe): None
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (2): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): Sequential(
+          (0): ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(4, 4), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(384, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): None
+    (roi_head): None
+  )
+)
+2025-09-25 01:14:22,595   INFO  **********************Start training custom_av/centerpoint_pillar_1x_long_epoch(default)**********************
+epochs:   0%|                                                                                                               | 0/2025-09-25 01:16:39,495   INFO  Train:   86/88 ( 98%) [   0/16896 (  0%)]  Loss: 2.173 (2.17)  LR: 5.550e-04  Time cost: 00:00/4:26:02 [02:16/13:18:07]  Acc_iter 118273      Data time: 0.13(0.13)  Forward time: 0.82(0.82)  Batch time: 0.94(0.94)
+2025-09-25 01:16:44,950   INFO  Train:   86/88 ( 98%) [  27/16896 (  0%)]  Loss: 1.769 (2.42)  LR: 5.551e-04  Time cost: 00:06/1:04:15 [02:22/3:12:58]  Acc_iter 118300      Data time: 0.00(0.01)  Forward time: 0.19(0.22)  Batch time: 0.19(0.23)
+2025-09-25 01:16:55,125   INFO  Train:   86/88 ( 98%) [  77/16896 (  0%)]  Loss: 1.872 (2.38)  LR: 5.553e-04  Time cost: 00:16/59:33 [02:32/2:59:14]  Acc_iter 118350      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:16:55,207   INFO
+2025-09-25 01:17:05,574   INFO  Train:   86/88 ( 98%) [ 127/16896 (  1%)]  Loss: 3.435 (2.37)  LR: 5.555e-04  Time cost: 00:27/59:00 [02:42/2:57:54]  Acc_iter 118400      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:17:15,974   INFO  Train:   86/88 ( 98%) [ 177/16896 (  1%)]  Loss: 1.855 (2.40)  LR: 5.557e-04  Time cost: 00:37/58:35 [02:53/2:56:59]  Acc_iter 118450      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:17:26,466   INFO  Train:   86/88 ( 98%) [ 227/16896 (  1%)]  Loss: 2.858 (2.42)  LR: 5.559e-04  Time cost: 00:47/58:23 [03:03/2:56:44]  Acc_iter 118500      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:17:26,557   INFO
+2025-09-25 01:17:36,959   INFO  Train:   86/88 ( 98%) [ 277/16896 (  2%)]  Loss: 2.316 (2.40)  LR: 5.562e-04  Time cost: 00:58/58:11 [03:14/2:56:31]  Acc_iter 118550      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.23(0.21)
+2025-09-25 01:17:47,769   INFO  Train:   86/88 ( 98%) [ 327/16896 (  2%)]  Loss: 2.292 (2.40)  LR: 5.564e-04  Time cost: 01:09/58:16 [03:25/2:57:07]  Acc_iter 118600      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:17:58,409   INFO  Train:   86/88 ( 98%) [ 377/16896 (  2%)]  Loss: 2.616 (2.39)  LR: 5.566e-04  Time cost: 01:19/58:09 [03:35/2:57:09]  Acc_iter 118650      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:17:58,510   INFO
+2025-09-25 01:18:09,262   INFO  Train:   86/88 ( 98%) [ 427/16896 (  3%)]  Loss: 3.207 (2.40)  LR: 5.568e-04  Time cost: 01:30/58:10 [03:46/2:57:32]  Acc_iter 118700      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:18:20,009   INFO  Train:   86/88 ( 98%) [ 477/16896 (  3%)]  Loss: 2.410 (2.40)  LR: 5.570e-04  Time cost: 01:41/58:05 [03:57/2:57:37]  Acc_iter 118750      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:18:30,739   INFO  Train:   86/88 ( 98%) [ 527/16896 (  3%)]  Loss: 2.845 (2.41)  LR: 5.572e-04  Time cost: 01:52/57:58 [04:08/2:57:38]  Acc_iter 118800      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.20(0.21)
+2025-09-25 01:18:30,821   INFO
+2025-09-25 01:18:41,679   INFO  Train:   86/88 ( 98%) [ 577/16896 (  3%)]  Loss: 2.651 (2.41)  LR: 5.574e-04  Time cost: 02:03/57:56 [04:19/2:57:54]  Acc_iter 118850      Data time: 0.01(0.00)  Forward time: 0.23(0.21)  Batch time: 0.24(0.21)
+2025-09-25 01:18:52,235   INFO  Train:   86/88 ( 98%) [ 627/16896 (  4%)]  Loss: 1.751 (2.41)  LR: 5.576e-04  Time cost: 02:13/57:43 [04:29/2:57:36]  Acc_iter 118900      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:19:03,127   INFO  Train:   86/88 ( 98%) [ 677/16896 (  4%)]  Loss: 2.122 (2.41)  LR: 5.578e-04  Time cost: 02:24/57:38 [04:40/2:57:44]  Acc_iter 118950      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:19:03,221   INFO
+2025-09-25 01:19:13,986   INFO  Train:   86/88 ( 98%) [ 727/16896 (  4%)]  Loss: 2.617 (2.41)  LR: 5.580e-04  Time cost: 02:35/57:32 [04:51/2:57:47]  Acc_iter 119000      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:19:24,902   INFO  Train:   86/88 ( 98%) [ 777/16896 (  5%)]  Loss: 2.209 (2.41)  LR: 5.583e-04  Time cost: 02:46/57:26 [05:02/2:57:51]  Acc_iter 119050      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.20(0.21)
+2025-09-25 01:19:35,559   INFO  Train:   86/88 ( 98%) [ 827/16896 (  5%)]  Loss: 2.865 (2.41)  LR: 5.585e-04  Time cost: 02:57/57:15 [05:12/2:57:39]  Acc_iter 119100      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.20(0.21)
+2025-09-25 01:19:35,659   INFO
+2025-09-25 01:19:46,711   INFO  Train:   86/88 ( 98%) [ 877/16896 (  5%)]  Loss: 2.349 (2.41)  LR: 5.587e-04  Time cost: 03:08/57:12 [05:24/2:57:54]  Acc_iter 119150      Data time: 0.01(0.00)  Forward time: 0.22(0.21)  Batch time: 0.23(0.21)
+2025-09-25 01:19:57,317   INFO  Train:   86/88 ( 98%) [ 927/16896 (  5%)]  Loss: 1.993 (2.41)  LR: 5.589e-04  Time cost: 03:18/57:00 [05:34/2:57:38]  Acc_iter 119200      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:20:08,268   INFO  Train:   86/88 ( 98%) [ 977/16896 (  6%)]  Loss: 1.911 (2.40)  LR: 5.591e-04  Time cost: 03:29/56:53 [05:45/2:57:39]  Acc_iter 119250      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:20:08,361   INFO
+2025-09-25 01:20:19,339   INFO  Train:   86/88 ( 98%) [1027/16896 (  6%)]  Loss: 2.902 (2.40)  LR: 5.593e-04  Time cost: 03:40/56:48 [05:56/2:57:45]  Acc_iter 119300      Data time: 0.00(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:20:30,119   INFO  Train:   86/88 ( 98%) [1077/16896 (  6%)]  Loss: 2.583 (2.40)  LR: 5.595e-04  Time cost: 03:51/56:38 [06:07/2:57:37]  Acc_iter 119350      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.21)
+2025-09-25 01:20:40,953   INFO  Train:   86/88 ( 98%) [1127/16896 (  7%)]  Loss: 2.185 (2.40)  LR: 5.597e-04  Time cost: 04:02/56:28 [06:18/2:57:30]  Acc_iter 119400      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.21)
+2025-09-25 01:20:41,046   INFO
+2025-09-25 01:20:52,103   INFO  Train:   86/88 ( 98%) [1177/16896 (  7%)]  Loss: 3.355 (2.40)  LR: 5.599e-04  Time cost: 04:13/56:23 [06:29/2:57:36]  Acc_iter 119450      Data time: 0.01(0.00)  Forward time: 0.20(0.21)  Batch time: 0.20(0.22)
+2025-09-25 01:21:03,135   INFO  Train:   86/88 ( 98%) [1227/16896 (  7%)]  Loss: 2.342 (2.40)  LR: 5.601e-04  Time cost: 04:24/56:16 [06:40/2:57:36]  Acc_iter 119500      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:21:14,081   INFO  Train:   86/88 ( 98%) [1277/16896 (  8%)]  Loss: 2.140 (2.40)  LR: 5.604e-04  Time cost: 04:35/56:07 [06:51/2:57:32]  Acc_iter 119550      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:21:14,201   INFO
+2025-09-25 01:21:25,105   INFO  Train:   86/88 ( 98%) [1327/16896 (  8%)]  Loss: 2.014 (2.40)  LR: 5.606e-04  Time cost: 04:46/55:59 [07:02/2:57:31]  Acc_iter 119600      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:21:35,764   INFO  Train:   86/88 ( 98%) [1377/16896 (  8%)]  Loss: 2.499 (2.40)  LR: 5.608e-04  Time cost: 04:57/55:47 [07:13/2:57:15]  Acc_iter 119650      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:21:38,757   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/ckpt/latest_model
+2025-09-25 01:21:46,834   INFO  Train:   86/88 ( 98%) [1427/16896 (  8%)]  Loss: 2.064 (2.41)  LR: 5.610e-04  Time cost: 05:08/55:39 [07:24/2:57:14]  Acc_iter 119700      Data time: 0.01(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:21:46,952   INFO
+2025-09-25 01:21:57,711   INFO  Train:   86/88 ( 98%) [1477/16896 (  9%)]  Loss: 2.640 (2.40)  LR: 5.612e-04  Time cost: 05:19/55:29 [07:35/2:57:06]  Acc_iter 119750      Data time: 0.01(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:22:08,619   INFO  Train:   86/88 ( 98%) [1527/16896 (  9%)]  Loss: 2.726 (2.40)  LR: 5.614e-04  Time cost: 05:30/55:19 [07:46/2:56:59]  Acc_iter 119800      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:22:19,557   INFO  Train:   86/88 ( 98%) [1577/16896 (  9%)]  Loss: 3.628 (2.40)  LR: 5.616e-04  Time cost: 05:41/55:10 [07:56/2:56:52]  Acc_iter 119850      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:22:19,684   INFO
+2025-09-25 01:22:30,690   INFO  Train:   86/88 ( 98%) [1627/16896 ( 10%)]  Loss: 1.904 (2.40)  LR: 5.618e-04  Time cost: 05:52/55:02 [08:08/2:56:51]  Acc_iter 119900      Data time: 0.01(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:22:41,534   INFO  Train:   86/88 ( 98%) [1677/16896 ( 10%)]  Loss: 3.374 (2.41)  LR: 5.620e-04  Time cost: 06:02/54:52 [08:18/2:56:42]  Acc_iter 119950      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:22:52,689   INFO  Train:   86/88 ( 98%) [1727/16896 ( 10%)]  Loss: 2.584 (2.41)  LR: 5.623e-04  Time cost: 06:14/54:44 [08:30/2:56:40]  Acc_iter 120000      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:22:52,812   INFO
+2025-09-25 01:23:03,768   INFO  Train:   86/88 ( 98%) [1777/16896 ( 11%)]  Loss: 3.571 (2.41)  LR: 5.625e-04  Time cost: 06:25/54:35 [08:41/2:56:36]  Acc_iter 120050      Data time: 0.01(0.00)  Forward time: 0.20(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:23:14,868   INFO  Train:   86/88 ( 98%) [1827/16896 ( 11%)]  Loss: 2.569 (2.41)  LR: 5.627e-04  Time cost: 06:36/54:27 [08:52/2:56:33]  Acc_iter 120100      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:23:25,878   INFO  Train:   86/88 ( 98%) [1877/16896 ( 11%)]  Loss: 2.015 (2.41)  LR: 5.629e-04  Time cost: 06:47/54:17 [09:03/2:56:26]  Acc_iter 120150      Data time: 0.00(0.00)  Forward time: 0.25(0.21)  Batch time: 0.26(0.22)
+2025-09-25 01:23:25,990   INFO
+2025-09-25 01:23:37,118   INFO  Train:   86/88 ( 98%) [1927/16896 ( 11%)]  Loss: 2.468 (2.41)  LR: 5.631e-04  Time cost: 06:58/54:09 [09:14/2:56:25]  Acc_iter 120200      Data time: 0.00(0.00)  Forward time: 0.22(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:23:48,115   INFO  Train:   86/88 ( 98%) [1977/16896 ( 12%)]  Loss: 2.268 (2.41)  LR: 5.633e-04  Time cost: 07:09/53:59 [09:25/2:56:18]  Acc_iter 120250      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:23:59,101   INFO  Train:   86/88 ( 98%) [2027/16896 ( 12%)]  Loss: 2.183 (2.41)  LR: 5.635e-04  Time cost: 07:20/53:50 [09:36/2:56:10]  Acc_iter 120300      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.22(0.22)
+2025-09-25 01:23:59,214   INFO
+2025-09-25 01:24:10,219   INFO  Train:   86/88 ( 98%) [2077/16896 ( 12%)]  Loss: 2.983 (2.41)  LR: 5.637e-04  Time cost: 07:31/53:41 [09:47/2:56:05]  Acc_iter 120350      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.22)
+2025-09-25 01:24:21,239   INFO  Train:   86/88 ( 98%) [2127/16896 ( 13%)]  Loss: 2.545 (2.41)  LR: 5.639e-04  Time cost: 07:42/53:31 [09:58/2:55:58]  Acc_iter 120400      Data time: 0.00(0.00)  Forward time: 0.25(0.21)  Batch time: 0.25(0.22)
+2025-09-25 01:24:32,265   INFO  Train:   86/88 ( 98%) [2177/16896 ( 13%)]  Loss: 2.732 (2.41)  LR: 5.642e-04  Time cost: 07:53/53:21 [10:09/2:55:51]  Acc_iter 120450      Data time: 0.00(0.00)  Forward time: 0.25(0.21)  Batch time: 0.25(0.22)
+2025-09-25 01:24:32,388   INFO
+2025-09-25 01:24:43,485   INFO  Train:   86/88 ( 98%) [2227/16896 ( 13%)]  Loss: 2.589 (2.41)  LR: 5.644e-04  Time cost: 08:04/53:12 [10:20/2:55:47]  Acc_iter 120500      Data time: 0.00(0.00)  Forward time: 0.23(0.21)  Batch time: 0.23(0.22)
+2025-09-25 01:24:54,527   INFO  Train:   86/88 ( 98%) [2277/16896 ( 13%)]  Loss: 2.610 (2.41)  LR: 5.646e-04  Time cost: 08:15/53:02 [10:31/2:55:40]  Acc_iter 120550      Data time: 0.00(0.00)  Forward time: 0.21(0.21)  Batch time: 0.21(0.22)
+epochs:   0%|                                                                                       | 0/3 [10:41<?, ?it/s]
+Traceback (most recent call last):
+  File "train.py", line 282, in <module>
+    main()
+  File "train.py", line 221, in main
+    train_model(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 198, in train_model
+    result = train_one_epoch(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 64, in train_one_epoch
+    scaler.scale(loss).backward()
+  File "/usr/local/lib/python3.8/dist-packages/torch/_tensor.py", line 525, in backward
+    torch.autograd.backward(
+  File "/usr/local/lib/python3.8/dist-packages/torch/autograd/__init__.py", line 267, in backward
+    _engine_run_backward(
+  File "/usr/local/lib/python3.8/dist-packages/torch/autograd/graph.py", line 744, in _engine_run_backward
+    return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "train.py", line 282, in <module>
+[rank0]:     main()
+[rank0]:   File "train.py", line 221, in main
+[rank0]:     train_model(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 198, in train_model
+[rank0]:     result = train_one_epoch(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 64, in train_one_epoch
+[rank0]:     scaler.scale(loss).backward()
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/_tensor.py", line 525, in backward
+[rank0]:     torch.autograd.backward(
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/autograd/__init__.py", line 267, in backward
+[rank0]:     _engine_run_backward(
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/autograd/graph.py", line 744, in _engine_run_backward
+[rank0]:     return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[rank0]: KeyboardInterrupt

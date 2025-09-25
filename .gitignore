@@ -1,2 +1,4 @@
 OpenPCDet/data/
 build/
+OpenPCDet/output/
+OpenPCDet/tools/train_utils/__pycache__

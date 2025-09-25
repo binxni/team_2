@@ -1,0 +1,13 @@
+{"time":"2025-09-25T03:17:59.668680674Z","level":"INFO","msg":"stream: starting","core version":"0.22.0"}
+{"time":"2025-09-25T03:18:00.014525966Z","level":"INFO","msg":"stream: created new stream","id":"xnk59lbm"}
+{"time":"2025-09-25T03:18:00.014576875Z","level":"INFO","msg":"stream: started","id":"xnk59lbm"}
+{"time":"2025-09-25T03:18:00.014597456Z","level":"INFO","msg":"writer: started","stream_id":"xnk59lbm"}
+{"time":"2025-09-25T03:18:00.01463577Z","level":"INFO","msg":"handler: started","stream_id":"xnk59lbm"}
+{"time":"2025-09-25T03:18:00.014660991Z","level":"INFO","msg":"sender: started","stream_id":"xnk59lbm"}
+{"time":"2025-09-25T04:00:55.824882866Z","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/kimseukjae-gachon-university/OpenPCDet/xnk59lbm/file_stream\": dial tcp: lookup api.wandb.ai on 168.126.63.1:53: read udp 172.17.0.5:40851->168.126.63.1:53: i/o timeout"}
+{"time":"2025-09-25T07:44:30.834654652Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading history steps 2-2, summary, console lines 1993-1994","runtime_seconds":0.011505427}],"total_operations":1}}
+{"time":"2025-09-25T07:44:32.059162841Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-09-25T07:44:32.350238099Z","level":"INFO","msg":"stream: closing","id":"xnk59lbm"}
+{"time":"2025-09-25T07:44:32.350270899Z","level":"INFO","msg":"handler: closed","stream_id":"xnk59lbm"}
+{"time":"2025-09-25T07:44:32.350347325Z","level":"INFO","msg":"sender: closed","stream_id":"xnk59lbm"}
+{"time":"2025-09-25T07:44:32.350359654Z","level":"INFO","msg":"stream: closed","id":"xnk59lbm"}

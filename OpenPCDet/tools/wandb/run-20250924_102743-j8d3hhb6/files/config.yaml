@@ -1,0 +1,316 @@
+_wandb:
+    value:
+        cli_version: 0.22.0
+        e:
+            hscb2hab7g9fut2auhqv6aawsilozwhr:
+                args:
+                    - --launcher
+                    - pytorch
+                    - --cfg_file
+                    - cfgs/custom_av/centerpoint_pillar_1x_long_epoch.yaml
+                codePath: train.py
+                codePathLocal: train.py
+                cpu_count: 12
+                cpu_count_logical: 24
+                cudaVersion: "12.2"
+                disk:
+                    /:
+                        total: "982820896768"
+                        used: "739784298496"
+                email: kimseukjae@naver.com
+                executable: /usr/bin/python3
+                gpu: NVIDIA GeForce RTX 3080
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 8704
+                      memoryTotal: "10737418240"
+                      name: NVIDIA GeForce RTX 3080
+                      uuid: GPU-132c0db6-9a2d-1878-8af3-9453d701f221
+                host: 7247adb7097e
+                memory:
+                    total: "134731538432"
+                os: Linux-5.15.0-139-generic-x86_64-with-glibc2.29
+                program: train.py
+                python: CPython 3.8.10
+                root: /workspace/OpenPCDet/tools
+                startedAt: "2025-09-24T10:27:43.619847Z"
+                writerId: hscb2hab7g9fut2auhqv6aawsilozwhr
+        m: []
+        python_version: 3.8.10
+        t:
+            "1":
+                - 1
+                - 41
+                - 79
+            "2":
+                - 1
+                - 41
+                - 79
+            "3":
+                - 13
+                - 16
+            "4": 3.8.10
+            "5": 0.22.0
+            "12": 0.22.0
+            "13": linux-x86_64
+CLASS_NAMES:
+    value:
+        - Vehicle
+        - Pedestrian
+        - Cyclist
+DATA_CONFIG:
+    value:
+        _BASE_CONFIG_: cfgs/dataset_configs/custom_av_dataset.yaml
+        DATA_AUGMENTOR:
+            AUG_CONFIG_LIST:
+                - DATABASE_WITH_FAKELIDAR: false
+                  DB_INFO_PATH:
+                    - custom_av_dbinfos_train.pkl
+                  LIMIT_WHOLE_SCENE: true
+                  NAME: gt_sampling
+                  NUM_POINT_FEATURES: 4
+                  PREPARE:
+                    filter_by_min_points:
+                        - Vehicle:5
+                        - Pedestrian:5
+                        - Cyclist:5
+                  REMOVE_EXTRA_WIDTH:
+                    - 0
+                    - 0
+                    - 0
+                  SAMPLE_GROUPS:
+                    - Vehicle:15
+                    - Pedestrian:10
+                    - Cyclist:10
+                  USE_ROAD_PLANE: false
+                - ALONG_AXIS_LIST:
+                    - x
+                    - "y"
+                  NAME: random_world_flip
+                - NAME: random_world_rotation
+                  WORLD_ROT_ANGLE:
+                    - -0.78539816
+                    - 0.78539816
+                - NAME: random_world_scaling
+                  WORLD_SCALE_RANGE:
+                    - 0.95
+                    - 1.05
+            DISABLE_AUG_LIST:
+                - placeholder
+        DATA_PATH: /workspace/dataset/custom_av
+        DATA_PROCESSOR:
+            - NAME: mask_points_and_boxes_outside_range
+              REMOVE_OUTSIDE_BOXES: true
+            - NAME: shuffle_points
+              SHUFFLE_ENABLED:
+                test: true
+                train: true
+            - MAX_NUMBER_OF_VOXELS:
+                test: 5000
+                train: 5000
+              MAX_POINTS_PER_VOXEL: 20
+              NAME: transform_points_to_voxels
+              VOXEL_SIZE:
+                - 0.05
+                - 0.05
+                - 2
+        DATA_SPLIT:
+            test: val
+            train: train
+        DATASET: CustomAvDataset
+        INFO_PATH:
+            test:
+                - custom_av_infos_val.pkl
+            train:
+                - custom_av_infos_train.pkl
+        MAP_CLASS_TO_KITTI:
+            Cyclist: Cyclist
+            Pedestrian: Pedestrian
+            Vehicle: Car
+        POINT_CLOUD_RANGE:
+            - -1
+            - -1
+            - -1
+            - 1
+            - 1
+            - 1
+        POINT_FEATURE_ENCODING:
+            encoding_type: absolute_coordinates_encoding
+            src_feature_list:
+                - x
+                - "y"
+                - z
+                - intensity
+            used_feature_list:
+                - x
+                - "y"
+                - z
+EXP_GROUP_PATH:
+    value: custom_av
+LOCAL_RANK:
+    value: 0
+MODEL:
+    value:
+        BACKBONE_2D:
+            LAYER_NUMS:
+                - 3
+                - 5
+                - 5
+            LAYER_STRIDES:
+                - 1
+                - 2
+                - 2
+            NAME: BaseBEVBackbone
+            NUM_FILTERS:
+                - 64
+                - 128
+                - 256
+            NUM_UPSAMPLE_FILTERS:
+                - 128
+                - 128
+                - 128
+            UPSAMPLE_STRIDES:
+                - 1
+                - 2
+                - 4
+        DENSE_HEAD:
+            CLASS_AGNOSTIC: false
+            CLASS_NAMES_EACH_HEAD:
+                - - Vehicle
+                  - Pedestrian
+                  - Cyclist
+            LOSS_CONFIG:
+                LOSS_WEIGHTS:
+                    cls_weight: 1
+                    code_weights:
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                    loc_weight: 2
+            NAME: CenterHead
+            NUM_HM_CONV: 2
+            POST_PROCESSING:
+                MAX_OBJ_PER_SAMPLE: 50
+                NMS_CONFIG:
+                    NMS_POST_MAXSIZE: 50
+                    NMS_PRE_MAXSIZE: 500
+                    NMS_THRESH: 0.7
+                    NMS_TYPE: nms_gpu
+                POST_CENTER_LIMIT_RANGE:
+                    - -1.5
+                    - -1.5
+                    - -1.5
+                    - 1.5
+                    - 1.5
+                    - 1.5
+                SCORE_THRESH: 0.1
+            SEPARATE_HEAD_CFG:
+                HEAD_DICT:
+                    center:
+                        num_conv: 2
+                        out_channels: 2
+                    center_z:
+                        num_conv: 2
+                        out_channels: 1
+                    dim:
+                        num_conv: 2
+                        out_channels: 3
+                    rot:
+                        num_conv: 2
+                        out_channels: 2
+                HEAD_ORDER:
+                    - center
+                    - center_z
+                    - dim
+                    - rot
+            SHARED_CONV_CHANNEL: 64
+            TARGET_ASSIGNER_CONFIG:
+                FEATURE_MAP_STRIDE: 1
+                GAUSSIAN_OVERLAP: 0.1
+                MIN_RADIUS: 2
+                NUM_MAX_OBJS: 50
+            USE_BIAS_BEFORE_NORM: true
+        MAP_TO_BEV:
+            NAME: PointPillarScatter
+            NUM_BEV_FEATURES: 64
+        NAME: CenterPoint
+        POST_PROCESSING:
+            EVAL_METRIC: waymo
+            RECALL_THRESH_LIST:
+                - 0.3
+                - 0.5
+                - 0.7
+        VFE:
+            NAME: PillarVFE
+            NUM_FILTERS:
+                - 64
+                - 64
+            USE_ABSLOTE_XYZ: true
+            USE_NORM: true
+            WITH_DISTANCE: false
+OPTIMIZATION:
+    value:
+        BATCH_SIZE_PER_GPU: 10
+        DECAY_STEP_LIST:
+            - 35
+            - 45
+        DIV_FACTOR: 10
+        GRAD_NORM_CLIP: 10
+        LR: 0.003
+        LR_CLIP: 1e-07
+        LR_DECAY: 0.1
+        LR_WARMUP: false
+        MOMENTUM: 0.9
+        MOMS:
+            - 0.95
+            - 0.85
+        NUM_EPOCHS: 86
+        OPTIMIZER: adam_onecycle
+        PCT_START: 0.4
+        WARMUP_EPOCH: 1
+        WEIGHT_DECAY: 0.01
+ROOT_DIR:
+    value: /workspace/OpenPCDet
+TAG:
+    value: centerpoint_pillar_1x_long_epoch
+batch_size:
+    value: 10
+cfg_file:
+    value: cfgs/custom_av/centerpoint_pillar_1x_long_epoch.yaml
+ckpt_save_interval:
+    value: 1
+class_names:
+    value:
+        - Vehicle
+        - Pedestrian
+        - Cyclist
+dataset:
+    value: CustomAvDataset
+distributed:
+    value: true
+epochs:
+    value: 86
+extra_tag:
+    value: default
+fix_random_seed:
+    value: false
+max_ckpt_save_num:
+    value: 30
+merge_all_iters_to_one_epoch:
+    value: false
+model_name:
+    value: CenterPoint
+sync_bn:
+    value: false
+total_gpus:
+    value: 1
+use_amp:
+    value: false
+workers:
+    value: 4

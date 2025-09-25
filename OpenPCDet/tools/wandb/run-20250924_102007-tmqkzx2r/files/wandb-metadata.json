@@ -1,0 +1,42 @@
+{
+  "os":  "Linux-5.15.0-139-generic-x86_64-with-glibc2.29",
+  "python":  "CPython 3.8.10",
+  "startedAt":  "2025-09-24T10:20:07.957736Z",
+  "args":  [
+    "--launcher",
+    "pytorch",
+    "--cfg_file",
+    "cfgs/custom_av/centerpoint_pillar_1x_long_epoch.yaml"
+  ],
+  "program":  "train.py",
+  "codePath":  "train.py",
+  "codePathLocal":  "train.py",
+  "email":  "kimseukjae@naver.com",
+  "root":  "/workspace/OpenPCDet/tools",
+  "host":  "7247adb7097e",
+  "executable":  "/usr/bin/python3",
+  "cpu_count":  12,
+  "cpu_count_logical":  24,
+  "gpu":  "NVIDIA GeForce RTX 3080",
+  "gpu_count":  1,
+  "disk":  {
+    "/":  {
+      "total":  "982820896768",
+      "used":  "739797696512"
+    }
+  },
+  "memory":  {
+    "total":  "134731538432"
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA GeForce RTX 3080",
+      "memoryTotal":  "10737418240",
+      "cudaCores":  8704,
+      "architecture":  "Ampere",
+      "uuid":  "GPU-132c0db6-9a2d-1878-8af3-9453d701f221"
+    }
+  ],
+  "cudaVersion":  "12.2",
+  "writerId":  "artts7s0ih6er1rbxjmc2w4fxizkh12g"
+}

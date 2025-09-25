@@ -1,0 +1,19 @@
+{
+  "os":  "Linux-5.15.0-139-generic-x86_64-with-glibc2.29",
+  "python":  "CPython 3.8.10",
+  "startedAt":  "2025-09-24T09:20:37.985818Z",
+  "args":  [
+    "--launcher",
+    "pytorch",
+    "--cfg_file",
+    "cfgs/custom_av/centerpoint_pillar_1x_long_epoch.yaml"
+  ],
+  "program":  "train.py",
+  "codePath":  "train.py",
+  "codePathLocal":  "train.py",
+  "email":  "kimseukjae@naver.com",
+  "root":  "/workspace/OpenPCDet/tools",
+  "host":  "7247adb7097e",
+  "executable":  "/usr/bin/python3",
+  "writerId":  "oql7w0q8ykepkvkaib24th9mwogws20n"
+}

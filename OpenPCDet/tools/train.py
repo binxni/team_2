@@ -9,6 +9,7 @@ from val import repeat_eval_ckpt
 import torch
 import torch.nn as nn
 from tensorboardX import SummaryWriter
+import wandb
 
 from pcdet.config import cfg, cfg_from_list, cfg_from_yaml_file, log_config_to_file
 from pcdet.datasets import build_dataloader
@@ -50,6 +51,13 @@ def parse_config():
     parser.add_argument('--ckpt_save_time_interval', type=int, default=300, help='in terms of seconds')
     parser.add_argument('--wo_gpu_stat', action='store_true', help='')
     parser.add_argument('--use_amp', action='store_true', help='use mix precision training')
+    
+    # wandb arguments
+    parser.add_argument('--wandb_project', type=str, default='OpenPCDet', help='wandb project name')
+    parser.add_argument('--wandb_entity', type=str, default=None, help='wandb entity (team) name')
+    parser.add_argument('--wandb_run_name', type=str, default=None, help='wandb run name')
+    parser.add_argument('--wandb_tags', type=str, nargs='+', default=None, help='wandb tags')
+    parser.add_argument('--val_interval', type=int, default=1, help='validation interval in epochs')
     
 
     args = parser.parse_args()
@@ -117,6 +125,41 @@ def main():
 
     tb_log = SummaryWriter(log_dir=str(output_dir / 'tensorboard')) if cfg.LOCAL_RANK == 0 else None
 
+    # Initialize wandb on main process
+    if cfg.LOCAL_RANK == 0:
+        wandb_run_name = args.wandb_run_name or f"{cfg.TAG}_{args.extra_tag}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        wandb.init(
+            project=args.wandb_project,
+            entity=args.wandb_entity,
+            name=wandb_run_name,
+            tags=args.wandb_tags,
+            config={
+                'cfg_file': args.cfg_file,
+                'batch_size': args.batch_size,
+                'epochs': args.epochs,
+                'workers': args.workers,
+                'extra_tag': args.extra_tag,
+                'sync_bn': args.sync_bn,
+                'fix_random_seed': args.fix_random_seed,
+                'ckpt_save_interval': args.ckpt_save_interval,
+                'max_ckpt_save_num': args.max_ckpt_save_num,
+                'merge_all_iters_to_one_epoch': args.merge_all_iters_to_one_epoch,
+                'use_amp': args.use_amp,
+                'model_name': cfg.MODEL.NAME,
+                'dataset': cfg.DATA_CONFIG.DATASET,
+                'class_names': cfg.CLASS_NAMES,
+                'total_gpus': total_gpus,
+                'distributed': dist_train
+            }
+        )
+        
+        # Log configuration to wandb
+        wandb.config.update(cfg)
+        
+        logger.info(f'Weights & Biases initialized with project: {args.wandb_project}')
+        logger.info(f'Wandb run name: {wandb_run_name}')
+
     logger.info("----------- Create dataloader & network & optimizer -----------")
     train_set, train_loader, train_sampler = build_dataloader(
         dataset_cfg=cfg.DATA_CONFIG,
@@ -128,6 +171,16 @@ def main():
         merge_all_iters_to_one_epoch=args.merge_all_iters_to_one_epoch,
         total_epochs=args.epochs,
         seed=666 if args.fix_random_seed else None
+    )
+
+    # Create validation dataloader
+    val_set, val_loader, val_sampler = build_dataloader(
+        dataset_cfg=cfg.DATA_CONFIG,
+        class_names=cfg.CLASS_NAMES,
+        batch_size=args.batch_size,
+        dist=dist_train, workers=args.workers,
+        logger=logger,
+        training=False
     )
 
     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
@@ -200,11 +253,19 @@ def main():
         use_logger_to_record=not args.use_tqdm_to_record, 
         show_gpu_stat=not args.wo_gpu_stat,
         use_amp=args.use_amp,
-        cfg=cfg
+        cfg=cfg,
+        use_wandb=cfg.LOCAL_RANK == 0,
+        val_loader=val_loader,
+        val_interval=args.val_interval
     )
 
     if hasattr(train_set, 'use_shared_memory') and train_set.use_shared_memory:
         train_set.clean_shared_memory()
+
+    # Finish wandb logging
+    if cfg.LOCAL_RANK == 0:
+        wandb.finish()
+        logger.info('Weights & Biases logging finished')
 
     logger.info('**********************End training %s/%s(%s)**********************\n\n\n'
                 % (cfg.EXP_GROUP_PATH, cfg.TAG, args.extra_tag))

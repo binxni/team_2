@@ -1,0 +1,44 @@
+2025-09-24 09:46:37,175   INFO  Weights & Biases initialized with project: OpenPCDet
+2025-09-24 09:46:37,176   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20250924_094635
+2025-09-24 09:46:37,177   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-09-24 09:46:38,978   INFO  Database filter by min points Vehicle: 408812 => 400637
+2025-09-24 09:46:39,001   INFO  Database filter by min points Pedestrian: 156474 => 151690
+2025-09-24 09:46:39,005   INFO  Database filter by min points Cyclist: 13581 => 13273
+2025-09-24 09:46:39,026   INFO  Loading Custom AV dataset.
+2025-09-24 09:46:39,204   INFO  Total samples for Custom AV dataset: 16896
+Traceback (most recent call last):
+  File "train.py", line 282, in <module>
+    main()
+  File "train.py", line 175, in main
+    model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
+  File "/workspace/OpenPCDet/tools/../pcdet/models/__init__.py", line 17, in build_network
+    model = build_detector(
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/__init__.py", line 42, in build_detector
+    model = __all__[model_cfg.NAME](
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/centerpoint.py", line 7, in __init__
+    self.module_list = self.build_networks()
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 46, in build_networks
+    module, model_info_dict = getattr(self, 'build_%s' % module_name)(
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 89, in build_map_to_bev_module
+    map_to_bev_module = map_to_bev.__all__[self.model_cfg.MAP_TO_BEV.NAME](
+  File "/workspace/OpenPCDet/tools/../pcdet/models/backbones_2d/map_to_bev/pointpillar_scatter.py", line 12, in __init__
+    assert self.nz == 1
+AssertionError
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "train.py", line 282, in <module>
+[rank0]:     main()
+[rank0]:   File "train.py", line 175, in main
+[rank0]:     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/__init__.py", line 17, in build_network
+[rank0]:     model = build_detector(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/__init__.py", line 42, in build_detector
+[rank0]:     model = __all__[model_cfg.NAME](
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/centerpoint.py", line 7, in __init__
+[rank0]:     self.module_list = self.build_networks()
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 46, in build_networks
+[rank0]:     module, model_info_dict = getattr(self, 'build_%s' % module_name)(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 89, in build_map_to_bev_module
+[rank0]:     map_to_bev_module = map_to_bev.__all__[self.model_cfg.MAP_TO_BEV.NAME](
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/backbones_2d/map_to_bev/pointpillar_scatter.py", line 12, in __init__
+[rank0]:     assert self.nz == 1
+[rank0]: AssertionError

@@ -1,3 +1,14 @@
+"""
+val.py - 3D 객체 검출 모델의 평가를 위한 스크립트
+
+이 스크립트는 학습된 모델의 성능을 평가하는 기능을 제공합니다.
+주요 기능:
+- 단일 체크포인트 평가
+- 연속적인 체크포인트 평가
+- 분산 평가 지원
+- TensorBoard 로깅
+"""
+
 import _init_path
 import argparse
 import datetime
@@ -20,6 +31,12 @@ from pcdet.utils import common_utils
 os.environ["NCCL_P2P_DISABLE"] = "1" 
 
 def parse_config():
+    """
+    명령행 인자를 파싱하고 설정을 로드하는 함수
+    Returns:
+        args: 파싱된 명령행 인자
+        cfg: 설정 객체
+    """
     parser = argparse.ArgumentParser(description='arg parser')
     parser.add_argument('--cfg_file', type=str, default=None, help='specify the config for training')
 
@@ -63,12 +80,23 @@ def parse_config():
 
 
 def eval_single_ckpt(model, test_loader, args, eval_output_dir, logger, epoch_id, dist_test=False):
-    # load checkpoint
+    """
+    단일 체크포인트에 대한 평가를 수행하는 함수
+    Args:
+        model: 평가할 모델
+        test_loader: 테스트 데이터 로더
+        args: 평가 설정이 포함된 인자
+        eval_output_dir: 평가 결과를 저장할 디렉토리
+        logger: 로깅을 위한 logger 객체
+        epoch_id: 현재 평가 중인 epoch 번호
+        dist_test: 분산 테스트 여부 (기본값: False)
+    """
+    # 체크포인트에서 모델 파라미터 로드
     model.load_params_from_file(filename=args.ckpt, logger=logger, to_cpu=dist_test, 
                                 pre_trained_path=args.pretrained_model)
-    model.cuda()
+    model.cuda()  # 모델을 GPU로 이동
     
-    # start evaluation
+    # eval_utils를 사용하여 한 epoch에 대한 평가 수행
     eval_utils.eval_one_epoch(
         cfg, args, model, test_loader, epoch_id, logger, dist_test=dist_test,
         result_dir=eval_output_dir
@@ -76,25 +104,55 @@ def eval_single_ckpt(model, test_loader, args, eval_output_dir, logger, epoch_id
 
 
 def get_no_evaluated_ckpt(ckpt_dir, ckpt_record_file, args):
+    """
+    아직 평가되지 않은 체크포인트를 찾는 함수
+    Args:
+        ckpt_dir: 체크포인트 파일들이 저장된 디렉토리 경로
+        ckpt_record_file: 이미 평가된 체크포인트 목록이 기록된 파일 경로
+        args: 평가 시작 epoch 등의 설정이 포함된 인자
+    Returns:
+        epoch_id: 발견된 체크포인트의 epoch 번호 (없으면 -1)
+        cur_ckpt: 발견된 체크포인트 파일 경로 (없으면 None)
+    """
+    # 모든 체크포인트 파일을 찾고 수정 시간 순으로 정렬
     ckpt_list = glob.glob(os.path.join(ckpt_dir, '*checkpoint_epoch_*.pth'))
     ckpt_list.sort(key=os.path.getmtime)
+    
+    # 이미 평가된 체크포인트의 epoch 번호 목록 로드
     evaluated_ckpt_list = [float(x.strip()) for x in open(ckpt_record_file, 'r').readlines()]
-
+    
+    # 각 체크포인트 파일에 대해 검사
     for cur_ckpt in ckpt_list:
+        # 파일명에서 epoch 번호 추출 (checkpoint_epoch_*.pth 형식)
         num_list = re.findall('checkpoint_epoch_(.*).pth', cur_ckpt)
-        if num_list.__len__() == 0:
+        if num_list.__len__() == 0:  # epoch 번호를 찾지 못한 경우
             continue
-
+            
         epoch_id = num_list[-1]
-        if 'optim' in epoch_id:
+        if 'optim' in epoch_id:  # optimizer 체크포인트는 건너뜀
             continue
+            
+        # 아직 평가되지 않았고, 시작 epoch 이상인 체크포인트를 찾으면 반환
         if float(epoch_id) not in evaluated_ckpt_list and int(float(epoch_id)) >= args.start_epoch:
             return epoch_id, cur_ckpt
+            
+    # 평가할 체크포인트를 찾지 못한 경우
     return -1, None
 
 
 def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir, dist_test=False):
-    # evaluated ckpt record
+    """
+    주기적으로 새로운 체크포인트를 확인하고 평가를 수행하는 함수
+    Args:
+        model: 평가할 모델
+        test_loader: 테스트 데이터 로더
+        args: 평가 설정이 포함된 인자
+        eval_output_dir: 평가 결과를 저장할 디렉토리
+        logger: 로깅을 위한 logger 객체
+        ckpt_dir: 체크포인트가 저장된 디렉토리
+        dist_test: 분산 테스트 여부 (기본값: False)
+    """
+    # 평가된 체크포인트 기록 파일 생성
     ckpt_record_file = eval_output_dir / ('eval_list_%s.txt' % cfg.DATA_CONFIG.DATA_SPLIT['test'])
     with open(ckpt_record_file, 'a'):
         pass
@@ -143,8 +201,17 @@ def repeat_eval_ckpt(model, test_loader, args, eval_output_dir, logger, ckpt_dir
 
 
 def main():
+    """
+    평가 프로세스의 메인 함수
+    - 설정을 파싱하고 초기화
+    - 분산 테스트 설정
+    - 데이터로더 생성
+    - 모델 생성 및 평가 수행
+    """
+    # 설정 파싱
     args, cfg = parse_config()
   
+    # 추론 시간 측정 모드
     if args.infer_time:
         os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 

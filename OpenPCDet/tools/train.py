@@ -116,7 +116,7 @@ def main():
         os.system('cp %s %s' % (args.cfg_file, output_dir))
 
     tb_log = SummaryWriter(log_dir=str(output_dir / 'tensorboard')) if cfg.LOCAL_RANK == 0 else None
-
+    
     logger.info("----------- Create dataloader & network & optimizer -----------")
     train_set, train_loader, train_sampler = build_dataloader(
         dataset_cfg=cfg.DATA_CONFIG,
@@ -220,7 +220,6 @@ def main():
     # eval_output_dir = output_dir / 'eval' / 'eval_with_train'
     # eval_output_dir.mkdir(parents=True, exist_ok=True)
     # args.start_epoch = max(args.epochs - args.num_epochs_to_eval, 0)  # Only evaluate the last args.num_epochs_to_eval epochs
-
     # repeat_eval_ckpt(
     #     model.module if dist_train else model,
     #     test_loader, args, eval_output_dir, logger, ckpt_dir,

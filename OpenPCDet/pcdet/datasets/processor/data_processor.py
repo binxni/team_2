@@ -71,6 +71,7 @@ class DataProcessor(object):
         self.data_processor_queue = []
 
         self.voxel_generator = None
+        self.voxel_mean_generator = None
 
         for cur_cfg in processor_configs:
             cur_processor = getattr(self, cur_cfg.NAME)(config=cur_cfg)
@@ -177,6 +178,142 @@ class DataProcessor(object):
             data_dict['voxels'] = voxels
             data_dict['voxel_coords'] = coordinates
             data_dict['voxel_num_points'] = num_points
+        return data_dict
+
+    def transform_points_to_voxels_selective(self, data_dict=None, config=None):
+        if data_dict is None:
+            grid_size = (self.point_cloud_range[3:6] - self.point_cloud_range[0:3]) / np.array(config.VOXEL_SIZE)
+            self.grid_size = np.round(grid_size).astype(np.int64)
+            self.voxel_size = config.VOXEL_SIZE
+            return partial(self.transform_points_to_voxels_selective, config=config)
+
+        voxel_size = np.array(config.VOXEL_SIZE, dtype=np.float32)
+        max_points_cfg = config.MAX_POINTS_PER_VOXEL
+        if isinstance(max_points_cfg, dict):
+            max_points_per_voxel = max_points_cfg[self.mode]
+        else:
+            max_points_per_voxel = int(max_points_cfg)
+
+        max_voxels_cfg = config.MAX_NUMBER_OF_VOXELS
+        if isinstance(max_voxels_cfg, dict):
+            max_num_voxels = max_voxels_cfg[self.mode]
+        else:
+            max_num_voxels = int(max_voxels_cfg)
+
+        point_cloud_min = self.point_cloud_range[:3]
+        grid_size = self.grid_size
+
+        def build_voxels(points):
+            if points.shape[0] == 0:
+                empty_voxels = np.zeros((0, max_points_per_voxel, points.shape[-1]), dtype=points.dtype)
+                empty_coords = np.zeros((0, 3), dtype=np.int32)
+                empty_num = np.zeros((0,), dtype=np.int32)
+                return empty_voxels, empty_coords, empty_num
+
+            coords = np.floor((points[:, :3] - point_cloud_min) / voxel_size).astype(np.int32)
+            valid_mask = np.logical_and(coords >= 0, coords < grid_size).all(axis=1)
+            points_valid = points[valid_mask]
+            coords_valid = coords[valid_mask]
+
+            voxel_points = {}
+            voxel_order = []
+            for pt, coord in zip(points_valid, coords_valid):
+                coord_key = tuple(coord.tolist())
+                if coord_key not in voxel_points:
+                    if len(voxel_points) >= max_num_voxels:
+                        continue
+                    voxel_points[coord_key] = []
+                    voxel_order.append(coord_key)
+                voxel_points[coord_key].append(pt)
+
+            num_voxels = len(voxel_order)
+            feature_dim = points.shape[-1]
+            voxels = np.zeros((num_voxels, max_points_per_voxel, feature_dim), dtype=points.dtype)
+            voxel_coords = np.zeros((num_voxels, 3), dtype=np.int32)
+            voxel_num_points = np.zeros((num_voxels,), dtype=np.int32)
+
+            for idx, coord_key in enumerate(voxel_order):
+                cur_points = np.stack(voxel_points[coord_key], axis=0)
+                if cur_points.shape[0] > max_points_per_voxel:
+                    if cur_points.shape[1] > 3:
+                        importance = cur_points[:, 3]
+                        order = np.argsort(-importance)
+                    else:
+                        center = (np.array(coord_key, dtype=np.float32) + 0.5) * voxel_size + point_cloud_min
+                        distances = np.linalg.norm(cur_points[:, :3] - center, axis=1)
+                        order = np.argsort(distances)
+                    selected_idx = order[:max_points_per_voxel]
+                    cur_points = cur_points[selected_idx]
+                voxel_num = min(cur_points.shape[0], max_points_per_voxel)
+                voxels[idx, :voxel_num] = cur_points[:voxel_num]
+                voxel_coords[idx] = np.array(coord_key, dtype=np.int32)
+                voxel_num_points[idx] = voxel_num
+
+            return voxels, voxel_coords, voxel_num_points
+
+        points = data_dict['points']
+        voxels, coordinates, num_points = build_voxels(points)
+
+        if not data_dict['use_lead_xyz']:
+            voxels = voxels[..., 3:]
+
+        if config.get('DOUBLE_FLIP', False):
+            voxels_list, voxel_coords_list, voxel_num_points_list = [voxels], [coordinates], [num_points]
+            points_yflip, points_xflip, points_xyflip = self.double_flip(points)
+            for flipped_points in [points_yflip, points_xflip, points_xyflip]:
+                cur_voxels, cur_coords, cur_num = build_voxels(flipped_points)
+                if not data_dict['use_lead_xyz']:
+                    cur_voxels = cur_voxels[..., 3:]
+                voxels_list.append(cur_voxels)
+                voxel_coords_list.append(cur_coords)
+                voxel_num_points_list.append(cur_num)
+
+            data_dict['voxels'] = voxels_list
+            data_dict['voxel_coords'] = voxel_coords_list
+            data_dict['voxel_num_points'] = voxel_num_points_list
+        else:
+            data_dict['voxels'] = voxels
+            data_dict['voxel_coords'] = coordinates
+            data_dict['voxel_num_points'] = num_points
+        return data_dict
+
+    def voxel_mean_downsample(self, data_dict=None, config=None):
+        if data_dict is None:
+            return partial(self.voxel_mean_downsample, config=config)
+
+        points = data_dict.get('points', None)
+        if points is None or len(points) == 0:
+            return data_dict
+
+        if not hasattr(self, 'voxel_mean_generator') or self.voxel_mean_generator is None:
+            max_num_points = config.get('MAX_POINTS_PER_VOXEL', 5)
+            max_num_voxels_cfg = config.get('MAX_NUMBER_OF_VOXELS', 200000)
+            if isinstance(max_num_voxels_cfg, dict):
+                max_num_voxels = max_num_voxels_cfg[self.mode]
+            else:
+                max_num_voxels = max_num_voxels_cfg
+
+            self.voxel_mean_generator = VoxelGeneratorWrapper(
+                vsize_xyz=config.VOXEL_SIZE,
+                coors_range_xyz=self.point_cloud_range,
+                num_point_features=self.num_point_features,
+                max_num_points_per_voxel=max_num_points,
+                max_num_voxels=max_num_voxels
+            )
+
+        voxels, _, num_points = self.voxel_mean_generator.generate(points)
+        valid_mask = num_points > 0
+        if not np.any(valid_mask):
+            data_dict['points'] = points[:0]
+            return data_dict
+
+        voxels = voxels[valid_mask]
+        num_points = num_points[valid_mask]
+
+        mean_points = voxels.sum(axis=1) / num_points[:, None]
+        data_dict['points'] = mean_points.astype(points.dtype, copy=False)
+        if config.get('SAVE_NUM_POINTS', False):
+            data_dict['mean_points_per_voxel'] = num_points
         return data_dict
 
     def sample_points(self, data_dict=None, config=None):

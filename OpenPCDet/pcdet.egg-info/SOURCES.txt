@@ -1,5 +1,3 @@
-LICENSE
-README.md
 setup.py
 pcdet/__init__.py
 pcdet/config.py
@@ -45,6 +43,7 @@ pcdet/datasets/once/once_toolkits.py
 pcdet/datasets/pandaset/__init__.py
 pcdet/datasets/pandaset/pandaset_dataset.py
 pcdet/datasets/processor/__init__.py
+pcdet/datasets/processor/analyze_label_distance.py
 pcdet/datasets/processor/data_processor.py
 pcdet/datasets/processor/point_feature_encoder.py
 pcdet/datasets/waymo/__init__.py

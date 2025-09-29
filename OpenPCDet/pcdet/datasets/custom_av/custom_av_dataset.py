@@ -174,13 +174,35 @@ class CustomAvDataset(DatasetTemplate):
 
         def process_single_scene(sample_idx):
             print('%s sample_idx: %s' % (self.split, sample_idx))
-            info = {}
-            pc_info = {'num_features': num_features, 'lidar_idx': sample_idx}
-            info['point_cloud'] = pc_info
-            points = self.get_lidar(sample_idx)
-            
-           
 
+            # 1) 포인트 로드
+            points = self.get_lidar(sample_idx)
+
+            # 2) 채널 수 추정 (ring이 5번째 컬럼이라고 가정)
+            num_channels = None
+            lidar_type = None
+            if points.ndim == 2 and points.shape[1] >= 5:
+                ring = points[:, 4].astype(np.int32, copy=False)
+                # sanity check: 합리적 범위 내에서만 인정
+                rmin, rmax = int(ring.min()), int(ring.max())
+                if 0 <= rmin <= rmax <= 2048:
+                    num_channels = rmax + 1
+                    if num_channels == 64:
+                        lidar_type = 'Pandar64'
+                    elif num_channels == 128:
+                        lidar_type = 'Pandar128'
+
+            # 3) info 딕셔너리 구성
+            info = {}
+            pc_info = {
+                'num_features': num_features,
+                'lidar_idx'  : sample_idx,
+                'num_channels': num_channels,       # None일 수 있음
+                'lidar_type' : lidar_type           # None일 수 있음
+            }
+            info['point_cloud'] = pc_info
+
+            # 4) 라벨 (옵션)
             if has_label:
                 annotations = {}
                 gt_boxes_lidar, name = self.get_label(sample_idx)
@@ -190,7 +212,6 @@ class CustomAvDataset(DatasetTemplate):
                     torch.from_numpy(points[:, 0:3]), torch.from_numpy(gt_boxes_lidar[:, :7])
                 ).sum(dim=1).float().cpu().numpy()
 
-
                 annotations['num_points_in_gt'] = num_pts_in_gt.astype(np.int64)
                 annotations['difficulty'] = np.array([0] * gt_boxes_lidar.shape[0])
                 info['annos'] = annotations
@@ -199,10 +220,10 @@ class CustomAvDataset(DatasetTemplate):
 
         sample_id_list = sample_id_list if sample_id_list is not None else self.sample_id_list
 
-        # create a thread pool to improve the velocity
         with futures.ThreadPoolExecutor(num_workers) as executor:
             infos = executor.map(process_single_scene, sample_id_list)
         return list(infos)
+
 
     def create_groundtruth_database(self, info_path=None, used_classes=None, split='train'):
         import torch

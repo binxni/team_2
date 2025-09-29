@@ -1,5 +1,5 @@
 DATASET: 'CustomAvDataset'
-DATA_PATH: 'data/custom_av'
+DATA_PATH: '../data/custom_av'
 
 POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]
 
@@ -9,14 +9,16 @@ MAP_CLASS_TO_KITTI: {
     'Cyclist': 'Cyclist',
 }
 
-DATA_SPLIT:
-  train: 'ImageSets/train_split.txt'
-  test:  'ImageSets/val.txt'
+DATA_SPLIT: {
+    'train': train,
+    'test': val
+}
 
+INFO_PATH: {
+    'train': [custom_av_infos_train.pkl],
+    'test': [custom_av_infos_val.pkl],
 
-INFO_PATH:
-  train: ['custom_av_infos_train.pkl']
-  test:  ['custom_av_infos_val.pkl']
+}
 
 POINT_FEATURE_ENCODING: {
     encoding_type: absolute_coordinates_encoding,
@@ -60,9 +62,9 @@ DATA_PROCESSOR:
         'test': True
       }
 
-    - NAME: transform_points_to_voxels
+    - NAME: transform_points_to_voxels_selective
       VOXEL_SIZE: [0.1, 0.1, 0.15]
-      MAX_POINTS_PER_VOXEL: 5
+      MAX_POINTS_PER_VOXEL: 5 # 복셀안에 있는 포인트 촤대 개수
       MAX_NUMBER_OF_VOXELS: {
         'train': 150000,
         'test': 150000

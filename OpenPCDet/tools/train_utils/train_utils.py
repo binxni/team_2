@@ -7,11 +7,70 @@ import glob
 from torch.nn.utils import clip_grad_norm_
 from pcdet.utils import common_utils, commu_utils
 
+try:
+    import wandb
+    WANDB_AVAILABLE = True
+except ImportError:
+    WANDB_AVAILABLE = False
+
+
+def validate_one_epoch(model, val_loader, model_func, cur_epoch, rank, logger=None, dist_test=False, cfg=None):
+    """
+    Validate one epoch and return validation loss
+    """
+    if val_loader is None:
+        return {}
+    
+    # Set model to training mode for validation loss computation
+    model.train()
+    val_losses = []
+    
+    if rank == 0:
+        val_pbar = tqdm.tqdm(total=len(val_loader), leave=False, desc='validation', dynamic_ncols=True)
+    
+    with torch.no_grad():
+        for i, batch in enumerate(val_loader):
+            try:
+                # Load data to GPU
+                from pcdet.models import load_data_to_gpu
+                load_data_to_gpu(batch)
+                
+                # Use model_func to get loss (model needs to be in train mode to compute loss)
+                loss, tb_dict, disp_dict = model_func(model, batch)
+                val_losses.append(loss.item())
+                
+                if rank == 0:
+                    val_pbar.update()
+                    val_pbar.set_postfix({'val_loss': loss.item()})
+                    
+            except Exception as e:
+                if logger:
+                    logger.warning(f"Validation batch {i} failed: {e}")
+                continue
+    
+    if rank == 0:
+        val_pbar.close()
+    
+    # Calculate average validation loss
+    if val_losses:
+        avg_val_loss = sum(val_losses) / len(val_losses)
+        
+        if logger and rank == 0:
+            logger.info(f'Validation Epoch {cur_epoch}: Average Loss = {avg_val_loss:.4f}')
+        
+        # Set model back to training mode
+        model.train()
+        return {'val_loss': avg_val_loss}
+    else:
+        # Set model back to training mode
+        model.train()
+        return {}
+
 
 def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, accumulated_iter, optim_cfg,
                     rank, tbar, total_it_each_epoch, dataloader_iter, tb_log=None, leave_pbar=False, 
                     use_logger_to_record=False, logger=None, logger_iter_interval=50, cur_epoch=None, 
-                    total_epochs=None, ckpt_save_dir=None, ckpt_save_time_interval=300, show_gpu_stat=False, use_amp=False):
+                    total_epochs=None, ckpt_save_dir=None, ckpt_save_time_interval=300, show_gpu_stat=False, use_amp=False, use_wandb=False):
     if total_it_each_epoch == len(train_loader):
         dataloader_iter = iter(train_loader)
 
@@ -132,6 +191,8 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                 for key, val in tb_dict.items():
                     tb_log.add_scalar('train/' + key, val, accumulated_iter)
             
+            # Note: wandb logging moved to end of epoch in train_model function
+            
             # save intermediate ckpt every {ckpt_save_time_interval} seconds         
             time_past_this_epoch = pbar.format_dict['elapsed']
             if time_past_this_epoch // ckpt_save_time_interval >= ckpt_save_cnt:
@@ -144,14 +205,24 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                 
     if rank == 0:
         pbar.close()
-    return accumulated_iter
+        # Return metrics for epoch-level logging
+        epoch_metrics = {
+            'avg_loss': losses_m.avg,
+            'avg_data_time': data_time.avg,
+            'avg_forward_time': forward_time.avg,
+            'avg_batch_time': batch_time.avg,
+            'final_lr': cur_lr
+        }
+        return accumulated_iter, epoch_metrics
+    else:
+        return accumulated_iter, None
 
 
 def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_cfg,
                 start_epoch, total_epochs, start_iter, rank, tb_log, ckpt_save_dir, train_sampler=None,
                 lr_warmup_scheduler=None, ckpt_save_interval=1, max_ckpt_save_num=50,
                 merge_all_iters_to_one_epoch=False, use_amp=False,
-                use_logger_to_record=False, logger=None, logger_iter_interval=None, ckpt_save_time_interval=None, show_gpu_stat=False, cfg=None):
+                use_logger_to_record=False, logger=None, logger_iter_interval=None, ckpt_save_time_interval=None, show_gpu_stat=False, cfg=None, use_wandb=False, val_loader=None, val_interval=1):
     accumulated_iter = start_iter
 
     # use for disable data augmentation hook
@@ -177,7 +248,7 @@ def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_
                 cur_scheduler = lr_scheduler
             
             augment_disable_flag = disable_augmentation_hook(hook_config, dataloader_iter, total_epochs, cur_epoch, cfg, augment_disable_flag, logger)
-            accumulated_iter = train_one_epoch(
+            result = train_one_epoch(
                 model, optimizer, train_loader, model_func,
                 lr_scheduler=cur_scheduler,
                 accumulated_iter=accumulated_iter, optim_cfg=optim_cfg,
@@ -191,8 +262,40 @@ def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_
                 logger=logger, logger_iter_interval=logger_iter_interval,
                 ckpt_save_dir=ckpt_save_dir, ckpt_save_time_interval=ckpt_save_time_interval, 
                 show_gpu_stat=show_gpu_stat,
-                use_amp=use_amp
+                use_amp=use_amp,
+                use_wandb=use_wandb
             )
+            
+            # Handle return value and extract metrics
+            if isinstance(result, tuple):
+                accumulated_iter, epoch_metrics = result
+            else:
+                accumulated_iter = result
+                epoch_metrics = None
+            
+            # Run validation
+            val_metrics = {}
+            if val_loader is not None and (cur_epoch + 1) % val_interval == 0:
+                val_metrics = validate_one_epoch(
+                    model, val_loader, model_func, cur_epoch + 1, rank, logger, cfg=cfg
+                )
+            
+            # Log epoch metrics to wandb
+            if use_wandb and WANDB_AVAILABLE and rank == 0 and epoch_metrics is not None:
+                wandb_log_dict = {
+                    'epoch/train_loss': epoch_metrics['avg_loss'],
+                    'epoch/learning_rate': epoch_metrics['final_lr'],
+                    'epoch/data_time': epoch_metrics['avg_data_time'],
+                    'epoch/forward_time': epoch_metrics['avg_forward_time'],
+                    'epoch/batch_time': epoch_metrics['avg_batch_time'],
+                    'epoch/epoch_num': cur_epoch + 1
+                }
+                
+                # Add validation loss if available
+                if val_metrics and 'val_loss' in val_metrics:
+                    wandb_log_dict['epoch/val_loss'] = val_metrics['val_loss']
+                
+                wandb.log(wandb_log_dict, step=cur_epoch + 1)
 
             # save trained model
             trained_epoch = cur_epoch + 1

@@ -14,5 +14,8 @@ do
 done
 echo $PORT
 
-torchrun --nproc_per_node=${NGPUS} --rdzv_endpoint=localhost:${PORT} train.py --launcher pytorch ${PY_ARGS}
-
+if command -v torchrun >/dev/null 2>&1; then
+    torchrun --nproc_per_node=${NGPUS} --rdzv_endpoint=localhost:${PORT} train.py --launcher pytorch ${PY_ARGS}
+else
+    python -m torch.distributed.launch --nproc_per_node=${NGPUS} --master_port=${PORT} train.py --launcher pytorch ${PY_ARGS}
+fi

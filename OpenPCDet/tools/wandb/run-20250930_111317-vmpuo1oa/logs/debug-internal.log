@@ -1,0 +1,11 @@
+{"time":"2025-09-30T11:13:17.719606608Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-09-30T11:13:18.157270817Z","level":"INFO","msg":"stream: created new stream","id":"vmpuo1oa"}
+{"time":"2025-09-30T11:13:18.157324052Z","level":"INFO","msg":"handler: started","stream_id":"vmpuo1oa"}
+{"time":"2025-09-30T11:13:18.157405815Z","level":"INFO","msg":"stream: started","id":"vmpuo1oa"}
+{"time":"2025-09-30T11:13:18.157418047Z","level":"INFO","msg":"writer: started","stream_id":"vmpuo1oa"}
+{"time":"2025-09-30T11:13:18.157437237Z","level":"INFO","msg":"sender: started","stream_id":"vmpuo1oa"}
+{"time":"2025-09-30T11:14:35.169548418Z","level":"INFO","msg":"stream: closing","id":"vmpuo1oa"}
+{"time":"2025-09-30T11:14:35.779586893Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-09-30T11:14:36.101206144Z","level":"INFO","msg":"handler: closed","stream_id":"vmpuo1oa"}
+{"time":"2025-09-30T11:14:36.101300658Z","level":"INFO","msg":"sender: closed","stream_id":"vmpuo1oa"}
+{"time":"2025-09-30T11:14:36.101308465Z","level":"INFO","msg":"stream: closed","id":"vmpuo1oa"}

@@ -1,0 +1,52 @@
+_wandb:
+    value:
+        cli_version: 0.22.1
+        e:
+            7o2psd54vs4zig04t8bnqc50bm9lwoc7:
+                args:
+                    - --cfg_file
+                    - tools/cfgs/custom_av/centerpoint_pillar_val.yaml
+                    - --num_trials
+                    - "10"
+                    - --wandb_project
+                    - centerpoint-optuna
+                    - --gpus
+                    - 0,1,2,3
+                email: subin.park017@gmail.com
+                executable: /usr/bin/python
+                git:
+                    remote: https://github.com/binxni/team_2.git
+                host: b7db4a6adde0
+                os: Linux-5.15.0-139-generic-x86_64-with-glibc2.29
+                program: -m tools.optuna_wandb_tuner
+                python: CPython 3.8.10
+                root: /workspace/OpenPCDet
+                startedAt: "2025-10-03T09:47:05.859505Z"
+                writerId: 7o2psd54vs4zig04t8bnqc50bm9lwoc7
+        m: []
+        python_version: 3.8.10
+        t:
+            "1":
+                - 35
+            "2":
+                - 35
+            "3":
+                - 2
+                - 13
+                - 16
+            "4": 3.8.10
+            "5": 0.22.1
+            "10":
+                - 20
+            "12": 0.22.1
+            "13": linux-x86_64
+MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH:
+    value: 0.0936843710297063
+OPTIMIZATION.DIV_FACTOR:
+    value: 11.479175279631736
+OPTIMIZATION.LR:
+    value: 0.0007627364729026302
+OPTIMIZATION.PCT_START:
+    value: 0.36237821581611895
+OPTIMIZATION.WEIGHT_DECAY:
+    value: 0.0003287747413991121

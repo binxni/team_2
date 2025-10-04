@@ -14,7 +14,7 @@ DATA_CONFIG:  # 데이터 로딩 및 전처리 설정 블록
                 'test': True  # 평가 시에도 섞어 편향 방지
             }
 
-        -   NAME: transform_points_to_voxels_selective  # 선택적 복셀 변환 단계
+        -   NAME: transform_points_to_voxels # 선택적 복셀 변환 단계
             VOXEL_SIZE: [ 0.25, 0.25, 8.0 ]  # 복셀 격자 크기 (x, y, z)
             MAX_POINTS_PER_VOXEL: 20  # 한 복셀에 허용되는 최대 포인트 수
             MAX_NUMBER_OF_VOXELS: {  # 복셀 수 상한 설정
@@ -95,8 +95,8 @@ MODEL:  # 모델 구성 설정
 
 
 OPTIMIZATION:  # 최적화 관련 설정
-    BATCH_SIZE_PER_GPU: 1  # GPU당 배치 크기
-    NUM_EPOCHS: 40  # 전체 학습 에포크 수
+    BATCH_SIZE_PER_GPU: 3  # GPU당 배치 크기
+    NUM_EPOCHS: 50  # 전체 학습 에포크 수
 
     OPTIMIZER: adam_onecycle  # 사용하는 옵티마이저 이름
     LR: 0.003  # 초기 학습률

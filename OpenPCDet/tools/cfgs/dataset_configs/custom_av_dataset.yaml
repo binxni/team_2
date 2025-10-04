@@ -28,6 +28,7 @@ POINT_FEATURE_ENCODING: {  # 입력 포인트 특성 구성 정의
 
 DATA_AUGMENTOR:  # 데이터 증강 설정
     DISABLE_AUG_LIST: ['placeholder','gt_sampling','random_world_flip','random_world_rotation','random_world_scaling']  # 비활성화할 증강 이름 목록; placeholder는 이후 오버라이드용 키를 유지
+    # DISABLE_AUG_LIST: ['placeholder']  # 비활성화할 증강 이름 목록
     AUG_CONFIG_LIST:
         - NAME: gt_sampling  # 클래스 균형을 맞추기 위해 데이터베이스 객체를 장면에 주입
           USE_ROAD_PLANE: False  # 도로 평면 추정치가 없어 정렬을 생략
@@ -55,6 +56,18 @@ DATA_AUGMENTOR:  # 데이터 증강 설정
 DATA_PROCESSOR:  # 증강 이후 적용할 전처리 파이프라인
     - NAME: mask_points_and_boxes_outside_range  # 범위를 벗어난 포인트/박스를 제거
       REMOVE_OUTSIDE_BOXES: True  # 박스가 범위 밖이면 함께 제거
+
+    - NAME: lidsor_filter
+      ENABLED: {
+        'train': True,
+        'test': True
+      }
+      MEAN_K: 50
+      STD_MUL: 0.15
+      RANGE_MULTIPLIER: 0.05
+      DISTANCE_THRESHOLD: 20.0
+      INTENSITY_THRESHOLD: 5.0
+      INTENSITY_INDEX: 3
 
     - NAME: shuffle_points  # 포인트 순서를 섞어 모델 편향을 방지
       SHUFFLE_ENABLED: {

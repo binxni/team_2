@@ -1,0 +1,26 @@
+2025-10-03 09:46:57,862 INFO    MainThread:234 [wandb_setup.py:_flush():81] Current SDK version is 0.22.1
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_setup.py:_flush():81] Configure stats pid to 234
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_setup.py:_flush():81] Loading settings from /root/.config/wandb/settings
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_setup.py:_flush():81] Loading settings from /workspace/OpenPCDet/wandb/settings
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_init.py:setup_run_log_directory():705] Logging user logs to /workspace/OpenPCDet/wandb/run-20251003_094657-u3qzvi8j/logs/debug.log
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_init.py:setup_run_log_directory():706] Logging internal logs to /workspace/OpenPCDet/wandb/run-20251003_094657-u3qzvi8j/logs/debug-internal.log
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_init.py:init():832] calling init triggers
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_init.py:init():837] wandb.init called with sweep_config: {}
+config: {'OPTIMIZATION.LR': 0.0011844319751820387, 'OPTIMIZATION.WEIGHT_DECAY': 0.004123206532618728, 'OPTIMIZATION.PCT_START': 0.4659969709057026, 'OPTIMIZATION.DIV_FACTOR': 13.979877262955549, 'MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH': 0.07340279606636549, '_wandb': {}}
+2025-10-03 09:46:57,863 INFO    MainThread:234 [wandb_init.py:init():880] starting backend
+2025-10-03 09:46:58,084 INFO    MainThread:234 [wandb_init.py:init():883] sending inform_init request
+2025-10-03 09:46:58,109 INFO    MainThread:234 [wandb_init.py:init():891] backend started and connected
+2025-10-03 09:46:58,111 INFO    MainThread:234 [wandb_init.py:init():961] updated telemetry
+2025-10-03 09:46:58,122 INFO    MainThread:234 [wandb_init.py:init():985] communicating run to backend with 90.0 second timeout
+2025-10-03 09:46:59,173 INFO    MainThread:234 [wandb_init.py:init():1036] starting run threads in backend
+2025-10-03 09:46:59,289 INFO    MainThread:234 [wandb_run.py:_console_start():2506] atexit reg
+2025-10-03 09:46:59,289 INFO    MainThread:234 [wandb_run.py:_redirect():2354] redirect: wrap_raw
+2025-10-03 09:46:59,290 INFO    MainThread:234 [wandb_run.py:_redirect():2423] Wrapping output streams.
+2025-10-03 09:46:59,290 INFO    MainThread:234 [wandb_run.py:_redirect():2446] Redirects installed.
+2025-10-03 09:46:59,293 INFO    MainThread:234 [wandb_init.py:init():1076] run started, returning control to user process
+2025-10-03 09:46:59,306 INFO    MainThread:234 [wandb_run.py:_finish():2272] finishing run subin-park017-soongsil-university/centerpoint-optuna/u3qzvi8j
+2025-10-03 09:46:59,307 INFO    MainThread:234 [wandb_run.py:_atexit_cleanup():2471] got exitcode: 0
+2025-10-03 09:46:59,308 INFO    MainThread:234 [wandb_run.py:_restore():2453] restore
+2025-10-03 09:46:59,308 INFO    MainThread:234 [wandb_run.py:_restore():2459] restore done
+2025-10-03 09:47:01,165 INFO    MainThread:234 [wandb_run.py:_footer_sync_info():3869] logging synced files

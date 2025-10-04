@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-from typing import List
+from typing import List, Set
 
 import numpy as np
 
@@ -71,8 +71,27 @@ def parse_args() -> argparse.Namespace:
 def resolve_data_root(cfg_path: Path, override: Path | None, dataset_cfg: EasyDict) -> Path:
     if override is not None:
         return override.resolve()
-    cfg_dir = cfg_path.parent
-    return (cfg_dir / dataset_cfg.DATA_PATH).resolve()
+
+    data_path = Path(dataset_cfg.DATA_PATH)
+    if data_path.is_absolute():
+        return data_path.resolve()
+
+    cfg_dir = cfg_path.resolve().parent
+    candidate_bases = [cfg_dir] + list(cfg_dir.parents)
+
+    checked: Set[Path] = set()
+    for base in candidate_bases:
+        candidate = (base / data_path).resolve()
+        if candidate in checked:
+            continue
+        checked.add(candidate)
+        if candidate.exists():
+            return candidate
+
+    raise FileNotFoundError(
+        f"Unable to resolve DATA_PATH '{dataset_cfg.DATA_PATH}' relative to {cfg_path}. "
+        "Please supply --data-root explicitly."
+    )
 
 
 def load_split_ids(data_root: Path, split: str) -> List[str]:
@@ -145,4 +164,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

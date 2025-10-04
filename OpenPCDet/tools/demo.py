@@ -51,9 +51,10 @@ class DemoDataset(DatasetTemplate):
         else:
             raise NotImplementedError
 
+        frame_id = Path(self.sample_file_list[index]).stem
         input_dict = {
             'points': points,
-            'frame_id': index,
+            'frame_id': frame_id,
         }
 
         data_dict = self.prepare_data(data_dict=input_dict)
@@ -68,6 +69,8 @@ def parse_config():
                         help='specify the point cloud data file or directory')
     parser.add_argument('--ckpt', type=str, default=None, help='specify the pretrained model')
     parser.add_argument('--ext', type=str, default='.bin', help='specify the extension of your point cloud data file')
+    parser.add_argument('--output_dir', type=str, default=None,
+                        help='If set, skip visualization and write detections to this directory as label txt files')
 
     args = parser.parse_args()
 
@@ -86,24 +89,52 @@ def main():
     )
     logger.info(f'Total number of samples: \t{len(demo_dataset)}')
 
+    save_labels = args.output_dir is not None
+    if save_labels:
+        output_dir = Path(args.output_dir).resolve()
+        output_dir.mkdir(parents=True, exist_ok=True)
+        logger.info(f'Saving detection labels to: {output_dir}')
+
     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=demo_dataset)
     model.load_params_from_file(filename=args.ckpt, logger=logger, to_cpu=True)
     model.cuda()
     model.eval()
     with torch.no_grad():
         for idx, data_dict in enumerate(demo_dataset):
-            logger.info(f'Visualized sample index: \t{idx + 1}')
+            logger.info(f'Processing sample index: \t{idx + 1}')
             data_dict = demo_dataset.collate_batch([data_dict])
             load_data_to_gpu(data_dict)
             pred_dicts, _ = model.forward(data_dict)
 
-            V.draw_scenes(
-                points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
-                ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels']
-            )
+            if save_labels:
+                frame_id = data_dict['frame_id'][0]
+                if isinstance(frame_id, bytes):
+                    frame_id = frame_id.decode('utf-8')
+                boxes = pred_dicts[0]['pred_boxes'].cpu().numpy() if hasattr(pred_dicts[0]['pred_boxes'], 'cpu') else pred_dicts[0]['pred_boxes']
+                scores = pred_dicts[0]['pred_scores'].cpu().numpy() if hasattr(pred_dicts[0]['pred_scores'], 'cpu') else pred_dicts[0]['pred_scores']
+                labels = pred_dicts[0]['pred_labels'].cpu().numpy() if hasattr(pred_dicts[0]['pred_labels'], 'cpu') else pred_dicts[0]['pred_labels']
 
-            if not OPEN3D_FLAG:
-                mlab.show(stop=True)
+                output_path = output_dir / f"{frame_id}.txt"
+                with open(output_path, 'w') as f:
+                    for det_idx in range(boxes.shape[0]):
+                        class_id = int(labels[det_idx])
+                        class_name = cfg.CLASS_NAMES[class_id - 1] if 0 < class_id <= len(cfg.CLASS_NAMES) else str(class_id)
+                        box = boxes[det_idx]
+                        score = float(scores[det_idx])
+                        f.write(
+                            f"{class_name} {score:.4f} "
+                            f"{box[0]:.4f} {box[1]:.4f} {box[2]:.4f} "
+                            f"{box[3]:.4f} {box[4]:.4f} {box[5]:.4f} {box[6]:.4f}\n"
+                        )
+                logger.info(f'Wrote detections to {output_path}')
+            else:
+                V.draw_scenes(
+                    points=data_dict['points'][:, 1:], ref_boxes=pred_dicts[0]['pred_boxes'],
+                    ref_scores=pred_dicts[0]['pred_scores'], ref_labels=pred_dicts[0]['pred_labels']
+                )
+
+                if not OPEN3D_FLAG:
+                    mlab.show(stop=True)
 
     logger.info('Demo done.')
 

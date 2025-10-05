@@ -1,0 +1,1 @@
+{"_wandb":{"runtime":10004},"epoch/forward_time":0.4448488908241334,"_runtime":10004.902898799,"epoch/val_loss":1.5241782741113143,"_timestamp":1.7595748818380134e+09,"epoch/train_loss":1.1187861209252836,"epoch/learning_rate":3.009476515280588e-08,"epoch/data_time":0.04407873986452029,"epoch/batch_time":0.4889285251225085,"epoch/epoch_num":30,"_step":30}

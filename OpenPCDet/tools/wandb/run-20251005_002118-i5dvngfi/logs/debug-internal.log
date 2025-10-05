@@ -1,0 +1,11 @@
+{"time":"2025-10-05T00:21:18.339578068Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-05T00:21:18.62879408Z","level":"INFO","msg":"stream: created new stream","id":"i5dvngfi"}
+{"time":"2025-10-05T00:21:18.628864543Z","level":"INFO","msg":"handler: started","stream_id":"i5dvngfi"}
+{"time":"2025-10-05T00:21:18.628944469Z","level":"INFO","msg":"stream: started","id":"i5dvngfi"}
+{"time":"2025-10-05T00:21:18.628963148Z","level":"INFO","msg":"sender: started","stream_id":"i5dvngfi"}
+{"time":"2025-10-05T00:21:18.628962896Z","level":"INFO","msg":"writer: started","stream_id":"i5dvngfi"}
+{"time":"2025-10-05T03:24:23.45184568Z","level":"INFO","msg":"stream: closing","id":"i5dvngfi"}
+{"time":"2025-10-05T03:24:24.318896691Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-10-05T03:24:24.699302611Z","level":"INFO","msg":"handler: closed","stream_id":"i5dvngfi"}
+{"time":"2025-10-05T03:24:24.699470675Z","level":"INFO","msg":"sender: closed","stream_id":"i5dvngfi"}
+{"time":"2025-10-05T03:24:24.69949226Z","level":"INFO","msg":"stream: closed","id":"i5dvngfi"}

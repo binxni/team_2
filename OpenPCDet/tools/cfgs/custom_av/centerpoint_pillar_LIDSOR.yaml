@@ -14,7 +14,18 @@ DATA_CONFIG:
                 'train': True,
                 'test': True
             }
-
+        -   NAME: lidsor_filter
+            ENABLED: {  # split별 필터 사용 여부
+                'train': True,
+                'test': True
+            }
+            MEAN_K: 50  # 평균 거리 계산 시 고려할 KNN 이웃 수
+            STD_MUL: 0.15  # 기본 임계값 = mean + STD_MUL * std
+            RANGE_MULTIPLIER: 0.05  # 거리(r)에 비례해 임계값을 확장하는 계수
+            DISTANCE_THRESHOLD: 20.0  # 이 거리 밖 포인트는 후보에서 제외
+            INTENSITY_THRESHOLD: 5.0  # intensity가 이 값보다 낮을 때만 노이즈로 간주
+            INTENSITY_INDEX: 3  # 포인트 배열에서 intensity가 위치한 컬럼 인덱스
+        
         -   NAME: transform_points_to_voxels_selective
             VOXEL_SIZE: [ 0.25, 0.25, 8.0 ]
             MAX_POINTS_PER_VOXEL: 20
@@ -22,7 +33,6 @@ DATA_CONFIG:
                 'train': 150000,
                 'test': 150000
             }
-
 
 MODEL:
     NAME: CenterPoint
@@ -97,7 +107,7 @@ MODEL:
 
 OPTIMIZATION:
     BATCH_SIZE_PER_GPU: 3
-    NUM_EPOCHS: 30
+    NUM_EPOCHS: 40
 
     OPTIMIZER: adam_onecycle
     LR: 0.003

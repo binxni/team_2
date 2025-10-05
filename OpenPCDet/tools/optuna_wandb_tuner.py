@@ -6,9 +6,10 @@ This helper script samples a handful of important hyper-parameters from
 training / validation binaries, and streams the key metrics into WandB so that
 trials can be compared visually.
 
-Usage example:
-    python tools/optuna_wandb_tuner.py \
-        --cfg_file tools/cfgs/custom_av/centerpoint_pillar_val.yaml \
+Usage example (run from the tools directory):
+    cd OpenPCDet/tools
+    python optuna_wandb_tuner.py \
+        --cfg_file cfgs/custom_av/centerpoint_pillar_val.yaml \
         --num_trials 10 \
         --wandb_project centerpoint-optuna \
         --gpus 0
@@ -82,9 +83,9 @@ def build_objective(args: argparse.Namespace, output_root: Path):
         # Optuna가 제안한 값으로 YAML 항목을 덮어쓸 하이퍼파라미터를 샘플링
         lr = trial.suggest_float("optim.lr", 5e-4, 5e-3, log=True)
         weight_decay = trial.suggest_float("optim.weight_decay", 1e-4, 5e-3, log=True)
-        pct_start = trial.suggest_float("optim.pct_start", 0.1, 0.6)
-        div_factor = trial.suggest_float("optim.div_factor", 5.0, 20.0)
         score_thresh = trial.suggest_float("model.score_thresh", 0.05, 0.20)
+        pct_start = float(getattr(cfg.OPTIMIZATION, "PCT_START", 0.4))
+        div_factor = float(getattr(cfg.OPTIMIZATION, "DIV_FACTOR", 10.0))
 
         run_tag = f"{args.run_prefix}trial_{trial.number:03d}"  # extra_tag와 WandB run 이름으로 활용
         run_dir = output_root / run_tag  # trial별 출력 디렉터리 경로
@@ -112,13 +113,14 @@ def build_objective(args: argparse.Namespace, output_root: Path):
             f"{lr}",
             "OPTIMIZATION.WEIGHT_DECAY",
             f"{weight_decay}",
-            "OPTIMIZATION.PCT_START",
-            f"{pct_start}",
-            "OPTIMIZATION.DIV_FACTOR",
-            f"{div_factor}",
             "MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH",
             f"{score_thresh:.4f}",
         ]
+
+        tools_dir = Path(args.tools_dir)
+        train_script = tools_dir / "train.py"
+        torch_train_sh = tools_dir / "scripts" / "torch_train.sh"
+        val_script = tools_dir / "val.py"
 
         gpu_ids: list[str] = []
         if args.gpus:
@@ -128,14 +130,14 @@ def build_objective(args: argparse.Namespace, output_root: Path):
         if num_gpus > 1:
             train_cmd = [
                 "bash",
-                "scripts/torch_train.sh",
+                str(torch_train_sh),
                 str(num_gpus),
                 *train_args,
             ]
         else:
             train_cmd = [
                 sys.executable,
-                "tools/train.py",
+                str(train_script),
                 "--launcher",
                 "none",
                 *train_args,
@@ -149,13 +151,14 @@ def build_objective(args: argparse.Namespace, output_root: Path):
             env["CUDA_VISIBLE_DEVICES"] = args.gpus
         if args.wandb_api_key:
             env.setdefault("WANDB_API_KEY", args.wandb_api_key)
+        env["PYTHON_BIN"] = sys.executable
 
         train_process = subprocess.run(
             train_cmd,
             env=env,
             text=True,
             capture_output=True,
-            cwd=args.repo_root,
+            cwd=str(args.repo_root),
         )
 
         train_loss = _parse_last_loss(train_process.stdout)  # 로깅된 최종 손실을 파싱
@@ -163,6 +166,12 @@ def build_objective(args: argparse.Namespace, output_root: Path):
             wandb.log({"train_loss_last": train_loss}, commit=False)
 
         if train_process.returncode != 0:
+            print("[optuna] train.py exited with", train_process.returncode)
+            if train_process.stdout:
+                print("[optuna] train stdout:\n" + train_process.stdout)
+            if train_process.stderr:
+                print("[optuna] train stderr:", file=sys.stderr)
+                print(train_process.stderr, file=sys.stderr)
             wandb.log({"train_failed": True})
             trial.set_user_attr("train_stdout", train_process.stdout)
             trial.set_user_attr("train_stderr", train_process.stderr)
@@ -179,7 +188,7 @@ def build_objective(args: argparse.Namespace, output_root: Path):
 
         val_cmd = [
             sys.executable,
-            "tools/val.py",
+            str(val_script),
             f"--cfg_file={args.cfg_file}",
             f"--ckpt={latest_ckpt}",
             "--eval_tag",
@@ -195,7 +204,7 @@ def build_objective(args: argparse.Namespace, output_root: Path):
             env=env,
             text=True,
             capture_output=True,
-            cwd=args.repo_root,
+            cwd=str(args.repo_root),
         )
         if val_process.returncode != 0:
             wandb.log({"val_failed": True})
@@ -226,7 +235,7 @@ def build_objective(args: argparse.Namespace, output_root: Path):
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Optuna + WandB tuner for OpenPCDet")
     parser.add_argument("--cfg_file", type=str,
-                        default="tools/cfgs/custom_av/centerpoint_pillar_val.yaml",
+                        default="cfgs/custom_av/centerpoint_pillar_val.yaml",
                         help="Base YAML configuration to tune")
     parser.add_argument("--num_trials", type=int, default=10, help="Number of Optuna trials")
     parser.add_argument("--storage", type=str, default=None,
@@ -239,7 +248,7 @@ def parse_args() -> argparse.Namespace:
                         help="Additional args appended to the train.py command")
     parser.add_argument("--val_extra", nargs='*', default=[],
                         help="Additional args appended to the val.py command")
-    parser.add_argument("--wandb_project", type=str, required=True,
+    parser.add_argument("--wandb_project", type=str, default=None,
                         help="Weights & Biases project name")
     parser.add_argument("--wandb_entity", type=str, default=None,
                         help="Weights & Biases entity / team name")
@@ -252,18 +261,46 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--direction", choices=["minimize", "maximize"], default="maximize",
                         help="Optimization direction for the evaluation metric")
     parser.add_argument("--seed", type=int, default=42, help="Random seed for Optuna")
-    parser.add_argument("--repo_root", type=str, default=".",
-                        help="Repository root where train/val scripts are executed")
+    parser.add_argument("--repo_root", type=str, default=None,
+                        help="Working directory for spawned train/val processes (defaults to tools dir)")
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
 
+    script_dir = Path(__file__).resolve().parent
+    repo_root = Path(args.repo_root).resolve() if args.repo_root is not None else script_dir
+    args.repo_root = repo_root
+    args.tools_dir = script_dir
+
+    cfg_path = Path(args.cfg_file)
+    if not cfg_path.is_absolute():
+        candidate = (script_dir / cfg_path)
+        if candidate.exists():
+            cfg_path = candidate
+        else:
+            cfg_path = (repo_root / cfg_path)
+    cfg_path = cfg_path.resolve()
+    args.cfg_file = str(cfg_path)
+
+    cfg_rel_for_tag = None
+    for base in (script_dir, repo_root):
+        try:
+            cfg_rel_for_tag = cfg_path.relative_to(base)
+            break
+        except ValueError:
+            continue
+    if cfg_rel_for_tag is None:
+        cfg_rel_for_tag = Path(cfg_path.name)
+
+    if not args.wandb_project:
+        args.wandb_project = os.environ.get("WANDB_PROJECT", "team2")
+
     # Load the base config once so that we can locate the output directory.
     cfg_from_yaml_file(args.cfg_file, cfg)
-    cfg.TAG = Path(args.cfg_file).stem
-    cfg.EXP_GROUP_PATH = '/'.join(args.cfg_file.split('/')[1:-1]) if '/' in args.cfg_file else ''
+    cfg.TAG = cfg_path.stem
+    cfg.EXP_GROUP_PATH = '/'.join(cfg_rel_for_tag.parts[:-1]) if len(cfg_rel_for_tag.parts) > 1 else ''
     output_root = Path(cfg.ROOT_DIR) / "output" / cfg.EXP_GROUP_PATH / cfg.TAG
     output_root.mkdir(parents=True, exist_ok=True)
 

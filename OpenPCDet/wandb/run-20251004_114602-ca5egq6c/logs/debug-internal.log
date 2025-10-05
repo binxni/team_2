@@ -1,0 +1,16 @@
+{"time":"2025-10-04T11:46:02.122908014Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-04T11:46:02.419836071Z","level":"INFO","msg":"stream: created new stream","id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:02.41991443Z","level":"INFO","msg":"handler: started","stream_id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:02.420071835Z","level":"INFO","msg":"stream: started","id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:02.42008603Z","level":"INFO","msg":"writer: started","stream_id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:02.420098698Z","level":"INFO","msg":"sender: started","stream_id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:19.255467253Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"updating run metadata","runtime_seconds":0.002430821}],"total_operations":1}}
+{"time":"2025-10-04T11:46:19.422779615Z","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql","body":"{\"errors\":[{\"message\":\"run ca5egq6c was previously created and deleted; try a new run id\",\"path\":[\"upsertBucket\"]}],\"data\":{\"upsertBucket\":null}}"}
+{"time":"2025-10-04T11:46:19.491398463Z","level":"ERROR","msg":"HTTP error","status":404,"method":"POST","url":"https://api.wandb.ai/graphql"}
+{"time":"2025-10-04T11:46:19.491524164Z","level":"ERROR","msg":"runfiles: CreateRunFiles returned error: returned error 404: {\"data\":{\"createRunFiles\":null},\"errors\":[{\"message\":\"run team2/ca5egq6c not found during createRunFiles\",\"path\":[\"createRunFiles\"]}]}"}
+{"time":"2025-10-04T11:46:21.630492871Z","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql","body":"{\"errors\":[{\"message\":\"run ca5egq6c was previously created and deleted; try a new run id\",\"path\":[\"upsertBucket\"]}],\"data\":{\"upsertBucket\":null}}"}
+{"time":"2025-10-04T11:46:24.424746339Z","level":"INFO","msg":"stream: closing","id":"ca5egq6c"}
+{"time":"2025-10-04T11:46:26.194196286Z","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql","body":"{\"errors\":[{\"message\":\"run ca5egq6c was previously created and deleted; try a new run id\",\"path\":[\"upsertBucket\"]}],\"data\":{\"upsertBucket\":null}}"}
+{"time":"2025-10-04T11:46:33.822612982Z","level":"ERROR","msg":"HTTP error","status":404,"method":"POST","url":"https://api.wandb.ai/files/subin-park017-soongsil-university/team2/ca5egq6c/file_stream"}
+{"time":"2025-10-04T11:46:33.822678827Z","level":"ERROR+4","msg":"filestream: fatal error: filestream: failed to upload: 404 Not Found path=files/subin-park017-soongsil-university/team2/ca5egq6c/file_stream: {\"error\":\"run team2/ca5egq6c not found while streaming file\"}"}
+{"time":"2025-10-04T11:46:35.069299435Z","level":"INFO","msg":"api: retrying HTTP error","status":409,"url":"https://api.wandb.ai/graphql","body":"{\"errors\":[{\"message\":\"run ca5egq6c was previously created and deleted; try a new run id\",\"path\":[\"upsertBucket\"]}],\"data\":{\"upsertBucket\":null}}"}

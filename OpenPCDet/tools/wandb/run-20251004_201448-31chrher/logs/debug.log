@@ -1,0 +1,21 @@
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:setup_run_log_directory():705] Logging user logs to /workspace/OpenPCDet/tools/wandb/run-20251004_201448-31chrher/logs/debug.log
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:setup_run_log_directory():706] Logging internal logs to /workspace/OpenPCDet/tools/wandb/run-20251004_201448-31chrher/logs/debug-internal.log
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:init():832] calling init triggers
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:init():837] wandb.init called with sweep_config: {}
+config: {'OPTIMIZATION.LR': 0.000571549193815661, 'OPTIMIZATION.WEIGHT_DECAY': 0.0029621516588303515, 'OPTIMIZATION.PCT_START': 0.4, 'OPTIMIZATION.DIV_FACTOR': 10.0, 'MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH': 0.14016725176148134, '_wandb': {}}
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:init():880] starting backend
+2025-10-04 20:14:48,382 INFO    MainThread:36538 [wandb_init.py:init():883] sending inform_init request
+2025-10-04 20:14:48,385 INFO    MainThread:36538 [wandb_init.py:init():891] backend started and connected
+2025-10-04 20:14:48,387 INFO    MainThread:36538 [wandb_init.py:init():961] updated telemetry
+2025-10-04 20:14:48,398 INFO    MainThread:36538 [wandb_init.py:init():985] communicating run to backend with 90.0 second timeout
+2025-10-04 20:14:49,175 INFO    MainThread:36538 [wandb_init.py:init():1036] starting run threads in backend
+2025-10-04 20:14:49,299 INFO    MainThread:36538 [wandb_run.py:_console_start():2506] atexit reg
+2025-10-04 20:14:49,299 INFO    MainThread:36538 [wandb_run.py:_redirect():2354] redirect: wrap_raw
+2025-10-04 20:14:49,299 INFO    MainThread:36538 [wandb_run.py:_redirect():2423] Wrapping output streams.
+2025-10-04 20:14:49,299 INFO    MainThread:36538 [wandb_run.py:_redirect():2446] Redirects installed.
+2025-10-04 20:14:49,300 INFO    MainThread:36538 [wandb_init.py:init():1076] run started, returning control to user process
+2025-10-05 00:21:04,081 INFO    MainThread:36538 [wandb_run.py:_finish():2272] finishing run subin-park017-soongsil-university/team2/31chrher
+2025-10-05 00:21:04,082 INFO    MainThread:36538 [wandb_run.py:_atexit_cleanup():2471] got exitcode: 0
+2025-10-05 00:21:04,082 INFO    MainThread:36538 [wandb_run.py:_restore():2453] restore
+2025-10-05 00:21:04,083 INFO    MainThread:36538 [wandb_run.py:_restore():2459] restore done
+2025-10-05 00:21:05,328 INFO    MainThread:36538 [wandb_run.py:_footer_sync_info():3869] logging synced files

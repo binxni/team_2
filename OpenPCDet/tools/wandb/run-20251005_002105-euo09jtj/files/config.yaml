@@ -1,0 +1,83 @@
+_wandb:
+    value:
+        cli_version: 0.22.1
+        e:
+            wbia79luko8l5rgq61h65z897omsfj09:
+                args:
+                    - --cfg_file
+                    - cfgs/custom_av/centerpoint_pillar_LIDSOR.yaml
+                    - --num_trials
+                    - "5"
+                    - --gpus
+                    - 0,1,2,3
+                codePath: optuna_wandb_tuner.py
+                codePathLocal: optuna_wandb_tuner.py
+                cpu_count: 12
+                cpu_count_logical: 24
+                cudaVersion: "12.2"
+                disk:
+                    /:
+                        total: "982819848192"
+                        used: "691111968768"
+                email: subin.park017@gmail.com
+                executable: /usr/bin/python
+                git:
+                    remote: https://github.com/binxni/team_2.git
+                gpu: NVIDIA GeForce RTX 3090
+                gpu_count: 4
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-13f2b1e7-b134-51e8-395d-5f8b65d523d7
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-32a91200-1da2-3fb5-5194-9ac3e094bc89
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-024b8218-e848-e394-0299-04649e80cb53
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-dd174675-6460-696d-3586-9f1efa993ef5
+                host: b7db4a6adde0
+                memory:
+                    total: "134733357056"
+                os: Linux-5.15.0-139-generic-x86_64-with-glibc2.29
+                program: optuna_wandb_tuner.py
+                python: CPython 3.8.10
+                root: /workspace/OpenPCDet/tools
+                startedAt: "2025-10-05T00:21:05.334862Z"
+                writerId: wbia79luko8l5rgq61h65z897omsfj09
+        m: []
+        python_version: 3.8.10
+        t:
+            "1":
+                - 35
+            "2":
+                - 35
+            "3":
+                - 13
+                - 16
+            "4": 3.8.10
+            "5": 0.22.1
+            "10":
+                - 20
+            "12": 0.22.1
+            "13": linux-x86_64
+MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH:
+    value: 0.19548647782429918
+OPTIMIZATION.DIV_FACTOR:
+    value: 10
+OPTIMIZATION.LR:
+    value: 0.002552951604697378
+OPTIMIZATION.PCT_START:
+    value: 0.4
+OPTIMIZATION.WEIGHT_DECAY:
+    value: 0.00010838581269344756

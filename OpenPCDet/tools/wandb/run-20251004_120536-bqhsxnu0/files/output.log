@@ -1,0 +1,809 @@
+2025-10-04 12:05:37,300   INFO  Weights & Biases initialized with project: team2
+2025-10-04 12:05:37,301   INFO  Wandb run name: centerpoint_pillar_LIDSOR_optuna_trial_000_20251004_120536
+2025-10-04 12:05:37,301   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-10-04 12:05:37,818   INFO  Database filter by min points Vehicle: 128615 => 125979
+2025-10-04 12:05:37,826   INFO  Database filter by min points Pedestrian: 53816 => 52928
+2025-10-04 12:05:37,827   INFO  Database filter by min points Cyclist: 3439 => 3396
+2025-10-04 12:05:37,834   INFO  Loading Custom AV dataset.
+2025-10-04 12:05:37,892   INFO  Total samples for Custom AV dataset: 5883
+2025-10-04 12:05:37,893   INFO  Loading Custom AV dataset.
+2025-10-04 12:05:37,898   INFO  Total samples for Custom AV dataset: 656
+2025-10-04 12:05:38,312   INFO  ----------- Model CenterPoint created, param count: 5224011 -----------
+2025-10-04 12:05:38,313   INFO  DistributedDataParallel(
+  (module): CenterPoint(
+    (vfe): PillarVFE(
+      (pfn_layers): ModuleList(
+        (0): PFNLayer(
+          (linear): Linear(in_features=10, out_features=32, bias=False)
+          (norm): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+        (1): PFNLayer(
+          (linear): Linear(in_features=64, out_features=64, bias=False)
+          (norm): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (backbone_3d): None
+    (map_to_bev_module): PointPillarScatter()
+    (pfe): None
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (2): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): Sequential(
+          (0): ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(4, 4), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(384, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): None
+    (roi_head): None
+  )
+)
+2025-10-04 12:05:38,316   INFO  **********************Start training workspace/OpenPCDet/tools/cfgs/custom_av/centerpoint_pillar_LIDSOR(optuna_trial_000)**********************
+epochs:   0%|          | 0/40 [00:00<?, ?it/s]/workspace/OpenPCDet/tools/../pcdet/utils/commu_utils.py:66: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  storage = torch.ByteStorage.from_buffer(buffer)
+2025-10-04 12:07:19,837   INFO  Train:    1/40 (  2%) [   0/491 (  0%)]  Loss: 194.4 (194.)  LR: 1.184e-04  Time cost: 00:03/27:44 [01:41/18:29:37]  Acc_iter 1           Data time: 1.56(1.56)  Forward time: 1.77(1.77)  Batch time: 3.33(3.33)
+2025-10-04 12:07:43,819   INFO  Train:    1/40 (  2%) [  49/491 ( 10%)]  Loss: 9.479 (28.1)  LR: 1.185e-04  Time cost: 00:27/04:01 [02:05/2:58:44]  Acc_iter 50          Data time: 0.05(0.06)  Forward time: 0.47(0.49)  Batch time: 0.51(0.55)
+2025-10-04 12:08:08,177   INFO  Train:    1/40 (  2%) [  99/491 ( 20%)]  Loss: 7.593 (18.4)  LR: 1.189e-04  Time cost: 00:51/03:22 [02:29/2:48:28]  Acc_iter 100         Data time: 0.02(0.04)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 12:08:33,012   INFO  Train:    1/40 (  2%) [ 149/491 ( 30%)]  Loss: 6.989 (14.8)  LR: 1.194e-04  Time cost: 01:16/02:54 [02:54/2:45:48]  Acc_iter 150         Data time: 0.04(0.04)  Forward time: 0.46(0.47)  Batch time: 0.50(0.51)
+2025-10-04 12:08:33,142   INFO
+2025-10-04 12:08:57,881   INFO  Train:    1/40 (  2%) [ 199/491 ( 41%)]  Loss: 7.474 (12.9)  LR: 1.201e-04  Time cost: 01:41/02:28 [03:19/2:44:19]  Acc_iter 200         Data time: 0.02(0.04)  Forward time: 0.47(0.47)  Batch time: 0.48(0.51)
+2025-10-04 12:09:22,724   INFO  Train:    1/40 (  2%) [ 249/491 ( 51%)]  Loss: 6.286 (11.7)  LR: 1.211e-04  Time cost: 02:06/02:02 [03:44/2:43:14]  Acc_iter 250         Data time: 0.04(0.04)  Forward time: 0.48(0.47)  Batch time: 0.51(0.50)
+2025-10-04 12:09:47,550   INFO  Train:    1/40 (  2%) [ 299/491 ( 61%)]  Loss: 7.345 (10.9)  LR: 1.222e-04  Time cost: 02:31/01:36 [04:09/2:42:21]  Acc_iter 300         Data time: 0.03(0.04)  Forward time: 0.46(0.47)  Batch time: 0.49(0.50)
+2025-10-04 12:09:47,665   INFO
+2025-10-04 12:10:12,552   INFO  Train:    1/40 (  2%) [ 349/491 ( 71%)]  Loss: 6.804 (10.3)  LR: 1.236e-04  Time cost: 02:56/01:11 [04:34/2:41:46]  Acc_iter 350         Data time: 0.03(0.04)  Forward time: 0.46(0.47)  Batch time: 0.49(0.50)
+2025-10-04 12:10:37,761   INFO  Train:    1/40 (  2%) [ 399/491 ( 81%)]  Loss: 5.917 (9.81)  LR: 1.252e-04  Time cost: 03:21/00:46 [04:59/2:41:23]  Acc_iter 400         Data time: 0.13(0.04)  Forward time: 0.46(0.47)  Batch time: 0.59(0.50)
+2025-10-04 12:11:03,271   INFO  Train:    1/40 (  2%) [ 449/491 ( 91%)]  Loss: 5.974 (9.42)  LR: 1.270e-04  Time cost: 03:46/00:21 [05:24/2:41:13]  Acc_iter 450         Data time: 0.03(0.04)  Forward time: 0.47(0.47)  Batch time: 0.50(0.50)
+2025-10-04 12:11:03,405   INFO
+2025-10-04 12:11:23,826   INFO  Train:    1/40 (  2%) [ 490/491 (100%)]  Loss: 6.697 (9.16)  LR: 1.286e-04  Time cost: 04:07/00:00 [05:45/2:40:48]  Acc_iter 491         Data time: 0.06(0.04)  Forward time: 0.20(0.47)  Batch time: 0.25(0.50)
+                                                                          2025-10-04 12:12:24,400   INFO  Validation Epoch 1: Average Loss = 6.3448
+epochs:   2%|▎         | 1/40 [06:46<4:24:00, 2025-10-04 12:13:14,796   INFO  Train:    2/40 (  5%) [   0/491 (  0%)]  Loss: 6.248 (6.25)  LR: 1.287e-04  Time cost: 00:02/18:48 [07:36/12:13:45]  Acc_iter 492         Data time: 1.52(1.52)  Forward time: 0.50(0.50)  Batch time: 2.02(2.02)
+2025-10-04 12:13:18,859   INFO  Train:    2/40 (  5%) [   8/491 (  2%)]  Loss: 6.492 (6.39)  LR: 1.290e-04  Time cost: 00:06/05:41 [07:40/3:45:29]  Acc_iter 500         Data time: 0.02(0.23)  Forward time: 0.46(0.47)  Batch time: 0.48(0.70)
+2025-10-04 12:13:44,010   INFO  Train:    2/40 (  5%) [  58/491 ( 12%)]  Loss: 5.555 (6.30)  LR: 1.312e-04  Time cost: 00:31/03:51 [08:05/2:49:56]  Acc_iter 550         Data time: 0.04(0.07)  Forward time: 0.48(0.47)  Batch time: 0.51(0.53)
+2025-10-04 12:14:09,168   INFO  Train:    2/40 (  5%) [ 108/491 ( 22%)]  Loss: 6.250 (6.22)  LR: 1.337e-04  Time cost: 00:56/03:19 [08:30/2:44:59]  Acc_iter 600         Data time: 0.02(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 12:14:09,304   INFO
+2025-10-04 12:14:34,487   INFO  Train:    2/40 (  5%) [ 158/491 ( 32%)]  Loss: 5.717 (6.15)  LR: 1.363e-04  Time cost: 01:21/02:51 [08:56/2:43:12]  Acc_iter 650         Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 12:15:00,574   INFO  Train:    2/40 (  5%) [ 208/491 ( 42%)]  Loss: 5.889 (6.11)  LR: 1.391e-04  Time cost: 01:48/02:26 [09:22/2:43:14]  Acc_iter 700         Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 12:15:26,169   INFO  Train:    2/40 (  5%) [ 258/491 ( 53%)]  Loss: 6.197 (6.06)  LR: 1.422e-04  Time cost: 02:13/02:00 [09:47/2:42:29]  Acc_iter 750         Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:15:26,273   INFO
+2025-10-04 12:15:52,473   INFO  Train:    2/40 (  5%) [ 308/491 ( 63%)]  Loss: 6.248 (6.02)  LR: 1.454e-04  Time cost: 02:39/01:34 [10:14/2:42:34]  Acc_iter 800         Data time: 0.05(0.05)  Forward time: 0.49(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:16:19,046   INFO  Train:    2/40 (  5%) [ 358/491 ( 73%)]  Loss: 5.855 (6.00)  LR: 1.489e-04  Time cost: 03:06/01:09 [10:40/2:42:44]  Acc_iter 850         Data time: 0.06(0.05)  Forward time: 0.50(0.47)  Batch time: 0.56(0.52)
+2025-10-04 12:16:44,778   INFO  Train:    2/40 (  5%) [ 408/491 ( 83%)]  Loss: 6.055 (5.97)  LR: 1.525e-04  Time cost: 03:32/00:43 [11:06/2:42:07]  Acc_iter 900         Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 12:16:44,909   INFO
+2025-10-04 12:17:11,175   INFO  Train:    2/40 (  5%) [ 458/491 ( 93%)]  Loss: 5.131 (5.93)  LR: 1.564e-04  Time cost: 03:58/00:17 [11:32/2:41:59]  Acc_iter 950         Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:17:27,256   INFO  Train:    2/40 (  5%) [ 490/491 (100%)]  Loss: 6.375 (5.92)  LR: 1.589e-04  Time cost: 04:14/00:00 [11:48/2:41:21]  Acc_iter 982         Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.20(0.52)
+                                                                          2025-10-04 12:18:27,345   INFO  Validation Epoch 2: Average Loss = 5.6263
+epochs:   5%|▌         | 2/40 [12:49<4:01:07, 2025-10-04 12:19:17,951   INFO  Train:    3/40 (  8%) [   0/491 (  0%)]  Loss: 5.156 (5.16)  LR: 1.590e-04  Time cost: 00:02/20:11 [13:39/12:47:20]  Acc_iter 983         Data time: 1.52(1.52)  Forward time: 0.49(0.49)  Batch time: 2.01(2.01)
+2025-10-04 12:19:26,423   INFO  Train:    3/40 (  8%) [  17/491 (  3%)]  Loss: 5.563 (5.60)  LR: 1.604e-04  Time cost: 00:10/04:48 [13:48/3:08:49]  Acc_iter 1000        Data time: 0.02(0.13)  Forward time: 0.47(0.47)  Batch time: 0.49(0.60)
+2025-10-04 12:19:51,354   INFO  Train:    3/40 (  8%) [  67/491 ( 14%)]  Loss: 5.384 (5.60)  LR: 1.647e-04  Time cost: 00:35/03:43 [14:13/2:43:26]  Acc_iter 1050        Data time: 0.03(0.06)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 12:19:51,506   INFO
+2025-10-04 12:20:17,176   INFO  Train:    3/40 (  8%) [ 117/491 ( 24%)]  Loss: 5.374 (5.59)  LR: 1.691e-04  Time cost: 01:01/03:15 [14:38/2:41:33]  Acc_iter 1100        Data time: 0.12(0.05)  Forward time: 0.48(0.47)  Batch time: 0.60(0.52)
+2025-10-04 12:20:42,938   INFO  Train:    3/40 (  8%) [ 167/491 ( 34%)]  Loss: 5.776 (5.58)  LR: 1.737e-04  Time cost: 01:27/02:48 [15:04/2:40:25]  Acc_iter 1150        Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:21:08,636   INFO  Train:    3/40 (  8%) [ 217/491 ( 44%)]  Loss: 5.938 (5.57)  LR: 1.785e-04  Time cost: 01:53/02:22 [15:30/2:39:31]  Acc_iter 1200        Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:21:08,761   INFO
+2025-10-04 12:21:34,267   INFO  Train:    3/40 (  8%) [ 267/491 ( 54%)]  Loss: 5.745 (5.56)  LR: 1.836e-04  Time cost: 02:18/01:55 [15:55/2:38:43]  Acc_iter 1250        Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:22:00,142   INFO  Train:    3/40 (  8%) [ 317/491 ( 65%)]  Loss: 5.351 (5.54)  LR: 1.888e-04  Time cost: 02:44/01:30 [16:21/2:38:16]  Acc_iter 1300        Data time: 0.06(0.05)  Forward time: 0.45(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:22:26,225   INFO  Train:    3/40 (  8%) [ 367/491 ( 75%)]  Loss: 5.294 (5.53)  LR: 1.941e-04  Time cost: 03:10/01:04 [16:47/2:38:00]  Acc_iter 1350        Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:22:26,333   INFO
+2025-10-04 12:22:52,641   INFO  Train:    3/40 (  8%) [ 417/491 ( 85%)]  Loss: 5.713 (5.52)  LR: 1.997e-04  Time cost: 03:37/00:38 [17:14/2:37:56]  Acc_iter 1400        Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:23:18,799   INFO  Train:    3/40 (  8%) [ 467/491 ( 95%)]  Loss: 5.291 (5.50)  LR: 2.054e-04  Time cost: 04:03/00:12 [17:40/2:37:37]  Acc_iter 1450        Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 12:23:30,381   INFO  Train:    3/40 (  8%) [ 490/491 (100%)]  Loss: 5.005 (5.50)  LR: 2.082e-04  Time cost: 04:14/00:00 [17:52/2:37:11]  Acc_iter 1473        Data time: 0.06(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.52)
+                                                                          2025-10-04 12:24:31,788   INFO  Validation Epoch 3: Average Loss = 5.3372
+epochs:   8%|▊         | 3/40 [18:53<3:50:11, 2025-10-04 12:25:22,150   INFO  Train:    4/40 ( 10%) [   0/491 (  0%)]  Loss: 5.009 (5.01)  LR: 2.083e-04  Time cost: 00:02/18:01 [19:43/11:06:52]  Acc_iter 1474        Data time: 1.41(1.41)  Forward time: 0.49(0.49)  Batch time: 1.90(1.90)
+2025-10-04 12:25:35,082   INFO  Train:    4/40 ( 10%) [  26/491 (  5%)]  Loss: 5.140 (5.35)  LR: 2.114e-04  Time cost: 00:15/04:20 [19:56/2:49:28]  Acc_iter 1500        Data time: 0.06(0.09)  Forward time: 0.44(0.46)  Batch time: 0.50(0.56)
+2025-10-04 12:25:35,192   INFO
+2025-10-04 12:26:00,310   INFO  Train:    4/40 ( 10%) [  76/491 ( 15%)]  Loss: 5.552 (5.31)  LR: 2.175e-04  Time cost: 00:40/03:37 [20:21/2:38:02]  Acc_iter 1550        Data time: 0.05(0.06)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 12:26:25,735   INFO  Train:    4/40 ( 10%) [ 126/491 ( 26%)]  Loss: 5.440 (5.29)  LR: 2.237e-04  Time cost: 01:05/03:09 [20:47/2:35:45]  Acc_iter 1600        Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 12:26:51,498   INFO  Train:    4/40 ( 10%) [ 176/491 ( 36%)]  Loss: 5.150 (5.26)  LR: 2.302e-04  Time cost: 01:31/02:42 [21:13/2:35:05]  Acc_iter 1650        Data time: 0.07(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:26:51,604   INFO
+2025-10-04 12:27:17,400   INFO  Train:    4/40 ( 10%) [ 226/491 ( 46%)]  Loss: 4.906 (5.24)  LR: 2.368e-04  Time cost: 01:57/02:17 [21:39/2:34:42]  Acc_iter 1700        Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 12:27:43,421   INFO  Train:    4/40 ( 10%) [ 276/491 ( 56%)]  Loss: 4.275 (5.21)  LR: 2.436e-04  Time cost: 02:23/01:51 [22:05/2:34:26]  Acc_iter 1750        Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 12:28:09,694   INFO  Train:    4/40 ( 10%) [ 326/491 ( 66%)]  Loss: 4.964 (5.19)  LR: 2.505e-04  Time cost: 02:49/01:25 [22:31/2:34:21]  Acc_iter 1800        Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 12:28:09,823   INFO
+2025-10-04 12:28:35,926   INFO  Train:    4/40 ( 10%) [ 376/491 ( 77%)]  Loss: 4.447 (5.18)  LR: 2.576e-04  Time cost: 03:15/00:59 [22:57/2:34:08]  Acc_iter 1850        Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:29:01,941   INFO  Train:    4/40 ( 10%) [ 426/491 ( 87%)]  Loss: 5.232 (5.16)  LR: 2.649e-04  Time cost: 03:41/00:33 [23:23/2:33:43]  Acc_iter 1900        Data time: 0.05(0.05)  Forward time: 0.49(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:29:28,276   INFO  Train:    4/40 ( 10%) [ 476/491 ( 97%)]  Loss: 5.618 (5.15)  LR: 2.723e-04  Time cost: 04:08/00:07 [23:49/2:33:30]  Acc_iter 1950        Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 12:29:28,381   INFO
+2025-10-04 12:29:35,806   INFO  Train:    4/40 ( 10%) [ 490/491 (100%)]  Loss: 5.782 (5.14)  LR: 2.744e-04  Time cost: 04:15/00:00 [23:57/2:33:31]  Acc_iter 1964        Data time: 0.05(0.05)  Forward time: 0.16(0.47)  Batch time: 0.21(0.52)
+                                                                         2025-10-04 12:30:37,924   INFO  Validation Epoch 4: Average Loss = 5.0365
+epochs:  10%|█         | 4/40 [24:59<3:42:17, 2025-10-04 12:31:29,928   INFO  Train:    5/40 ( 12%) [   0/491 (  0%)]  Loss: 4.785 (4.78)  LR: 2.746e-04  Time cost: 00:02/18:17 [25:51/10:58:12]  Acc_iter 1965        Data time: 1.56(1.56)  Forward time: 0.50(0.50)  Batch time: 2.05(2.05)
+2025-10-04 12:31:47,398   INFO  Train:    5/40 ( 12%) [  35/491 (  7%)]  Loss: 4.729 (5.10)  LR: 2.799e-04  Time cost: 00:19/04:09 [26:09/2:40:55]  Acc_iter 2000        Data time: 0.03(0.09)  Forward time: 0.47(0.47)  Batch time: 0.50(0.56)
+2025-10-04 12:32:12,723   INFO  Train:    5/40 ( 12%) [  85/491 ( 17%)]  Loss: 5.180 (5.07)  LR: 2.876e-04  Time cost: 00:45/03:32 [26:34/2:33:30]  Acc_iter 2050        Data time: 0.04(0.06)  Forward time: 0.46(0.47)  Batch time: 0.50(0.53)
+2025-10-04 12:32:39,156   INFO  Train:    5/40 ( 12%) [ 135/491 ( 27%)]  Loss: 4.596 (5.08)  LR: 2.954e-04  Time cost: 01:11/03:07 [27:00/2:33:37]  Acc_iter 2100        Data time: 0.05(0.05)  Forward time: 0.50(0.48)  Batch time: 0.54(0.53)
+2025-10-04 12:32:39,294   INFO
+2025-10-04 12:33:05,159   INFO  Train:    5/40 ( 12%) [ 185/491 ( 38%)]  Loss: 4.865 (5.06)  LR: 3.034e-04  Time cost: 01:37/02:40 [27:26/2:32:45]  Acc_iter 2150        Data time: 0.02(0.05)  Forward time: 0.47(0.48)  Batch time: 0.49(0.53)
+2025-10-04 12:33:31,757   INFO  Train:    5/40 ( 12%) [ 235/491 ( 48%)]  Loss: 4.924 (5.03)  LR: 3.116e-04  Time cost: 02:04/02:14 [27:53/2:32:48]  Acc_iter 2200        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.53)
+2025-10-04 12:33:58,000   INFO  Train:    5/40 ( 12%) [ 285/491 ( 58%)]  Loss: 4.631 (5.02)  LR: 3.199e-04  Time cost: 02:30/01:48 [28:19/2:32:19]  Acc_iter 2250        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.53)
+2025-10-04 12:33:58,138   INFO
+2025-10-04 12:34:24,953   INFO  Train:    5/40 ( 12%) [ 335/491 ( 68%)]  Loss: 5.399 (5.00)  LR: 3.283e-04  Time cost: 02:57/01:22 [28:46/2:32:28]  Acc_iter 2300        Data time: 0.07(0.05)  Forward time: 0.48(0.48)  Batch time: 0.55(0.53)
+2025-10-04 12:34:51,632   INFO  Train:    5/40 ( 12%) [ 385/491 ( 78%)]  Loss: 5.331 (5.00)  LR: 3.368e-04  Time cost: 03:23/00:56 [29:13/2:32:15]  Acc_iter 2350        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 12:35:18,969   INFO  Train:    5/40 ( 12%) [ 435/491 ( 89%)]  Loss: 4.923 (5.02)  LR: 3.455e-04  Time cost: 03:51/00:29 [29:40/2:32:25]  Acc_iter 2400        Data time: 0.06(0.05)  Forward time: 0.48(0.48)  Batch time: 0.54(0.53)
+2025-10-04 12:35:19,101   INFO
+2025-10-04 12:35:46,844   INFO  Train:    5/40 ( 12%) [ 485/491 ( 99%)]  Loss: 5.468 (5.02)  LR: 3.543e-04  Time cost: 04:19/00:03 [30:08/2:32:46]  Acc_iter 2450        Data time: 0.04(0.05)  Forward time: 0.45(0.48)  Batch time: 0.50(0.53)
+2025-10-04 12:35:49,056   INFO  Train:    5/40 ( 12%) [ 490/491 (100%)]  Loss: 5.416 (5.01)  LR: 3.551e-04  Time cost: 04:21/00:00 [30:10/2:32:28]  Acc_iter 2455        Data time: 0.06(0.05)  Forward time: 0.16(0.48)  Batch time: 0.23(0.53)
+                                                                          2025-10-04 12:36:50,784   INFO  Validation Epoch 5: Average Loss = 4.6482
+epochs:  12%|█▎        | 5/40 [31:12<3:36:36, 2025-10-04 12:37:43,794   INFO  Train:    6/40 ( 15%) [   0/491 (  0%)]  Loss: 4.338 (4.34)  LR: 3.553e-04  Time cost: 00:03/26:20 [32:05/15:21:46]  Acc_iter 2456        Data time: 1.53(1.53)  Forward time: 0.48(0.48)  Batch time: 2.01(2.01)
+2025-10-04 12:38:05,565   INFO  Train:    6/40 ( 15%) [  44/491 (  9%)]  Loss: 5.585 (5.05)  LR: 3.632e-04  Time cost: 00:24/04:08 [32:27/2:38:38]  Acc_iter 2500        Data time: 0.04(0.09)  Forward time: 0.49(0.47)  Batch time: 0.53(0.55)
+2025-10-04 12:38:31,102   INFO  Train:    6/40 ( 15%) [  94/491 ( 19%)]  Loss: 4.050 (4.96)  LR: 3.722e-04  Time cost: 00:50/03:31 [32:52/2:31:30]  Acc_iter 2550        Data time: 0.06(0.06)  Forward time: 0.49(0.47)  Batch time: 0.55(0.53)
+2025-10-04 12:38:31,233   INFO
+2025-10-04 12:38:57,905   INFO  Train:    6/40 ( 15%) [ 144/491 ( 29%)]  Loss: 4.766 (4.91)  LR: 3.813e-04  Time cost: 01:17/03:05 [33:19/2:31:28]  Acc_iter 2600        Data time: 0.02(0.06)  Forward time: 0.51(0.47)  Batch time: 0.53(0.53)
+2025-10-04 12:39:23,938   INFO  Train:    6/40 ( 15%) [ 194/491 ( 40%)]  Loss: 5.061 (4.94)  LR: 3.906e-04  Time cost: 01:43/02:37 [33:45/2:30:06]  Acc_iter 2650        Data time: 0.02(0.06)  Forward time: 0.47(0.47)  Batch time: 0.49(0.53)
+2025-10-04 12:39:50,646   INFO  Train:    6/40 ( 15%) [ 244/491 ( 50%)]  Loss: 4.628 (4.91)  LR: 3.999e-04  Time cost: 02:10/02:11 [34:12/2:29:53]  Acc_iter 2700        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.53)
+2025-10-04 12:39:50,774   INFO
+2025-10-04 12:40:17,513   INFO  Train:    6/40 ( 15%) [ 294/491 ( 60%)]  Loss: 4.964 (4.86)  LR: 4.093e-04  Time cost: 02:36/01:44 [34:39/2:29:45]  Acc_iter 2750        Data time: 0.07(0.06)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:40:44,077   INFO  Train:    6/40 ( 15%) [ 344/491 ( 70%)]  Loss: 4.550 (4.83)  LR: 4.189e-04  Time cost: 03:03/01:18 [35:05/2:29:17]  Acc_iter 2800        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.53)
+2025-10-04 12:41:10,773   INFO  Train:    6/40 ( 15%) [ 394/491 ( 80%)]  Loss: 4.983 (4.80)  LR: 4.285e-04  Time cost: 03:30/00:51 [35:32/2:28:55]  Acc_iter 2850        Data time: 0.05(0.05)  Forward time: 0.49(0.48)  Batch time: 0.55(0.53)
+2025-10-04 12:41:10,906   INFO
+2025-10-04 12:41:37,402   INFO  Train:    6/40 ( 15%) [ 444/491 ( 90%)]  Loss: 4.259 (4.76)  LR: 4.383e-04  Time cost: 03:56/00:25 [35:59/2:28:29]  Acc_iter 2900        Data time: 0.04(0.05)  Forward time: 0.47(0.48)  Batch time: 0.51(0.53)
+2025-10-04 12:42:01,505   INFO  Train:    6/40 ( 15%) [ 490/491 (100%)]  Loss: 6.165 (4.77)  LR: 4.473e-04  Time cost: 04:20/00:00 [36:23/2:27:52]  Acc_iter 2946        Data time: 0.05(0.05)  Forward time: 0.17(0.48)  Batch time: 0.22(0.53)
+                                                                          2025-10-04 12:43:01,486   INFO  Validation Epoch 6: Average Loss = 5.1486
+epochs:  15%|█▌        | 6/40 [37:23<3:30:18, 2025-10-04 12:43:53,993   INFO  Train:    7/40 ( 18%) [   0/491 (  0%)]  Loss: 5.152 (5.15)  LR: 4.475e-04  Time cost: 00:02/18:34 [38:15/10:31:38]  Acc_iter 2947        Data time: 1.59(1.59)  Forward time: 0.48(0.48)  Batch time: 2.07(2.07)
+2025-10-04 12:43:55,473   INFO  Train:    7/40 ( 18%) [   3/491 (  1%)]  Loss: 5.272 (5.57)  LR: 4.481e-04  Time cost: 00:03/07:37 [38:17/4:20:49]  Acc_iter 2950        Data time: 0.04(0.54)  Forward time: 0.47(0.46)  Batch time: 0.52(1.00)
+2025-10-04 12:44:20,655   INFO  Train:    7/40 ( 18%) [  53/491 ( 11%)]  Loss: 4.538 (4.68)  LR: 4.580e-04  Time cost: 00:28/03:54 [38:42/2:28:36]  Acc_iter 3000        Data time: 0.04(0.07)  Forward time: 0.47(0.47)  Batch time: 0.51(0.54)
+2025-10-04 12:44:20,813   INFO
+2025-10-04 12:44:46,581   INFO  Train:    7/40 ( 18%) [ 103/491 ( 21%)]  Loss: 4.342 (4.59)  LR: 4.679e-04  Time cost: 00:54/03:24 [39:08/2:25:51]  Acc_iter 3050        Data time: 0.03(0.06)  Forward time: 0.48(0.47)  Batch time: 0.51(0.53)
+2025-10-04 12:45:12,500   INFO  Train:    7/40 ( 18%) [ 153/491 ( 31%)]  Loss: 4.740 (4.51)  LR: 4.780e-04  Time cost: 01:20/02:57 [39:34/2:24:36]  Acc_iter 3100        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 12:45:39,011   INFO  Train:    7/40 ( 18%) [ 203/491 ( 41%)]  Loss: 4.521 (4.56)  LR: 4.881e-04  Time cost: 01:47/02:31 [40:00/2:24:32]  Acc_iter 3150        Data time: 0.14(0.05)  Forward time: 0.48(0.48)  Batch time: 0.62(0.53)
+2025-10-04 12:45:39,159   INFO
+2025-10-04 12:46:05,376   INFO  Train:    7/40 ( 18%) [ 253/491 ( 52%)]  Loss: 4.184 (4.56)  LR: 4.982e-04  Time cost: 02:13/02:05 [40:27/2:24:11]  Acc_iter 3200        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.51(0.53)
+2025-10-04 12:46:32,368   INFO  Train:    7/40 ( 18%) [ 303/491 ( 62%)]  Loss: 4.437 (4.63)  LR: 5.085e-04  Time cost: 02:40/01:39 [40:54/2:24:21]  Acc_iter 3250        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:46:59,457   INFO  Train:    7/40 ( 18%) [ 353/491 ( 72%)]  Loss: 4.135 (4.61)  LR: 5.188e-04  Time cost: 03:07/01:13 [41:21/2:24:26]  Acc_iter 3300        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:46:59,606   INFO
+2025-10-04 12:47:26,389   INFO  Train:    7/40 ( 18%) [ 403/491 ( 82%)]  Loss: 4.637 (4.60)  LR: 5.291e-04  Time cost: 03:34/00:46 [41:48/2:24:16]  Acc_iter 3350        Data time: 0.06(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:47:53,205   INFO  Train:    7/40 ( 18%) [ 453/491 ( 92%)]  Loss: 4.511 (4.60)  LR: 5.395e-04  Time cost: 04:01/00:20 [42:14/2:23:58]  Acc_iter 3400        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:48:12,741   INFO  Train:    7/40 ( 18%) [ 490/491 (100%)]  Loss: 3.526 (4.61)  LR: 5.472e-04  Time cost: 04:21/00:00 [42:34/2:23:34]  Acc_iter 3437        Data time: 0.05(0.05)  Forward time: 0.16(0.48)  Batch time: 0.21(0.53)
+                                                                         2025-10-04 12:49:15,183   INFO  Validation Epoch 7: Average Loss = 4.1837
+epochs:  18%|█▊        | 7/40 [43:36<3:24:34, 2025-10-04 12:50:07,889   INFO  Train:    8/40 ( 20%) [   0/491 (  0%)]  Loss: 4.270 (4.27)  LR: 5.475e-04  Time cost: 00:02/18:25 [44:29/10:07:50]  Acc_iter 3438        Data time: 1.46(1.46)  Forward time: 0.50(0.50)  Batch time: 1.96(1.96)
+2025-10-04 12:50:13,878   INFO  Train:    8/40 ( 20%) [  12/491 (  2%)]  Loss: 4.306 (4.57)  LR: 5.500e-04  Time cost: 00:08/05:03 [44:35/2:51:02]  Acc_iter 3450        Data time: 0.03(0.15)  Forward time: 0.46(0.47)  Batch time: 0.49(0.62)
+2025-10-04 12:50:14,040   INFO
+2025-10-04 12:50:39,253   INFO  Train:    8/40 ( 20%) [  62/491 ( 13%)]  Loss: 4.844 (4.73)  LR: 5.604e-04  Time cost: 00:33/03:48 [45:00/2:23:32]  Acc_iter 3500        Data time: 0.03(0.06)  Forward time: 0.47(0.47)  Batch time: 0.51(0.53)
+2025-10-04 12:51:05,119   INFO  Train:    8/40 ( 20%) [ 112/491 ( 23%)]  Loss: 4.638 (4.69)  LR: 5.710e-04  Time cost: 00:59/03:19 [45:26/2:21:10]  Acc_iter 3550        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 12:51:31,508   INFO  Train:    8/40 ( 20%) [ 162/491 ( 33%)]  Loss: 3.791 (4.59)  LR: 5.815e-04  Time cost: 01:25/02:53 [45:53/2:20:50]  Acc_iter 3600        Data time: 0.06(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:51:31,658   INFO
+2025-10-04 12:51:58,156   INFO  Train:    8/40 ( 20%) [ 212/491 ( 43%)]  Loss: 4.032 (4.53)  LR: 5.921e-04  Time cost: 01:52/02:27 [46:19/2:20:47]  Acc_iter 3650        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 12:52:24,698   INFO  Train:    8/40 ( 20%) [ 262/491 ( 53%)]  Loss: 4.349 (4.47)  LR: 6.027e-04  Time cost: 02:19/02:01 [46:46/2:20:28]  Acc_iter 3700        Data time: 0.05(0.05)  Forward time: 0.49(0.48)  Batch time: 0.54(0.53)
+2025-10-04 12:52:51,339   INFO  Train:    8/40 ( 20%) [ 312/491 ( 64%)]  Loss: 4.827 (4.46)  LR: 6.133e-04  Time cost: 02:45/01:34 [47:13/2:20:12]  Acc_iter 3750        Data time: 0.09(0.05)  Forward time: 0.49(0.48)  Batch time: 0.58(0.53)
+2025-10-04 12:52:51,481   INFO
+2025-10-04 12:53:18,054   INFO  Train:    8/40 ( 20%) [ 362/491 ( 74%)]  Loss: 4.776 (4.45)  LR: 6.240e-04  Time cost: 03:12/01:08 [47:39/2:19:56]  Acc_iter 3800        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.53)
+2025-10-04 12:53:45,057   INFO  Train:    8/40 ( 20%) [ 412/491 ( 84%)]  Loss: 5.109 (4.48)  LR: 6.346e-04  Time cost: 03:39/00:41 [48:06/2:19:49]  Acc_iter 3850        Data time: 0.06(0.05)  Forward time: 0.48(0.48)  Batch time: 0.54(0.53)
+2025-10-04 12:54:11,810   INFO  Train:    8/40 ( 20%) [ 462/491 ( 94%)]  Loss: 4.397 (4.49)  LR: 6.453e-04  Time cost: 04:06/00:15 [48:33/2:19:29]  Acc_iter 3900        Data time: 0.04(0.05)  Forward time: 0.50(0.48)  Batch time: 0.53(0.53)
+2025-10-04 12:54:11,925   INFO
+2025-10-04 12:54:26,843   INFO  Train:    8/40 ( 20%) [ 490/491 (100%)]  Loss: 3.188 (4.47)  LR: 6.512e-04  Time cost: 04:21/00:00 [48:48/2:19:19]  Acc_iter 3928        Data time: 0.04(0.05)  Forward time: 0.17(0.48)  Batch time: 0.21(0.53)
+                                                                          2025-10-04 12:55:29,535   INFO  Validation Epoch 8: Average Loss = 3.9513
+epochs:  20%|██        | 8/40 [49:51<3:18:47, 2025-10-04 12:56:22,088   INFO  Train:    9/40 ( 22%) [   0/491 (  0%)]  Loss: 4.485 (4.48)  LR: 6.514e-04  Time cost: 00:02/18:13 [50:43/9:42:56]  Acc_iter 3929        Data time: 1.62(1.62)  Forward time: 0.49(0.49)  Batch time: 2.11(2.11)
+2025-10-04 12:56:32,544   INFO  Train:    9/40 ( 22%) [  21/491 (  4%)]  Loss: 4.297 (4.33)  LR: 6.559e-04  Time cost: 00:12/04:30 [50:54/2:30:45]  Acc_iter 3950        Data time: 0.03(0.12)  Forward time: 0.47(0.47)  Batch time: 0.50(0.59)
+2025-10-04 12:56:57,754   INFO  Train:    9/40 ( 22%) [  71/491 ( 14%)]  Loss: 4.686 (4.34)  LR: 6.666e-04  Time cost: 00:37/03:41 [51:19/2:17:11]  Acc_iter 4000        Data time: 0.02(0.06)  Forward time: 0.47(0.47)  Batch time: 0.49(0.53)
+2025-10-04 12:57:23,776   INFO  Train:    9/40 ( 22%) [ 121/491 ( 25%)]  Loss: 4.172 (4.38)  LR: 6.772e-04  Time cost: 01:03/03:13 [51:45/2:16:07]  Acc_iter 4050        Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.53)
+2025-10-04 12:57:23,924   INFO
+2025-10-04 12:57:50,271   INFO  Train:    9/40 ( 22%) [ 171/491 ( 35%)]  Loss: 4.532 (4.40)  LR: 6.879e-04  Time cost: 01:30/02:48 [52:11/2:16:08]  Acc_iter 4100        Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.53)
+2025-10-04 12:58:16,477   INFO  Train:    9/40 ( 22%) [ 221/491 ( 45%)]  Loss: 4.844 (4.35)  LR: 6.985e-04  Time cost: 01:56/02:21 [52:38/2:15:37]  Acc_iter 4150        Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.53)
+2025-10-04 12:58:43,319   INFO  Train:    9/40 ( 22%) [ 271/491 ( 55%)]  Loss: 4.107 (4.44)  LR: 7.091e-04  Time cost: 02:23/01:56 [53:05/2:15:43]  Acc_iter 4200        Data time: 0.02(0.05)  Forward time: 0.48(0.48)  Batch time: 0.50(0.53)
+2025-10-04 12:58:43,451   INFO
+2025-10-04 12:59:09,897   INFO  Train:    9/40 ( 22%) [ 321/491 ( 65%)]  Loss: 4.692 (4.44)  LR: 7.197e-04  Time cost: 02:50/01:29 [53:31/2:15:27]  Acc_iter 4250        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 12:59:37,504   INFO  Train:    9/40 ( 22%) [ 371/491 ( 76%)]  Loss: 5.324 (4.46)  LR: 7.302e-04  Time cost: 03:17/01:03 [53:59/2:15:50]  Acc_iter 4300        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 13:00:04,532   INFO  Train:    9/40 ( 22%) [ 421/491 ( 86%)]  Loss: 5.319 (4.46)  LR: 7.407e-04  Time cost: 03:44/00:37 [54:26/2:15:40]  Acc_iter 4350        Data time: 0.06(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:00:04,634   INFO
+2025-10-04 13:00:31,452   INFO  Train:    9/40 ( 22%) [ 471/491 ( 96%)]  Loss: 3.749 (4.47)  LR: 7.512e-04  Time cost: 04:11/00:10 [54:53/2:15:23]  Acc_iter 4400        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:00:41,514   INFO  Train:    9/40 ( 22%) [ 490/491 (100%)]  Loss: 4.590 (4.45)  LR: 7.552e-04  Time cost: 04:21/00:00 [55:03/2:15:11]  Acc_iter 4419        Data time: 0.04(0.06)  Forward time: 0.17(0.48)  Batch time: 0.21(0.53)
+                                                                          2025-10-04 13:01:43,826   INFO  Validation Epoch 9: Average Loss = 3.8429
+epochs:  22%|██▎       | 9/40 [56:05<3:12:49, 2025-10-04 13:02:36,440   INFO  Train:   10/40 ( 25%) [   0/491 (  0%)]  Loss: 3.894 (3.89)  LR: 7.554e-04  Time cost: 00:02/19:37 [56:58/10:08:13]  Acc_iter 4420        Data time: 1.42(1.42)  Forward time: 0.49(0.49)  Batch time: 1.92(1.92)
+2025-10-04 13:02:51,844   INFO  Train:   10/40 ( 25%) [  30/491 (  6%)]  Loss: 3.921 (4.01)  LR: 7.617e-04  Time cost: 00:17/04:24 [57:13/2:25:23]  Acc_iter 4450        Data time: 0.02(0.10)  Forward time: 0.48(0.47)  Batch time: 0.50(0.57)
+2025-10-04 13:03:17,339   INFO  Train:   10/40 ( 25%) [  80/491 ( 16%)]  Loss: 3.847 (4.29)  LR: 7.721e-04  Time cost: 00:43/03:39 [57:39/2:14:53]  Acc_iter 4500        Data time: 0.04(0.06)  Forward time: 0.47(0.47)  Batch time: 0.51(0.53)
+2025-10-04 13:03:17,484   INFO
+2025-10-04 13:03:43,614   INFO  Train:   10/40 ( 25%) [ 130/491 ( 26%)]  Loss: 4.611 (4.33)  LR: 7.824e-04  Time cost: 01:09/03:11 [58:05/2:13:34]  Acc_iter 4550        Data time: 0.04(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 13:04:09,842   INFO  Train:   10/40 ( 25%) [ 180/491 ( 37%)]  Loss: 4.373 (4.28)  LR: 7.927e-04  Time cost: 01:35/02:44 [58:31/2:12:40]  Acc_iter 4600        Data time: 0.03(0.05)  Forward time: 0.53(0.48)  Batch time: 0.56(0.53)
+2025-10-04 13:04:36,246   INFO  Train:   10/40 ( 25%) [ 230/491 ( 47%)]  Loss: 4.212 (4.29)  LR: 8.030e-04  Time cost: 02:02/02:18 [58:57/2:12:10]  Acc_iter 4650        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.53)
+2025-10-04 13:04:36,394   INFO
+2025-10-04 13:05:03,038   INFO  Train:   10/40 ( 25%) [ 280/491 ( 57%)]  Loss: 4.714 (4.23)  LR: 8.132e-04  Time cost: 02:28/01:51 [59:24/2:12:02]  Acc_iter 4700        Data time: 0.06(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:05:30,007   INFO  Train:   10/40 ( 25%) [ 330/491 ( 67%)]  Loss: 4.222 (4.24)  LR: 8.233e-04  Time cost: 02:55/01:25 [59:51/2:11:56]  Acc_iter 4750        Data time: 0.22(0.05)  Forward time: 0.48(0.48)  Batch time: 0.70(0.53)
+2025-10-04 13:05:56,880   INFO  Train:   10/40 ( 25%) [ 380/491 ( 77%)]  Loss: 4.190 (4.22)  LR: 8.334e-04  Time cost: 03:22/00:59 [1:00:18/2:11:41]  Acc_iter 4800        Data time: 0.04(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.53)
+2025-10-04 13:05:56,986   INFO
+2025-10-04 13:06:23,673   INFO  Train:   10/40 ( 25%) [ 430/491 ( 88%)]  Loss: 4.268 (4.29)  LR: 8.433e-04  Time cost: 03:49/00:32 [1:00:45/2:11:20]  Acc_iter 4850        Data time: 0.02(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.53)
+2025-10-04 13:06:50,150   INFO  Train:   10/40 ( 25%) [ 480/491 ( 98%)]  Loss: 3.570 (4.30)  LR: 8.532e-04  Time cost: 04:16/00:05 [1:01:11/2:10:48]  Acc_iter 4900        Data time: 0.22(0.05)  Forward time: 0.48(0.48)  Batch time: 0.70(0.53)
+2025-10-04 13:06:55,045   INFO  Train:   10/40 ( 25%) [ 490/491 (100%)]  Loss: 4.487 (4.29)  LR: 8.552e-04  Time cost: 04:21/00:00 [1:01:16/2:10:30]  Acc_iter 4910        Data time: 0.04(0.05)  Forward time: 0.16(0.48)  Batch time: 0.20(0.53)
+                                                                          2025-10-04 13:07:57,172   INFO  Validation Epoch 10: Average Loss = 3.9275
+epochs:  25%|██▌       | 10/40 [1:02:18<3:06:32025-10-04 13:08:49,970   INFO  Train:   11/40 ( 28%) [   0/491 (  0%)]  Loss: 4.269 (4.27)  LR: 8.554e-04  Time cost: 00:02/20:57 [1:03:11/10:28:39]  Acc_iter 4911        Data time: 1.37(1.37)  Forward time: 0.49(0.49)  Batch time: 1.86(1.86)
+2025-10-04 13:09:09,732   INFO  Train:   11/40 ( 28%) [  39/491 (  8%)]  Loss: 4.664 (4.23)  LR: 8.631e-04  Time cost: 00:22/04:12 [1:03:31/2:16:38]  Acc_iter 4950        Data time: 0.13(0.08)  Forward time: 0.49(0.47)  Batch time: 0.62(0.55)
+2025-10-04 13:09:09,874   INFO
+2025-10-04 13:09:35,327   INFO  Train:   11/40 ( 28%) [  89/491 ( 18%)]  Loss: 3.700 (4.33)  LR: 8.728e-04  Time cost: 00:47/03:34 [1:03:57/2:09:55]  Acc_iter 5000        Data time: 0.06(0.06)  Forward time: 0.47(0.47)  Batch time: 0.53(0.53)
+2025-10-04 13:10:00,790   INFO  Train:   11/40 ( 28%) [ 139/491 ( 28%)]  Loss: 4.181 (4.24)  LR: 8.824e-04  Time cost: 01:13/03:04 [1:04:22/2:07:27]  Acc_iter 5050        Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:10:27,211   INFO  Train:   11/40 ( 28%) [ 189/491 ( 38%)]  Loss: 4.338 (4.16)  LR: 8.920e-04  Time cost: 01:39/02:38 [1:04:48/2:07:17]  Acc_iter 5100        Data time: 0.04(0.05)  Forward time: 0.49(0.47)  Batch time: 0.52(0.52)
+2025-10-04 13:10:27,373   INFO
+2025-10-04 13:10:53,054   INFO  Train:   11/40 ( 28%) [ 239/491 ( 49%)]  Loss: 4.979 (4.15)  LR: 9.015e-04  Time cost: 02:05/02:11 [1:05:14/2:06:26]  Acc_iter 5150        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:11:19,404   INFO  Train:   11/40 ( 28%) [ 289/491 ( 59%)]  Loss: 4.410 (4.17)  LR: 9.108e-04  Time cost: 02:31/01:45 [1:05:41/2:06:08]  Acc_iter 5200        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.52)
+2025-10-04 13:11:45,417   INFO  Train:   11/40 ( 28%) [ 339/491 ( 69%)]  Loss: 4.131 (4.13)  LR: 9.201e-04  Time cost: 02:58/01:19 [1:06:07/2:05:34]  Acc_iter 5250        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.54(0.52)
+2025-10-04 13:11:45,577   INFO
+2025-10-04 13:12:11,757   INFO  Train:   11/40 ( 28%) [ 389/491 ( 79%)]  Loss: 3.830 (4.12)  LR: 9.292e-04  Time cost: 03:24/00:53 [1:06:33/2:05:14]  Acc_iter 5300        Data time: 0.05(0.05)  Forward time: 0.49(0.48)  Batch time: 0.54(0.52)
+2025-10-04 13:12:38,979   INFO  Train:   11/40 ( 28%) [ 439/491 ( 89%)]  Loss: 4.062 (4.09)  LR: 9.383e-04  Time cost: 03:51/00:27 [1:07:00/2:05:21]  Acc_iter 5350        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 13:13:04,826   INFO  Train:   11/40 ( 28%) [ 489/491 (100%)]  Loss: 3.808 (4.09)  LR: 9.472e-04  Time cost: 04:17/00:01 [1:07:26/2:04:41]  Acc_iter 5400        Data time: 0.03(0.05)  Forward time: 0.46(0.48)  Batch time: 0.49(0.52)
+2025-10-04 13:13:04,927   INFO
+2025-10-04 13:13:05,266   INFO  Train:   11/40 ( 28%) [ 490/491 (100%)]  Loss: 3.306 (4.09)  LR: 9.474e-04  Time cost: 04:17/00:00 [1:07:26/2:04:38]  Acc_iter 5401        Data time: 0.07(0.05)  Forward time: 0.29(0.48)  Batch time: 0.35(0.52)
+                                                                          2025-10-04 13:14:06,910   INFO  Validation Epoch 11: Average Loss = 3.6611
+epochs:  28%|██▊       | 11/40 [1:08:28<2:59:52025-10-04 13:15:00,404   INFO  Train:   12/40 ( 30%) [   0/491 (  0%)]  Loss: 3.128 (3.13)  LR: 9.476e-04  Time cost: 00:03/27:56 [1:09:22/13:30:05]  Acc_iter 5402        Data time: 1.38(1.38)  Forward time: 0.50(0.50)  Batch time: 1.88(1.88)
+2025-10-04 13:15:24,082   INFO  Train:   12/40 ( 30%) [  48/491 ( 10%)]  Loss: 3.908 (4.02)  LR: 9.560e-04  Time cost: 00:27/04:04 [1:09:45/2:10:46]  Acc_iter 5450        Data time: 0.04(0.08)  Forward time: 0.47(0.47)  Batch time: 0.51(0.55)
+2025-10-04 13:15:49,724   INFO  Train:   12/40 ( 30%) [  98/491 ( 20%)]  Loss: 5.722 (4.08)  LR: 9.647e-04  Time cost: 00:52/03:29 [1:10:11/2:05:32]  Acc_iter 5500        Data time: 0.03(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 13:16:15,384   INFO  Train:   12/40 ( 30%) [ 148/491 ( 30%)]  Loss: 4.325 (4.07)  LR: 9.732e-04  Time cost: 01:18/03:00 [1:10:37/2:03:33]  Acc_iter 5550        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:16:15,536   INFO
+2025-10-04 13:16:41,013   INFO  Train:   12/40 ( 30%) [ 198/491 ( 40%)]  Loss: 4.421 (4.04)  LR: 9.817e-04  Time cost: 01:44/02:33 [1:11:02/2:02:19]  Acc_iter 5600        Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:17:06,928   INFO  Train:   12/40 ( 30%) [ 248/491 ( 51%)]  Loss: 3.974 (4.05)  LR: 9.900e-04  Time cost: 02:09/02:06 [1:11:28/2:01:41]  Acc_iter 5650        Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 13:17:32,896   INFO  Train:   12/40 ( 30%) [ 298/491 ( 61%)]  Loss: 3.818 (4.05)  LR: 9.981e-04  Time cost: 02:35/01:40 [1:11:54/2:01:09]  Acc_iter 5700        Data time: 0.06(0.05)  Forward time: 0.49(0.47)  Batch time: 0.54(0.52)
+2025-10-04 13:17:33,025   INFO
+2025-10-04 13:17:58,969   INFO  Train:   12/40 ( 30%) [ 348/491 ( 71%)]  Loss: 4.041 (4.07)  LR: 1.006e-03  Time cost: 03:01/01:14 [1:12:20/2:00:43]  Acc_iter 5750        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:18:24,745   INFO  Train:   12/40 ( 30%) [ 398/491 ( 81%)]  Loss: 3.921 (4.05)  LR: 1.014e-03  Time cost: 03:27/00:48 [1:12:46/2:00:06]  Acc_iter 5800        Data time: 0.03(0.04)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:18:50,811   INFO  Train:   12/40 ( 30%) [ 448/491 ( 91%)]  Loss: 4.437 (4.02)  LR: 1.022e-03  Time cost: 03:53/00:22 [1:13:12/1:59:41]  Acc_iter 5850        Data time: 0.03(0.04)  Forward time: 0.48(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:18:50,969   INFO
+2025-10-04 13:19:12,142   INFO  Train:   12/40 ( 30%) [ 490/491 (100%)]  Loss: 3.607 (4.03)  LR: 1.028e-03  Time cost: 04:15/00:00 [1:13:33/1:59:04]  Acc_iter 5892        Data time: 0.04(0.04)  Forward time: 0.16(0.47)  Batch time: 0.20(0.52)
+                                                                          2025-10-04 13:20:14,248   INFO  Validation Epoch 12: Average Loss = 4.1402
+epochs:  30%|███       | 12/40 [1:14:36<2:52:52025-10-04 13:21:07,242   INFO  Train:   13/40 ( 32%) [   0/491 (  0%)]  Loss: 4.618 (4.62)  LR: 1.028e-03  Time cost: 00:02/18:59 [1:15:28/8:51:37]  Acc_iter 5893        Data time: 1.57(1.57)  Forward time: 0.51(0.51)  Batch time: 2.08(2.08)
+2025-10-04 13:21:10,742   INFO  Train:   13/40 ( 32%) [   7/491 (  1%)]  Loss: 4.143 (3.96)  LR: 1.029e-03  Time cost: 00:05/05:52 [1:15:32/2:46:37]  Acc_iter 5900        Data time: 0.02(0.24)  Forward time: 0.49(0.48)  Batch time: 0.51(0.72)
+2025-10-04 13:21:35,586   INFO  Train:   13/40 ( 32%) [  57/491 ( 12%)]  Loss: 3.465 (3.79)  LR: 1.037e-03  Time cost: 00:30/03:49 [1:15:57/2:00:38]  Acc_iter 5950        Data time: 0.03(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 13:22:00,942   INFO  Train:   13/40 ( 32%) [ 107/491 ( 22%)]  Loss: 3.546 (3.75)  LR: 1.044e-03  Time cost: 00:56/03:19 [1:16:22/1:57:55]  Acc_iter 6000        Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 13:22:01,095   INFO
+2025-10-04 13:22:26,568   INFO  Train:   13/40 ( 32%) [ 157/491 ( 32%)]  Loss: 3.732 (3.76)  LR: 1.051e-03  Time cost: 01:21/02:52 [1:16:48/1:57:03]  Acc_iter 6050        Data time: 0.03(0.04)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:22:52,364   INFO  Train:   13/40 ( 32%) [ 207/491 ( 42%)]  Loss: 3.892 (3.84)  LR: 1.058e-03  Time cost: 01:47/02:26 [1:17:14/1:56:34]  Acc_iter 6100        Data time: 0.09(0.04)  Forward time: 0.49(0.47)  Batch time: 0.58(0.52)
+2025-10-04 13:23:18,271   INFO  Train:   13/40 ( 32%) [ 257/491 ( 52%)]  Loss: 3.656 (3.85)  LR: 1.065e-03  Time cost: 02:13/02:00 [1:17:39/1:56:12]  Acc_iter 6150        Data time: 0.06(0.04)  Forward time: 0.48(0.47)  Batch time: 0.54(0.52)
+2025-10-04 13:23:18,401   INFO
+2025-10-04 13:23:44,543   INFO  Train:   13/40 ( 32%) [ 307/491 ( 63%)]  Loss: 3.648 (3.86)  LR: 1.072e-03  Time cost: 02:39/01:35 [1:18:06/1:56:05]  Acc_iter 6200        Data time: 0.02(0.04)  Forward time: 0.47(0.48)  Batch time: 0.49(0.52)
+2025-10-04 13:24:10,680   INFO  Train:   13/40 ( 32%) [ 357/491 ( 73%)]  Loss: 3.449 (3.85)  LR: 1.078e-03  Time cost: 03:05/01:09 [1:18:32/1:55:48]  Acc_iter 6250        Data time: 0.03(0.04)  Forward time: 0.48(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:24:37,067   INFO  Train:   13/40 ( 32%) [ 407/491 ( 83%)]  Loss: 4.186 (3.86)  LR: 1.084e-03  Time cost: 03:32/00:43 [1:18:58/1:55:36]  Acc_iter 6300        Data time: 0.04(0.04)  Forward time: 0.50(0.48)  Batch time: 0.54(0.52)
+2025-10-04 13:24:37,214   INFO
+2025-10-04 13:25:03,434   INFO  Train:   13/40 ( 32%) [ 457/491 ( 93%)]  Loss: 3.745 (3.89)  LR: 1.091e-03  Time cost: 03:58/00:17 [1:19:25/1:55:21]  Acc_iter 6350        Data time: 0.05(0.04)  Forward time: 0.49(0.48)  Batch time: 0.54(0.52)
+2025-10-04 13:25:20,279   INFO  Train:   13/40 ( 32%) [ 490/491 (100%)]  Loss: 3.387 (3.92)  LR: 1.094e-03  Time cost: 04:15/00:00 [1:19:41/1:54:55]  Acc_iter 6383        Data time: 0.05(0.04)  Forward time: 0.17(0.48)  Batch time: 0.21(0.52)
+                                                                         2025-10-04 13:26:22,394   INFO  Validation Epoch 13: Average Loss = 3.8229
+epochs:  32%|███▎      | 13/40 [1:20:44<2:46:22025-10-04 13:27:15,621   INFO  Train:   14/40 ( 35%) [   0/491 (  0%)]  Loss: 4.466 (4.47)  LR: 1.095e-03  Time cost: 00:02/24:01 [1:21:37/10:48:38]  Acc_iter 6384        Data time: 1.50(1.50)  Forward time: 0.50(0.50)  Batch time: 2.00(2.00)
+2025-10-04 13:27:23,596   INFO  Train:   14/40 ( 35%) [  16/491 (  3%)]  Loss: 4.134 (3.71)  LR: 1.096e-03  Time cost: 00:10/05:04 [1:21:45/2:21:39]  Acc_iter 6400        Data time: 0.02(0.15)  Forward time: 0.48(0.47)  Batch time: 0.50(0.63)
+2025-10-04 13:27:49,053   INFO  Train:   14/40 ( 35%) [  66/491 ( 13%)]  Loss: 4.566 (4.30)  LR: 1.102e-03  Time cost: 00:36/03:50 [1:22:10/1:59:20]  Acc_iter 6450        Data time: 0.03(0.07)  Forward time: 0.48(0.47)  Batch time: 0.50(0.54)
+2025-10-04 13:27:49,192   INFO
+2025-10-04 13:28:14,458   INFO  Train:   14/40 ( 35%) [ 116/491 ( 24%)]  Loss: 3.760 (4.33)  LR: 1.108e-03  Time cost: 01:01/03:17 [1:22:36/1:55:38]  Acc_iter 6500        Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.53)
+2025-10-04 13:28:40,099   INFO  Train:   14/40 ( 35%) [ 166/491 ( 34%)]  Loss: 3.282 (4.17)  LR: 1.113e-03  Time cost: 01:27/02:50 [1:23:01/1:54:12]  Acc_iter 6550        Data time: 0.02(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:29:05,854   INFO  Train:   14/40 ( 35%) [ 216/491 ( 44%)]  Loss: 4.044 (4.08)  LR: 1.119e-03  Time cost: 01:53/02:23 [1:23:27/1:53:21]  Acc_iter 6600        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 13:29:05,998   INFO
+2025-10-04 13:29:31,929   INFO  Train:   14/40 ( 35%) [ 266/491 ( 54%)]  Loss: 3.749 (4.05)  LR: 1.124e-03  Time cost: 02:19/01:57 [1:23:53/1:52:55]  Acc_iter 6650        Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:29:58,059   INFO  Train:   14/40 ( 35%) [ 316/491 ( 64%)]  Loss: 3.576 (3.99)  LR: 1.128e-03  Time cost: 02:45/01:31 [1:24:19/1:52:31]  Acc_iter 6700        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.52)
+2025-10-04 13:30:24,993   INFO  Train:   14/40 ( 35%) [ 366/491 ( 75%)]  Loss: 3.981 (3.97)  LR: 1.133e-03  Time cost: 03:12/01:05 [1:24:46/1:52:34]  Acc_iter 6750        Data time: 0.04(0.05)  Forward time: 0.47(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:30:25,134   INFO
+2025-10-04 13:30:51,692   INFO  Train:   14/40 ( 35%) [ 416/491 ( 85%)]  Loss: 3.419 (3.93)  LR: 1.138e-03  Time cost: 03:39/00:39 [1:25:13/1:52:24]  Acc_iter 6800        Data time: 0.02(0.05)  Forward time: 0.48(0.48)  Batch time: 0.50(0.52)
+2025-10-04 13:31:17,955   INFO  Train:   14/40 ( 35%) [ 466/491 ( 95%)]  Loss: 4.592 (3.92)  LR: 1.142e-03  Time cost: 04:05/00:13 [1:25:39/1:51:57]  Acc_iter 6850        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:31:30,116   INFO  Train:   14/40 ( 35%) [ 490/491 (100%)]  Loss: 3.830 (3.94)  LR: 1.144e-03  Time cost: 04:17/00:00 [1:25:51/1:51:33]  Acc_iter 6874        Data time: 0.03(0.05)  Forward time: 0.16(0.48)  Batch time: 0.19(0.52)
+                                                                          2025-10-04 13:32:32,496   INFO  Validation Epoch 14: Average Loss = 4.0737
+epochs:  35%|███▌      | 14/40 [1:26:54<2:40:12025-10-04 13:33:25,481   INFO  Train:   15/40 ( 38%) [   0/491 (  0%)]  Loss: 4.781 (4.78)  LR: 1.144e-03  Time cost: 00:02/23:24 [1:27:47/10:08:31]  Acc_iter 6875        Data time: 1.40(1.40)  Forward time: 0.50(0.50)  Batch time: 1.90(1.90)
+2025-10-04 13:33:37,960   INFO  Train:   15/40 ( 38%) [  25/491 (  5%)]  Loss: 3.534 (4.23)  LR: 1.146e-03  Time cost: 00:15/04:34 [1:27:59/2:05:16]  Acc_iter 6900        Data time: 0.03(0.11)  Forward time: 0.47(0.47)  Batch time: 0.50(0.58)
+2025-10-04 13:33:38,108   INFO
+2025-10-04 13:34:03,206   INFO  Train:   15/40 ( 38%) [  75/491 ( 15%)]  Loss: 4.085 (4.03)  LR: 1.150e-03  Time cost: 00:40/03:42 [1:28:24/1:52:57]  Acc_iter 6950        Data time: 0.03(0.06)  Forward time: 0.46(0.47)  Batch time: 0.49(0.53)
+2025-10-04 13:34:28,410   INFO  Train:   15/40 ( 38%) [ 125/491 ( 25%)]  Loss: 3.506 (3.91)  LR: 1.153e-03  Time cost: 01:05/03:11 [1:28:50/1:50:00]  Acc_iter 7000        Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:34:54,321   INFO  Train:   15/40 ( 38%) [ 175/491 ( 36%)]  Loss: 3.932 (3.84)  LR: 1.157e-03  Time cost: 01:31/02:44 [1:29:16/1:49:20]  Acc_iter 7050        Data time: 0.02(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:34:54,425   INFO
+2025-10-04 13:35:20,012   INFO  Train:   15/40 ( 38%) [ 225/491 ( 46%)]  Loss: 3.766 (3.80)  LR: 1.160e-03  Time cost: 01:57/02:18 [1:29:41/1:48:34]  Acc_iter 7100        Data time: 0.04(0.04)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 13:35:45,701   INFO  Train:   15/40 ( 38%) [ 275/491 ( 56%)]  Loss: 3.661 (3.76)  LR: 1.163e-03  Time cost: 02:23/01:51 [1:30:07/1:47:55]  Acc_iter 7150        Data time: 0.03(0.04)  Forward time: 0.49(0.47)  Batch time: 0.52(0.52)
+2025-10-04 13:36:11,666   INFO  Train:   15/40 ( 38%) [ 325/491 ( 66%)]  Loss: 3.992 (3.80)  LR: 1.166e-03  Time cost: 02:49/01:26 [1:30:33/1:47:31]  Acc_iter 7200        Data time: 0.05(0.04)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 13:36:11,795   INFO
+2025-10-04 13:36:37,817   INFO  Train:   15/40 ( 38%) [ 375/491 ( 76%)]  Loss: 3.644 (3.77)  LR: 1.169e-03  Time cost: 03:15/01:00 [1:30:59/1:47:12]  Acc_iter 7250        Data time: 0.03(0.04)  Forward time: 0.51(0.47)  Batch time: 0.54(0.52)
+2025-10-04 13:37:03,829   INFO  Train:   15/40 ( 38%) [ 425/491 ( 87%)]  Loss: 3.309 (3.73)  LR: 1.171e-03  Time cost: 03:41/00:34 [1:31:25/1:46:48]  Acc_iter 7300        Data time: 0.02(0.04)  Forward time: 0.48(0.48)  Batch time: 0.50(0.52)
+2025-10-04 13:37:30,101   INFO  Train:   15/40 ( 38%) [ 475/491 ( 97%)]  Loss: 3.770 (3.75)  LR: 1.174e-03  Time cost: 04:07/00:08 [1:31:51/1:46:30]  Acc_iter 7350        Data time: 0.05(0.04)  Forward time: 0.49(0.48)  Batch time: 0.53(0.52)
+2025-10-04 13:37:30,249   INFO
+2025-10-04 13:37:37,636   INFO  Train:   15/40 ( 38%) [ 490/491 (100%)]  Loss: 3.565 (3.75)  LR: 1.174e-03  Time cost: 04:15/00:00 [1:31:59/1:46:15]  Acc_iter 7365        Data time: 0.05(0.04)  Forward time: 0.17(0.48)  Batch time: 0.22(0.52)
+                                                                         2025-10-04 13:38:39,860   INFO  Validation Epoch 15: Average Loss = 3.4344
+epochs:  38%|███▊      | 15/40 [1:33:01<2:33:42025-10-04 13:39:32,768   INFO  Train:   16/40 ( 40%) [   0/491 (  0%)]  Loss: 3.362 (3.36)  LR: 1.174e-03  Time cost: 00:02/20:02 [1:33:54/8:21:06]  Acc_iter 7366        Data time: 1.46(1.46)  Forward time: 0.51(0.51)  Batch time: 1.97(1.97)
+2025-10-04 13:39:49,747   INFO  Train:   16/40 ( 40%) [  34/491 (  7%)]  Loss: 4.153 (4.02)  LR: 1.176e-03  Time cost: 00:19/04:13 [1:34:11/1:53:14]  Acc_iter 7400        Data time: 0.03(0.09)  Forward time: 0.47(0.47)  Batch time: 0.49(0.56)
+2025-10-04 13:40:15,833   INFO  Train:   16/40 ( 40%) [  84/491 ( 17%)]  Loss: 4.064 (4.03)  LR: 1.177e-03  Time cost: 00:45/03:37 [1:34:37/1:48:47]  Acc_iter 7450        Data time: 0.02(0.06)  Forward time: 0.48(0.47)  Batch time: 0.50(0.54)
+2025-10-04 13:40:41,898   INFO  Train:   16/40 ( 40%) [ 134/491 ( 27%)]  Loss: 4.456 (3.93)  LR: 1.179e-03  Time cost: 01:11/03:09 [1:35:03/1:47:17]  Acc_iter 7500        Data time: 0.05(0.06)  Forward time: 0.47(0.47)  Batch time: 0.52(0.53)
+2025-10-04 13:40:42,040   INFO
+2025-10-04 13:41:08,203   INFO  Train:   16/40 ( 40%) [ 184/491 ( 37%)]  Loss: 3.711 (3.87)  LR: 1.180e-03  Time cost: 01:37/02:42 [1:35:29/1:46:37]  Acc_iter 7550        Data time: 0.05(0.05)  Forward time: 0.47(0.48)  Batch time: 0.52(0.53)
+2025-10-04 13:41:34,036   INFO  Train:   16/40 ( 40%) [ 234/491 ( 48%)]  Loss: 3.462 (3.82)  LR: 1.182e-03  Time cost: 02:03/02:15 [1:35:55/1:45:39]  Acc_iter 7600        Data time: 0.03(0.05)  Forward time: 0.46(0.48)  Batch time: 0.49(0.53)
+2025-10-04 13:42:00,222   INFO  Train:   16/40 ( 40%) [ 284/491 ( 58%)]  Loss: 3.923 (3.80)  LR: 1.183e-03  Time cost: 02:29/01:48 [1:36:21/1:45:06]  Acc_iter 7650        Data time: 0.05(0.05)  Forward time: 0.49(0.48)  Batch time: 0.54(0.53)
+2025-10-04 13:42:00,364   INFO
+2025-10-04 13:42:26,450   INFO  Train:   16/40 ( 40%) [ 334/491 ( 68%)]  Loss: 3.397 (3.77)  LR: 1.183e-03  Time cost: 02:56/01:22 [1:36:48/1:44:38]  Acc_iter 7700        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:42:52,933   INFO  Train:   16/40 ( 40%) [ 384/491 ( 78%)]  Loss: 3.671 (3.77)  LR: 1.184e-03  Time cost: 03:22/00:56 [1:37:14/1:44:17]  Acc_iter 7750        Data time: 0.05(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:43:18,903   INFO  Train:   16/40 ( 40%) [ 434/491 ( 88%)]  Loss: 3.224 (3.74)  LR: 1.184e-03  Time cost: 03:48/00:29 [1:37:40/1:43:42]  Acc_iter 7800        Data time: 0.03(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.53)
+2025-10-04 13:43:19,039   INFO
+2025-10-04 13:43:45,701   INFO  Train:   16/40 ( 40%) [ 484/491 ( 99%)]  Loss: 3.536 (3.72)  LR: 1.184e-03  Time cost: 04:15/00:03 [1:38:07/1:43:28]  Acc_iter 7850        Data time: 0.05(0.05)  Forward time: 0.45(0.48)  Batch time: 0.50(0.53)
+2025-10-04 13:43:48,358   INFO  Train:   16/40 ( 40%) [ 490/491 (100%)]  Loss: 3.813 (3.72)  LR: 1.184e-03  Time cost: 04:18/00:00 [1:38:10/1:43:13]  Acc_iter 7856        Data time: 0.02(0.05)  Forward time: 0.17(0.48)  Batch time: 0.20(0.53)
+                                                                       2025-10-04 13:44:50,315   INFO  Validation Epoch 16: Average Loss = 3.5689
+epochs:  40%|████      | 16/40 [1:39:12<2:27:42025-10-04 13:45:43,577   INFO  Train:   17/40 ( 42%) [   0/491 (  0%)]  Loss: 3.584 (3.58)  LR: 1.184e-03  Time cost: 00:03/25:57 [1:40:05/10:23:07]  Acc_iter 7857        Data time: 1.41(1.41)  Forward time: 0.48(0.48)  Batch time: 1.89(1.89)
+2025-10-04 13:46:05,026   INFO  Train:   17/40 ( 42%) [  43/491 (  9%)]  Loss: 3.644 (3.77)  LR: 1.184e-03  Time cost: 00:24/04:10 [1:40:26/1:49:29]  Acc_iter 7900        Data time: 0.03(0.08)  Forward time: 0.48(0.47)  Batch time: 0.50(0.55)
+2025-10-04 13:46:30,924   INFO  Train:   17/40 ( 42%) [  93/491 ( 19%)]  Loss: 4.173 (3.62)  LR: 1.184e-03  Time cost: 00:50/03:33 [1:40:52/1:44:43]  Acc_iter 7950        Data time: 0.04(0.06)  Forward time: 0.47(0.47)  Batch time: 0.51(0.53)
+2025-10-04 13:46:31,066   INFO
+2025-10-04 13:46:56,466   INFO  Train:   17/40 ( 42%) [ 143/491 ( 29%)]  Loss: 3.175 (3.58)  LR: 1.184e-03  Time cost: 01:16/03:03 [1:41:18/1:42:28]  Acc_iter 8000        Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:47:22,565   INFO  Train:   17/40 ( 42%) [ 193/491 ( 39%)]  Loss: 4.491 (3.58)  LR: 1.184e-03  Time cost: 01:42/02:36 [1:41:44/1:41:43]  Acc_iter 8050        Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:47:48,569   INFO  Train:   17/40 ( 42%) [ 243/491 ( 49%)]  Loss: 3.547 (3.61)  LR: 1.183e-03  Time cost: 02:08/02:10 [1:42:10/1:41:02]  Acc_iter 8100        Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 13:47:48,721   INFO
+2025-10-04 13:48:14,673   INFO  Train:   17/40 ( 42%) [ 293/491 ( 60%)]  Loss: 3.653 (3.59)  LR: 1.183e-03  Time cost: 02:34/01:43 [1:42:36/1:40:29]  Acc_iter 8150        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:48:41,153   INFO  Train:   17/40 ( 42%) [ 343/491 ( 70%)]  Loss: 3.489 (3.59)  LR: 1.182e-03  Time cost: 03:00/01:17 [1:43:02/1:40:11]  Acc_iter 8200        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.52)
+2025-10-04 13:49:08,093   INFO  Train:   17/40 ( 42%) [ 393/491 ( 80%)]  Loss: 3.861 (3.60)  LR: 1.181e-03  Time cost: 03:27/00:51 [1:43:29/1:40:04]  Acc_iter 8250        Data time: 0.06(0.05)  Forward time: 0.47(0.48)  Batch time: 0.53(0.53)
+2025-10-04 13:49:08,233   INFO
+2025-10-04 13:49:35,321   INFO  Train:   17/40 ( 42%) [ 443/491 ( 90%)]  Loss: 3.360 (3.57)  LR: 1.180e-03  Time cost: 03:54/00:25 [1:43:57/1:40:00]  Acc_iter 8300        Data time: 0.04(0.05)  Forward time: 0.47(0.48)  Batch time: 0.51(0.53)
+2025-10-04 13:50:00,190   INFO  Train:   17/40 ( 42%) [ 490/491 (100%)]  Loss: 3.367 (3.55)  LR: 1.179e-03  Time cost: 04:19/00:00 [1:44:21/1:39:35]  Acc_iter 8347        Data time: 0.05(0.05)  Forward time: 0.16(0.48)  Batch time: 0.21(0.53)
+                                                                          2025-10-04 13:51:02,603   INFO  Validation Epoch 17: Average Loss = 3.2431
+epochs:  42%|████▎     | 17/40 [1:45:24<2:21:52025-10-04 13:51:54,497   INFO  Train:   18/40 ( 45%) [   0/491 (  0%)]  Loss: 3.863 (3.86)  LR: 1.179e-03  Time cost: 00:02/16:38 [1:46:16/6:22:41]  Acc_iter 8348        Data time: 1.48(1.48)  Forward time: 0.51(0.51)  Batch time: 1.98(1.98)
+2025-10-04 13:51:55,474   INFO  Train:   18/40 ( 45%) [   2/491 (  0%)]  Loss: 3.383 (3.50)  LR: 1.179e-03  Time cost: 00:03/08:10 [1:46:17/3:08:49]  Acc_iter 8350        Data time: 0.03(0.52)  Forward time: 0.46(0.48)  Batch time: 0.50(1.00)
+2025-10-04 13:52:20,764   INFO  Train:   18/40 ( 45%) [  52/491 ( 11%)]  Loss: 3.738 (3.65)  LR: 1.178e-03  Time cost: 00:28/03:54 [1:46:42/1:40:02]  Acc_iter 8400        Data time: 0.03(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 13:52:20,933   INFO
+2025-10-04 13:52:46,776   INFO  Train:   18/40 ( 45%) [ 102/491 ( 21%)]  Loss: 2.948 (3.53)  LR: 1.177e-03  Time cost: 00:54/03:25 [1:47:08/1:38:21]  Acc_iter 8450        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.53)
+2025-10-04 13:53:12,475   INFO  Train:   18/40 ( 45%) [ 152/491 ( 31%)]  Loss: 3.796 (3.51)  LR: 1.176e-03  Time cost: 01:20/02:57 [1:47:34/1:37:06]  Acc_iter 8500        Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 13:53:38,652   INFO  Train:   18/40 ( 45%) [ 202/491 ( 41%)]  Loss: 3.488 (3.53)  LR: 1.174e-03  Time cost: 01:46/02:31 [1:48:00/1:36:41]  Acc_iter 8550        Data time: 0.04(0.05)  Forward time: 0.49(0.48)  Batch time: 0.52(0.52)
+2025-10-04 13:53:38,794   INFO
+2025-10-04 13:54:04,710   INFO  Train:   18/40 ( 45%) [ 252/491 ( 51%)]  Loss: 3.463 (3.48)  LR: 1.173e-03  Time cost: 02:12/02:04 [1:48:26/1:36:11]  Acc_iter 8600        Data time: 0.03(0.05)  Forward time: 0.48(0.48)  Batch time: 0.51(0.52)
+2025-10-04 13:54:30,740   INFO  Train:   18/40 ( 45%) [ 302/491 ( 62%)]  Loss: 2.878 (3.48)  LR: 1.171e-03  Time cost: 02:38/01:38 [1:48:52/1:35:41]  Acc_iter 8650        Data time: 0.05(0.05)  Forward time: 0.48(0.48)  Batch time: 0.53(0.52)
+2025-10-04 13:54:57,122   INFO  Train:   18/40 ( 45%) [ 352/491 ( 72%)]  Loss: 3.870 (3.47)  LR: 1.170e-03  Time cost: 03:04/01:12 [1:49:18/1:35:23]  Acc_iter 8700        Data time: 0.06(0.05)  Forward time: 0.48(0.48)  Batch time: 0.54(0.52)
+2025-10-04 13:54:57,278   INFO
+2025-10-04 13:55:24,060   INFO  Train:   18/40 ( 45%) [ 402/491 ( 82%)]  Loss: 3.001 (3.46)  LR: 1.168e-03  Time cost: 03:31/00:46 [1:49:45/1:35:18]  Acc_iter 8750        Data time: 0.04(0.05)  Forward time: 0.49(0.48)  Batch time: 0.52(0.52)
+2025-10-04 13:55:50,637   INFO  Train:   18/40 ( 45%) [ 452/491 ( 92%)]  Loss: 3.369 (3.44)  LR: 1.166e-03  Time cost: 03:58/00:20 [1:50:12/1:34:59]  Acc_iter 8800        Data time: 0.03(0.05)  Forward time: 0.49(0.48)  Batch time: 0.52(0.53)
+2025-10-04 13:56:10,130   INFO  Train:   18/40 ( 45%) [ 490/491 (100%)]  Loss: 3.142 (3.44)  LR: 1.164e-03  Time cost: 04:17/00:00 [1:50:31/1:34:29]  Acc_iter 8838        Data time: 0.03(0.05)  Forward time: 0.17(0.48)  Batch time: 0.20(0.52)
+                                                                          2025-10-04 13:57:12,517   INFO  Validation Epoch 18: Average Loss = 3.6066
+epochs:  45%|████▌     | 18/40 [1:51:34<2:15:42025-10-04 13:58:05,105   INFO  Train:   19/40 ( 48%) [   0/491 (  0%)]  Loss: 3.480 (3.48)  LR: 1.164e-03  Time cost: 00:02/18:42 [1:52:26/6:51:33]  Acc_iter 8839        Data time: 1.49(1.49)  Forward time: 0.49(0.49)  Batch time: 1.98(1.98)
+2025-10-04 13:58:10,591   INFO  Train:   19/40 ( 48%) [  11/491 (  2%)]  Loss: 3.818 (3.52)  LR: 1.164e-03  Time cost: 00:07/05:10 [1:52:32/1:56:29]  Acc_iter 8850        Data time: 0.03(0.18)  Forward time: 0.46(0.47)  Batch time: 0.49(0.65)
+2025-10-04 13:58:10,721   INFO
+2025-10-04 13:58:35,952   INFO  Train:   19/40 ( 48%) [  61/491 ( 12%)]  Loss: 3.478 (3.40)  LR: 1.162e-03  Time cost: 00:33/03:49 [1:52:57/1:35:40]  Acc_iter 8900        Data time: 0.03(0.06)  Forward time: 0.49(0.47)  Batch time: 0.52(0.53)
+2025-10-04 13:59:01,138   INFO  Train:   19/40 ( 48%) [ 111/491 ( 23%)]  Loss: 3.164 (3.35)  LR: 1.159e-03  Time cost: 00:58/03:17 [1:53:22/1:32:46]  Acc_iter 8950        Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 13:59:26,949   INFO  Train:   19/40 ( 48%) [ 161/491 ( 33%)]  Loss: 3.600 (3.35)  LR: 1.157e-03  Time cost: 01:24/02:51 [1:53:48/1:32:06]  Acc_iter 9000        Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 13:59:27,093   INFO
+2025-10-04 13:59:52,826   INFO  Train:   19/40 ( 48%) [ 211/491 ( 43%)]  Loss: 3.482 (3.33)  LR: 1.155e-03  Time cost: 01:50/02:25 [1:54:14/1:31:35]  Acc_iter 9050        Data time: 0.04(0.04)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:00:19,062   INFO  Train:   19/40 ( 48%) [ 261/491 ( 53%)]  Loss: 3.366 (3.36)  LR: 1.152e-03  Time cost: 02:16/01:59 [1:54:40/1:31:21]  Acc_iter 9100        Data time: 0.03(0.04)  Forward time: 0.47(0.48)  Batch time: 0.51(0.52)
+2025-10-04 14:00:45,681   INFO  Train:   19/40 ( 48%) [ 311/491 ( 63%)]  Loss: 3.538 (3.34)  LR: 1.150e-03  Time cost: 02:42/01:33 [1:55:07/1:31:16]  Acc_iter 9150        Data time: 0.03(0.05)  Forward time: 0.52(0.48)  Batch time: 0.55(0.52)
+2025-10-04 14:00:45,785   INFO
+2025-10-04 14:01:12,142   INFO  Train:   19/40 ( 48%) [ 361/491 ( 74%)]  Loss: 3.051 (3.33)  LR: 1.147e-03  Time cost: 03:09/01:07 [1:55:33/1:31:00]  Acc_iter 9200        Data time: 0.06(0.05)  Forward time: 0.50(0.48)  Batch time: 0.56(0.52)
+2025-10-04 14:01:38,701   INFO  Train:   19/40 ( 48%) [ 411/491 ( 84%)]  Loss: 3.154 (3.31)  LR: 1.144e-03  Time cost: 03:35/00:41 [1:56:00/1:30:44]  Acc_iter 9250        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.52)
+2025-10-04 14:02:05,141   INFO  Train:   19/40 ( 48%) [ 461/491 ( 94%)]  Loss: 3.098 (3.30)  LR: 1.141e-03  Time cost: 04:02/00:15 [1:56:26/1:30:23]  Acc_iter 9300        Data time: 0.05(0.05)  Forward time: 0.49(0.48)  Batch time: 0.53(0.52)
+2025-10-04 14:02:05,298   INFO
+2025-10-04 14:02:20,150   INFO  Train:   19/40 ( 48%) [ 490/491 (100%)]  Loss: 2.603 (3.30)  LR: 1.139e-03  Time cost: 04:17/00:00 [1:56:41/1:30:04]  Acc_iter 9329        Data time: 0.04(0.05)  Forward time: 0.17(0.48)  Batch time: 0.21(0.52)
+                                                                         2025-10-04 14:03:22,451   INFO  Validation Epoch 19: Average Loss = 3.0936
+epochs:  48%|████▊     | 19/40 [1:57:44<2:09:32025-10-04 14:04:15,273   INFO  Train:   20/40 ( 50%) [   0/491 (  0%)]  Loss: 2.821 (2.82)  LR: 1.139e-03  Time cost: 00:02/20:51 [1:58:36/7:17:54]  Acc_iter 9330        Data time: 1.39(1.39)  Forward time: 0.52(0.52)  Batch time: 1.91(1.91)
+2025-10-04 14:04:25,308   INFO  Train:   20/40 ( 50%) [  20/491 (  4%)]  Loss: 3.082 (3.31)  LR: 1.138e-03  Time cost: 00:12/04:42 [1:58:46/1:42:46]  Acc_iter 9350        Data time: 0.02(0.11)  Forward time: 0.47(0.47)  Batch time: 0.50(0.58)
+2025-10-04 14:04:50,458   INFO  Train:   20/40 ( 50%) [  70/491 ( 14%)]  Loss: 3.526 (3.31)  LR: 1.135e-03  Time cost: 00:37/03:43 [1:59:12/1:30:42]  Acc_iter 9400        Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.53)
+2025-10-04 14:05:15,990   INFO  Train:   20/40 ( 50%) [ 120/491 ( 24%)]  Loss: 2.872 (3.27)  LR: 1.132e-03  Time cost: 01:03/03:13 [1:59:37/1:28:48]  Acc_iter 9450        Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:05:16,144   INFO
+2025-10-04 14:05:42,192   INFO  Train:   20/40 ( 50%) [ 170/491 ( 35%)]  Loss: 3.257 (3.28)  LR: 1.129e-03  Time cost: 01:29/02:47 [2:00:03/1:28:25]  Acc_iter 9500        Data time: 0.06(0.05)  Forward time: 0.50(0.47)  Batch time: 0.56(0.52)
+2025-10-04 14:06:07,986   INFO  Train:   20/40 ( 50%) [ 220/491 ( 45%)]  Loss: 3.564 (3.28)  LR: 1.125e-03  Time cost: 01:55/02:21 [2:00:29/1:27:42]  Acc_iter 9550        Data time: 0.04(0.04)  Forward time: 0.48(0.48)  Batch time: 0.52(0.52)
+2025-10-04 14:06:34,426   INFO  Train:   20/40 ( 50%) [ 270/491 ( 55%)]  Loss: 3.583 (3.26)  LR: 1.122e-03  Time cost: 02:21/01:55 [2:00:56/1:27:30]  Acc_iter 9600        Data time: 0.02(0.05)  Forward time: 0.47(0.48)  Batch time: 0.49(0.52)
+2025-10-04 14:06:34,578   INFO
+2025-10-04 14:07:00,589   INFO  Train:   20/40 ( 50%) [ 320/491 ( 65%)]  Loss: 3.042 (3.27)  LR: 1.118e-03  Time cost: 02:47/01:29 [2:01:22/1:27:04]  Acc_iter 9650        Data time: 0.04(0.05)  Forward time: 0.48(0.48)  Batch time: 0.52(0.52)
+2025-10-04 14:07:26,593   INFO  Train:   20/40 ( 50%) [ 370/491 ( 75%)]  Loss: 3.603 (3.27)  LR: 1.114e-03  Time cost: 03:13/01:03 [2:01:48/1:26:34]  Acc_iter 9700        Data time: 0.03(0.05)  Forward time: 0.45(0.48)  Batch time: 0.49(0.52)
+2025-10-04 14:07:52,570   INFO  Train:   20/40 ( 50%) [ 420/491 ( 86%)]  Loss: 3.404 (3.27)  LR: 1.111e-03  Time cost: 03:39/00:37 [2:02:14/1:26:05]  Acc_iter 9750        Data time: 0.02(0.05)  Forward time: 0.47(0.48)  Batch time: 0.50(0.52)
+2025-10-04 14:07:52,716   INFO
+2025-10-04 14:08:18,696   INFO  Train:   20/40 ( 50%) [ 470/491 ( 96%)]  Loss: 3.054 (3.27)  LR: 1.107e-03  Time cost: 04:05/00:10 [2:02:40/1:25:39]  Acc_iter 9800        Data time: 0.07(0.05)  Forward time: 0.47(0.48)  Batch time: 0.54(0.52)
+2025-10-04 14:08:28,495   INFO  Train:   20/40 ( 50%) [ 490/491 (100%)]  Loss: 3.342 (3.28)  LR: 1.105e-03  Time cost: 04:15/00:00 [2:02:50/1:25:15]  Acc_iter 9820        Data time: 0.04(0.05)  Forward time: 0.17(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 14:09:27,454   INFO  Validation Epoch 20: Average Loss = 3.2779
+epochs:  50%|█████     | 20/40 [2:03:49<2:02:52025-10-04 14:10:17,767   INFO  Train:   21/40 ( 52%) [   0/491 (  0%)]  Loss: 2.922 (2.92)  LR: 1.105e-03  Time cost: 00:02/20:22 [2:04:39/6:47:38]  Acc_iter 9821        Data time: 1.32(1.32)  Forward time: 0.49(0.49)  Batch time: 1.81(1.81)
+2025-10-04 14:10:31,989   INFO  Train:   21/40 ( 52%) [  29/491 (  6%)]  Loss: 3.989 (3.31)  LR: 1.103e-03  Time cost: 00:16/04:17 [2:04:53/1:30:54]  Acc_iter 9850        Data time: 0.05(0.09)  Forward time: 0.46(0.46)  Batch time: 0.50(0.55)
+2025-10-04 14:10:56,925   INFO  Train:   21/40 ( 52%) [  79/491 ( 16%)]  Loss: 3.021 (3.26)  LR: 1.099e-03  Time cost: 00:41/03:34 [2:05:18/1:24:31]  Acc_iter 9900        Data time: 0.04(0.06)  Forward time: 0.46(0.46)  Batch time: 0.50(0.52)
+2025-10-04 14:10:57,077   INFO
+2025-10-04 14:11:22,189   INFO  Train:   21/40 ( 52%) [ 129/491 ( 26%)]  Loss: 2.992 (3.23)  LR: 1.095e-03  Time cost: 01:06/03:06 [2:05:43/1:23:08]  Acc_iter 9950        Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.51)
+2025-10-04 14:11:47,572   INFO  Train:   21/40 ( 52%) [ 179/491 ( 36%)]  Loss: 3.471 (3.20)  LR: 1.090e-03  Time cost: 01:32/02:39 [2:06:09/1:22:23]  Acc_iter 10000       Data time: 0.04(0.05)  Forward time: 0.49(0.47)  Batch time: 0.53(0.51)
+2025-10-04 14:12:13,265   INFO  Train:   21/40 ( 52%) [ 229/491 ( 47%)]  Loss: 3.396 (3.19)  LR: 1.086e-03  Time cost: 01:57/02:14 [2:06:34/1:22:00]  Acc_iter 10050       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.51)
+2025-10-04 14:12:13,376   INFO
+2025-10-04 14:12:39,598   INFO  Train:   21/40 ( 52%) [ 279/491 ( 57%)]  Loss: 3.145 (3.19)  LR: 1.082e-03  Time cost: 02:24/01:49 [2:07:01/1:21:57]  Acc_iter 10100       Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 14:13:05,236   INFO  Train:   21/40 ( 52%) [ 329/491 ( 67%)]  Loss: 3.234 (3.18)  LR: 1.077e-03  Time cost: 02:49/01:23 [2:07:26/1:21:28]  Acc_iter 10150       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.51)
+2025-10-04 14:13:30,802   INFO  Train:   21/40 ( 52%) [ 379/491 ( 77%)]  Loss: 3.404 (3.17)  LR: 1.073e-03  Time cost: 03:15/00:57 [2:07:52/1:20:57]  Acc_iter 10200       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.51)
+2025-10-04 14:13:30,948   INFO
+2025-10-04 14:13:56,593   INFO  Train:   21/40 ( 52%) [ 429/491 ( 87%)]  Loss: 3.109 (3.16)  LR: 1.068e-03  Time cost: 03:41/00:31 [2:08:18/1:20:33]  Acc_iter 10250       Data time: 0.04(0.04)  Forward time: 0.46(0.47)  Batch time: 0.50(0.51)
+2025-10-04 14:14:22,417   INFO  Train:   21/40 ( 52%) [ 479/491 ( 98%)]  Loss: 2.935 (3.15)  LR: 1.063e-03  Time cost: 04:07/00:06 [2:08:44/1:20:09]  Acc_iter 10300       Data time: 0.08(0.04)  Forward time: 0.47(0.47)  Batch time: 0.55(0.51)
+2025-10-04 14:14:27,786   INFO  Train:   21/40 ( 52%) [ 490/491 (100%)]  Loss: 4.727 (3.14)  LR: 1.062e-03  Time cost: 04:12/00:00 [2:08:49/1:19:58]  Acc_iter 10311       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.20(0.51)
+                                                                          2025-10-04 14:15:26,253   INFO  Validation Epoch 21: Average Loss = 3.0285
+epochs:  52%|█████▎    | 21/40 [2:09:48<1:55:42025-10-04 14:16:16,793   INFO  Train:   22/40 ( 55%) [   0/491 (  0%)]  Loss: 3.342 (3.34)  LR: 1.062e-03  Time cost: 00:02/23:19 [2:10:38/7:23:03]  Acc_iter 10312       Data time: 1.38(1.38)  Forward time: 0.48(0.48)  Batch time: 1.86(1.86)
+2025-10-04 14:16:35,499   INFO  Train:   22/40 ( 55%) [  38/491 (  8%)]  Loss: 3.233 (3.07)  LR: 1.058e-03  Time cost: 00:21/04:10 [2:10:57/1:25:35]  Acc_iter 10350       Data time: 0.02(0.08)  Forward time: 0.46(0.46)  Batch time: 0.48(0.54)
+2025-10-04 14:16:35,646   INFO
+2025-10-04 14:17:00,815   INFO  Train:   22/40 ( 55%) [  88/491 ( 18%)]  Loss: 3.237 (3.08)  LR: 1.053e-03  Time cost: 00:46/03:32 [2:11:22/1:21:06]  Acc_iter 10400       Data time: 0.13(0.06)  Forward time: 0.46(0.47)  Batch time: 0.59(0.52)
+2025-10-04 14:17:26,394   INFO  Train:   22/40 ( 55%) [ 138/491 ( 28%)]  Loss: 3.150 (3.07)  LR: 1.048e-03  Time cost: 01:12/03:03 [2:11:48/1:19:50]  Acc_iter 10450       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:17:51,964   INFO  Train:   22/40 ( 55%) [ 188/491 ( 38%)]  Loss: 2.954 (3.07)  LR: 1.043e-03  Time cost: 01:38/02:37 [2:12:13/1:19:00]  Acc_iter 10500       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:17:52,074   INFO
+2025-10-04 14:18:17,268   INFO  Train:   22/40 ( 55%) [ 238/491 ( 48%)]  Loss: 3.083 (3.06)  LR: 1.038e-03  Time cost: 02:03/02:10 [2:12:38/1:18:10]  Acc_iter 10550       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.51)
+2025-10-04 14:18:43,357   INFO  Train:   22/40 ( 55%) [ 288/491 ( 59%)]  Loss: 3.159 (3.06)  LR: 1.033e-03  Time cost: 02:29/01:44 [2:13:05/1:17:54]  Acc_iter 10600       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:19:08,812   INFO  Train:   22/40 ( 55%) [ 338/491 ( 69%)]  Loss: 3.319 (3.06)  LR: 1.028e-03  Time cost: 02:54/01:18 [2:13:30/1:17:17]  Acc_iter 10650       Data time: 0.03(0.05)  Forward time: 0.45(0.47)  Batch time: 0.49(0.51)
+2025-10-04 14:19:08,956   INFO
+2025-10-04 14:19:34,372   INFO  Train:   22/40 ( 55%) [ 388/491 ( 79%)]  Loss: 3.273 (3.06)  LR: 1.022e-03  Time cost: 03:20/00:53 [2:13:56/1:16:46]  Acc_iter 10700       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.51)
+2025-10-04 14:20:00,262   INFO  Train:   22/40 ( 55%) [ 438/491 ( 89%)]  Loss: 3.077 (3.07)  LR: 1.017e-03  Time cost: 03:46/00:27 [2:14:21/1:16:23]  Acc_iter 10750       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.54(0.51)
+2025-10-04 14:20:25,698   INFO  Train:   22/40 ( 55%) [ 488/491 ( 99%)]  Loss: 3.045 (3.07)  LR: 1.011e-03  Time cost: 04:11/00:01 [2:14:47/1:15:51]  Acc_iter 10800       Data time: 0.04(0.04)  Forward time: 0.45(0.47)  Batch time: 0.49(0.51)
+2025-10-04 14:20:25,797   INFO
+2025-10-04 14:20:26,490   INFO  Train:   22/40 ( 55%) [ 490/491 (100%)]  Loss: 2.652 (3.07)  LR: 1.011e-03  Time cost: 04:12/00:00 [2:14:48/1:15:46]  Acc_iter 10802       Data time: 0.05(0.04)  Forward time: 0.17(0.47)  Batch time: 0.22(0.51)
+                                                                          2025-10-04 14:21:26,044   INFO  Validation Epoch 22: Average Loss = 2.9081
+epochs:  55%|█████▌    | 22/40 [2:15:47<1:49:12025-10-04 14:22:16,178   INFO  Train:   23/40 ( 58%) [   0/491 (  0%)]  Loss: 2.989 (2.99)  LR: 1.011e-03  Time cost: 00:02/17:01 [2:16:37/5:06:22]  Acc_iter 10803       Data time: 1.38(1.38)  Forward time: 0.49(0.49)  Batch time: 1.87(1.87)
+2025-10-04 14:22:39,241   INFO  Train:   23/40 ( 58%) [  47/491 ( 10%)]  Loss: 3.197 (3.09)  LR: 1.006e-03  Time cost: 00:25/03:52 [2:17:00/1:16:44]  Acc_iter 10850       Data time: 0.02(0.07)  Forward time: 0.48(0.46)  Batch time: 0.50(0.53)
+2025-10-04 14:23:04,354   INFO  Train:   23/40 ( 58%) [  97/491 ( 20%)]  Loss: 2.701 (3.06)  LR: 1.000e-03  Time cost: 00:50/03:22 [2:17:26/1:14:42]  Acc_iter 10900       Data time: 0.05(0.05)  Forward time: 0.47(0.46)  Batch time: 0.51(0.52)
+2025-10-04 14:23:29,736   INFO  Train:   23/40 ( 58%) [ 147/491 ( 30%)]  Loss: 2.707 (3.14)  LR: 9.942e-04  Time cost: 01:15/02:55 [2:17:51/1:14:01]  Acc_iter 10950       Data time: 0.04(0.05)  Forward time: 0.46(0.46)  Batch time: 0.50(0.51)
+2025-10-04 14:23:29,874   INFO
+2025-10-04 14:23:55,197   INFO  Train:   23/40 ( 58%) [ 197/491 ( 40%)]  Loss: 2.719 (3.11)  LR: 9.884e-04  Time cost: 01:41/02:30 [2:18:16/1:13:32]  Acc_iter 11000       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.51)
+2025-10-04 14:24:20,466   INFO  Train:   23/40 ( 58%) [ 247/491 ( 50%)]  Loss: 3.035 (3.08)  LR: 9.825e-04  Time cost: 02:06/02:04 [2:18:42/1:12:57]  Acc_iter 11050       Data time: 0.07(0.04)  Forward time: 0.47(0.47)  Batch time: 0.54(0.51)
+2025-10-04 14:24:46,086   INFO  Train:   23/40 ( 58%) [ 297/491 ( 60%)]  Loss: 3.130 (3.07)  LR: 9.765e-04  Time cost: 02:31/01:38 [2:19:07/1:12:36]  Acc_iter 11100       Data time: 0.03(0.04)  Forward time: 0.47(0.47)  Batch time: 0.50(0.51)
+2025-10-04 14:24:46,230   INFO
+2025-10-04 14:25:11,691   INFO  Train:   23/40 ( 58%) [ 347/491 ( 71%)]  Loss: 3.047 (3.06)  LR: 9.705e-04  Time cost: 02:57/01:13 [2:19:33/1:12:13]  Acc_iter 11150       Data time: 0.03(0.04)  Forward time: 0.49(0.47)  Batch time: 0.52(0.51)
+2025-10-04 14:25:37,200   INFO  Train:   23/40 ( 58%) [ 397/491 ( 81%)]  Loss: 2.697 (3.06)  LR: 9.644e-04  Time cost: 03:23/00:47 [2:19:58/1:11:47]  Acc_iter 11200       Data time: 0.06(0.04)  Forward time: 0.48(0.47)  Batch time: 0.54(0.51)
+2025-10-04 14:26:03,127   INFO  Train:   23/40 ( 58%) [ 447/491 ( 91%)]  Loss: 3.018 (3.05)  LR: 9.582e-04  Time cost: 03:49/00:22 [2:20:24/1:11:29]  Acc_iter 11250       Data time: 0.04(0.04)  Forward time: 0.47(0.47)  Batch time: 0.51(0.51)
+2025-10-04 14:26:03,270   INFO
+2025-10-04 14:26:24,975   INFO  Train:   23/40 ( 58%) [ 490/491 (100%)]  Loss: 2.557 (3.04)  LR: 9.529e-04  Time cost: 04:10/00:00 [2:20:46/1:11:05]  Acc_iter 11293       Data time: 0.07(0.04)  Forward time: 0.17(0.47)  Batch time: 0.24(0.51)
+                                                                          2025-10-04 14:27:23,952   INFO  Validation Epoch 23: Average Loss = 2.8553
+epochs:  57%|█████▊    | 23/40 [2:21:45<1:42:32025-10-04 14:28:14,179   INFO  Train:   24/40 ( 60%) [   0/491 (  0%)]  Loss: 3.117 (3.12)  LR: 9.527e-04  Time cost: 00:02/19:53 [2:22:35/5:38:08]  Acc_iter 11294       Data time: 1.42(1.42)  Forward time: 0.48(0.48)  Batch time: 1.90(1.90)
+2025-10-04 14:28:17,098   INFO  Train:   24/40 ( 60%) [   6/491 (  1%)]  Loss: 3.003 (2.96)  LR: 9.520e-04  Time cost: 00:05/06:10 [2:22:38/1:46:15]  Acc_iter 11300       Data time: 0.01(0.28)  Forward time: 0.46(0.46)  Batch time: 0.47(0.75)
+2025-10-04 14:28:41,722   INFO  Train:   24/40 ( 60%) [  56/491 ( 11%)]  Loss: 3.042 (2.99)  LR: 9.457e-04  Time cost: 00:29/03:48 [2:23:03/1:12:39]  Acc_iter 11350       Data time: 0.05(0.06)  Forward time: 0.46(0.46)  Batch time: 0.51(0.52)
+2025-10-04 14:29:06,785   INFO  Train:   24/40 ( 60%) [ 106/491 ( 22%)]  Loss: 2.931 (2.97)  LR: 9.393e-04  Time cost: 00:55/03:18 [2:23:28/1:10:38]  Acc_iter 11400       Data time: 0.04(0.05)  Forward time: 0.47(0.46)  Batch time: 0.51(0.51)
+2025-10-04 14:29:06,922   INFO
+2025-10-04 14:29:32,071   INFO  Train:   24/40 ( 60%) [ 156/491 ( 32%)]  Loss: 2.849 (2.98)  LR: 9.329e-04  Time cost: 01:20/02:51 [2:23:53/1:09:50]  Acc_iter 11450       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.51)
+2025-10-04 14:29:58,415   INFO  Train:   24/40 ( 60%) [ 206/491 ( 42%)]  Loss: 2.991 (2.99)  LR: 9.264e-04  Time cost: 01:46/02:26 [2:24:20/1:09:55]  Acc_iter 11500       Data time: 0.01(0.05)  Forward time: 0.46(0.47)  Batch time: 0.47(0.51)
+2025-10-04 14:30:24,396   INFO  Train:   24/40 ( 60%) [ 256/491 ( 52%)]  Loss: 3.281 (2.99)  LR: 9.199e-04  Time cost: 02:12/02:01 [2:24:46/1:09:36]  Acc_iter 11550       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.54(0.52)
+2025-10-04 14:30:24,501   INFO
+2025-10-04 14:30:50,693   INFO  Train:   24/40 ( 60%) [ 306/491 ( 62%)]  Loss: 2.916 (3.00)  LR: 9.133e-04  Time cost: 02:38/01:35 [2:25:12/1:09:23]  Acc_iter 11600       Data time: 0.07(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 14:31:17,102   INFO  Train:   24/40 ( 60%) [ 356/491 ( 73%)]  Loss: 2.846 (3.00)  LR: 9.066e-04  Time cost: 03:05/01:10 [2:25:38/1:09:08]  Acc_iter 11650       Data time: 0.08(0.05)  Forward time: 0.48(0.47)  Batch time: 0.56(0.52)
+2025-10-04 14:31:42,813   INFO  Train:   24/40 ( 60%) [ 406/491 ( 83%)]  Loss: 2.853 (2.99)  LR: 8.999e-04  Time cost: 03:31/00:44 [2:26:04/1:08:38]  Acc_iter 11700       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:31:42,940   INFO
+2025-10-04 14:32:09,159   INFO  Train:   24/40 ( 60%) [ 456/491 ( 93%)]  Loss: 2.737 (2.99)  LR: 8.931e-04  Time cost: 03:57/00:18 [2:26:30/1:08:19]  Acc_iter 11750       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:32:26,454   INFO  Train:   24/40 ( 60%) [ 490/491 (100%)]  Loss: 2.329 (2.98)  LR: 8.885e-04  Time cost: 04:14/00:00 [2:26:48/1:07:55]  Acc_iter 11784       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 14:33:25,126   INFO  Validation Epoch 24: Average Loss = 2.7983
+epochs:  60%|██████    | 24/40 [2:27:46<1:36:22025-10-04 14:34:15,911   INFO  Train:   25/40 ( 62%) [   0/491 (  0%)]  Loss: 2.649 (2.65)  LR: 8.883e-04  Time cost: 00:03/25:54 [2:28:37/6:54:39]  Acc_iter 11785       Data time: 1.37(1.37)  Forward time: 0.49(0.49)  Batch time: 1.86(1.86)
+2025-10-04 14:34:23,165   INFO  Train:   25/40 ( 62%) [  15/491 (  3%)]  Loss: 3.233 (2.97)  LR: 8.863e-04  Time cost: 00:10/05:10 [2:28:44/1:25:07]  Acc_iter 11800       Data time: 0.02(0.16)  Forward time: 0.46(0.46)  Batch time: 0.48(0.63)
+2025-10-04 14:34:48,122   INFO  Train:   25/40 ( 62%) [  65/491 ( 13%)]  Loss: 3.045 (3.02)  LR: 8.794e-04  Time cost: 00:35/03:48 [2:29:09/1:09:36]  Acc_iter 11850       Data time: 0.04(0.07)  Forward time: 0.47(0.46)  Batch time: 0.50(0.53)
+2025-10-04 14:34:48,240   INFO
+2025-10-04 14:35:13,628   INFO  Train:   25/40 ( 62%) [ 115/491 ( 23%)]  Loss: 3.014 (2.97)  LR: 8.725e-04  Time cost: 01:00/03:17 [2:29:35/1:07:42]  Acc_iter 11900       Data time: 0.04(0.06)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:35:39,061   INFO  Train:   25/40 ( 62%) [ 165/491 ( 34%)]  Loss: 2.922 (2.96)  LR: 8.655e-04  Time cost: 01:26/02:49 [2:30:00/1:06:39]  Acc_iter 11950       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:36:05,176   INFO  Train:   25/40 ( 62%) [ 215/491 ( 44%)]  Loss: 2.574 (2.95)  LR: 8.585e-04  Time cost: 01:52/02:23 [2:30:26/1:06:17]  Acc_iter 12000       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:36:05,312   INFO
+2025-10-04 14:36:31,480   INFO  Train:   25/40 ( 62%) [ 265/491 ( 54%)]  Loss: 2.996 (2.95)  LR: 8.514e-04  Time cost: 02:18/01:57 [2:30:53/1:05:59]  Acc_iter 12050       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:36:57,139   INFO  Train:   25/40 ( 62%) [ 315/491 ( 64%)]  Loss: 3.883 (2.94)  LR: 8.443e-04  Time cost: 02:44/01:31 [2:31:18/1:05:23]  Acc_iter 12100       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:37:22,905   INFO  Train:   25/40 ( 62%) [ 365/491 ( 74%)]  Loss: 2.681 (2.95)  LR: 8.371e-04  Time cost: 03:10/01:05 [2:31:44/1:04:52]  Acc_iter 12150       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:37:23,047   INFO
+2025-10-04 14:37:49,291   INFO  Train:   25/40 ( 62%) [ 415/491 ( 85%)]  Loss: 2.883 (2.94)  LR: 8.299e-04  Time cost: 03:36/00:39 [2:32:10/1:04:33]  Acc_iter 12200       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:38:15,462   INFO  Train:   25/40 ( 62%) [ 465/491 ( 95%)]  Loss: 2.940 (2.94)  LR: 8.226e-04  Time cost: 04:02/00:13 [2:32:37/1:04:09]  Acc_iter 12250       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:38:28,243   INFO  Train:   25/40 ( 62%) [ 490/491 (100%)]  Loss: 3.994 (2.94)  LR: 8.190e-04  Time cost: 04:15/00:00 [2:32:49/1:03:53]  Acc_iter 12275       Data time: 0.06(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.52)
+                                                                          2025-10-04 14:39:26,835   INFO  Validation Epoch 25: Average Loss = 2.7421
+epochs:  62%|██████▎   | 25/40 [2:33:48<1:30:22025-10-04 14:40:17,393   INFO  Train:   26/40 ( 65%) [   0/491 (  0%)]  Loss: 3.000 (3.00)  LR: 8.189e-04  Time cost: 00:02/20:42 [2:34:39/5:10:42]  Acc_iter 12276       Data time: 1.40(1.40)  Forward time: 0.49(0.49)  Batch time: 1.89(1.89)
+2025-10-04 14:40:29,187   INFO  Train:   26/40 ( 65%) [  24/491 (  5%)]  Loss: 3.219 (2.89)  LR: 8.153e-04  Time cost: 00:14/04:27 [2:34:50/1:10:06]  Acc_iter 12300       Data time: 0.12(0.10)  Forward time: 0.45(0.46)  Batch time: 0.57(0.56)
+2025-10-04 14:40:29,312   INFO
+2025-10-04 14:40:54,806   INFO  Train:   26/40 ( 65%) [  74/491 ( 15%)]  Loss: 3.058 (2.92)  LR: 8.080e-04  Time cost: 00:39/03:42 [2:35:16/1:04:43]  Acc_iter 12350       Data time: 0.14(0.06)  Forward time: 0.45(0.47)  Batch time: 0.59(0.53)
+2025-10-04 14:41:19,874   INFO  Train:   26/40 ( 65%) [ 124/491 ( 25%)]  Loss: 2.654 (2.90)  LR: 8.006e-04  Time cost: 01:05/03:10 [2:35:41/1:02:46]  Acc_iter 12400       Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 14:41:45,687   INFO  Train:   26/40 ( 65%) [ 174/491 ( 35%)]  Loss: 2.536 (2.87)  LR: 7.932e-04  Time cost: 01:30/02:44 [2:36:07/1:02:12]  Acc_iter 12450       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:41:45,833   INFO
+2025-10-04 14:42:11,377   INFO  Train:   26/40 ( 65%) [ 224/491 ( 46%)]  Loss: 2.401 (2.87)  LR: 7.858e-04  Time cost: 01:56/02:18 [2:36:33/1:01:37]  Acc_iter 12500       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:42:37,207   INFO  Train:   26/40 ( 65%) [ 274/491 ( 56%)]  Loss: 2.838 (2.86)  LR: 7.783e-04  Time cost: 02:22/01:52 [2:36:58/1:01:10]  Acc_iter 12550       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 14:43:03,325   INFO  Train:   26/40 ( 65%) [ 324/491 ( 66%)]  Loss: 3.017 (2.86)  LR: 7.708e-04  Time cost: 02:48/01:26 [2:37:25/1:00:49]  Acc_iter 12600       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:43:03,470   INFO
+2025-10-04 14:43:29,789   INFO  Train:   26/40 ( 65%) [ 374/491 ( 76%)]  Loss: 2.458 (2.86)  LR: 7.633e-04  Time cost: 03:14/01:00 [2:37:51/1:00:33]  Acc_iter 12650       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:43:55,904   INFO  Train:   26/40 ( 65%) [ 424/491 ( 86%)]  Loss: 3.004 (2.85)  LR: 7.557e-04  Time cost: 03:41/00:34 [2:38:17/1:00:10]  Acc_iter 12700       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:44:22,832   INFO  Train:   26/40 ( 65%) [ 474/491 ( 97%)]  Loss: 2.900 (2.85)  LR: 7.481e-04  Time cost: 04:07/00:08 [2:38:44/59:57]  Acc_iter 12750       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:44:22,971   INFO
+2025-10-04 14:44:30,747   INFO  Train:   26/40 ( 65%) [ 490/491 (100%)]  Loss: 3.371 (2.85)  LR: 7.456e-04  Time cost: 04:15/00:00 [2:38:52/59:42]  Acc_iter 12766       Data time: 0.04(0.05)  Forward time: 0.17(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 14:45:29,608   INFO  Validation Epoch 26: Average Loss = 2.7412
+epochs:  65%|██████▌   | 26/40 [2:39:51<1:24:22025-10-04 14:46:20,158   INFO  Train:   27/40 ( 68%) [   0/491 (  0%)]  Loss: 2.627 (2.63)  LR: 7.455e-04  Time cost: 00:02/21:20 [2:40:41/4:58:52]  Acc_iter 12767       Data time: 1.44(1.44)  Forward time: 0.48(0.48)  Batch time: 1.92(1.92)
+2025-10-04 14:46:36,651   INFO  Train:   27/40 ( 68%) [  33/491 (  7%)]  Loss: 2.976 (2.86)  LR: 7.405e-04  Time cost: 00:19/04:17 [2:40:58/1:04:03]  Acc_iter 12800       Data time: 0.03(0.09)  Forward time: 0.46(0.46)  Batch time: 0.49(0.55)
+2025-10-04 14:47:01,689   INFO  Train:   27/40 ( 68%) [  83/491 ( 17%)]  Loss: 3.155 (2.83)  LR: 7.328e-04  Time cost: 00:44/03:34 [2:41:23/59:28]  Acc_iter 12850       Data time: 0.05(0.06)  Forward time: 0.47(0.46)  Batch time: 0.51(0.52)
+2025-10-04 14:47:27,282   INFO  Train:   27/40 ( 68%) [ 133/491 ( 27%)]  Loss: 2.909 (2.81)  LR: 7.251e-04  Time cost: 01:09/03:06 [2:41:48/58:27]  Acc_iter 12900       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 14:47:27,399   INFO
+2025-10-04 14:47:52,745   INFO  Train:   27/40 ( 68%) [ 183/491 ( 37%)]  Loss: 2.951 (2.82)  LR: 7.174e-04  Time cost: 01:35/02:39 [2:42:14/57:41]  Acc_iter 12950       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:48:18,478   INFO  Train:   27/40 ( 68%) [ 233/491 ( 47%)]  Loss: 3.007 (2.81)  LR: 7.097e-04  Time cost: 02:00/02:13 [2:42:40/57:12]  Acc_iter 13000       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:48:44,487   INFO  Train:   27/40 ( 68%) [ 283/491 ( 58%)]  Loss: 2.497 (2.80)  LR: 7.019e-04  Time cost: 02:26/01:47 [2:43:06/56:50]  Acc_iter 13050       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:48:44,599   INFO
+2025-10-04 14:49:10,804   INFO  Train:   27/40 ( 68%) [ 333/491 ( 68%)]  Loss: 3.069 (2.82)  LR: 6.942e-04  Time cost: 02:53/01:21 [2:43:32/56:32]  Acc_iter 13100       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:49:36,702   INFO  Train:   27/40 ( 68%) [ 383/491 ( 78%)]  Loss: 2.738 (2.82)  LR: 6.864e-04  Time cost: 03:19/00:56 [2:43:58/56:06]  Acc_iter 13150       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 14:50:03,426   INFO  Train:   27/40 ( 68%) [ 433/491 ( 88%)]  Loss: 3.252 (2.81)  LR: 6.786e-04  Time cost: 03:45/00:30 [2:44:25/55:52]  Acc_iter 13200       Data time: 0.09(0.05)  Forward time: 0.47(0.47)  Batch time: 0.56(0.52)
+2025-10-04 14:50:03,555   INFO
+2025-10-04 14:50:29,415   INFO  Train:   27/40 ( 68%) [ 483/491 ( 98%)]  Loss: 2.447 (2.80)  LR: 6.708e-04  Time cost: 04:11/00:04 [2:44:51/55:25]  Acc_iter 13250       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:50:32,674   INFO  Train:   27/40 ( 68%) [ 490/491 (100%)]  Loss: 2.131 (2.80)  LR: 6.697e-04  Time cost: 04:15/00:00 [2:44:54/55:17]  Acc_iter 13257       Data time: 0.05(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.52)
+                                                                         2025-10-04 14:51:31,389   INFO  Validation Epoch 27: Average Loss = 2.6306
+epochs:  68%|██████▊   | 27/40 [2:45:53<1:18:22025-10-04 14:52:21,767   INFO  Train:   28/40 ( 70%) [   0/491 (  0%)]  Loss: 2.673 (2.67)  LR: 6.695e-04  Time cost: 00:02/23:02 [2:46:43/4:59:31]  Acc_iter 13258       Data time: 1.35(1.35)  Forward time: 0.49(0.49)  Batch time: 1.84(1.84)
+2025-10-04 14:52:42,451   INFO  Train:   28/40 ( 70%) [  42/491 (  9%)]  Loss: 3.301 (2.75)  LR: 6.629e-04  Time cost: 00:23/04:05 [2:47:04/57:45]  Acc_iter 13300       Data time: 0.02(0.07)  Forward time: 0.46(0.46)  Batch time: 0.48(0.54)
+2025-10-04 14:53:08,274   INFO  Train:   28/40 ( 70%) [  92/491 ( 19%)]  Loss: 2.337 (2.75)  LR: 6.551e-04  Time cost: 00:49/03:31 [2:47:29/55:36]  Acc_iter 13350       Data time: 0.05(0.06)  Forward time: 0.47(0.47)  Batch time: 0.52(0.53)
+2025-10-04 14:53:08,408   INFO
+2025-10-04 14:53:34,215   INFO  Train:   28/40 ( 70%) [ 142/491 ( 29%)]  Loss: 2.702 (2.75)  LR: 6.472e-04  Time cost: 01:15/03:03 [2:47:55/54:44]  Acc_iter 13400       Data time: 0.14(0.06)  Forward time: 0.46(0.47)  Batch time: 0.60(0.52)
+2025-10-04 14:53:59,949   INFO  Train:   28/40 ( 70%) [ 192/491 ( 39%)]  Loss: 2.574 (2.76)  LR: 6.394e-04  Time cost: 01:40/02:36 [2:48:21/53:59]  Acc_iter 13450       Data time: 0.09(0.05)  Forward time: 0.47(0.47)  Batch time: 0.55(0.52)
+2025-10-04 14:54:26,150   INFO  Train:   28/40 ( 70%) [ 242/491 ( 49%)]  Loss: 2.379 (2.77)  LR: 6.315e-04  Time cost: 02:07/02:10 [2:48:47/53:34]  Acc_iter 13500       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:54:26,262   INFO
+2025-10-04 14:54:52,139   INFO  Train:   28/40 ( 70%) [ 292/491 ( 59%)]  Loss: 2.925 (2.76)  LR: 6.236e-04  Time cost: 02:33/01:44 [2:49:13/53:04]  Acc_iter 13550       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:55:18,349   INFO  Train:   28/40 ( 70%) [ 342/491 ( 70%)]  Loss: 2.342 (2.76)  LR: 6.157e-04  Time cost: 02:59/01:17 [2:49:40/52:39]  Acc_iter 13600       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 14:55:45,379   INFO  Train:   28/40 ( 70%) [ 392/491 ( 80%)]  Loss: 3.002 (2.76)  LR: 6.079e-04  Time cost: 03:26/00:52 [2:50:07/52:26]  Acc_iter 13650       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 14:55:45,527   INFO
+2025-10-04 14:56:11,966   INFO  Train:   28/40 ( 70%) [ 442/491 ( 90%)]  Loss: 2.431 (2.76)  LR: 6.000e-04  Time cost: 03:53/00:25 [2:50:33/52:04]  Acc_iter 13700       Data time: 0.07(0.05)  Forward time: 0.48(0.47)  Batch time: 0.55(0.53)
+2025-10-04 14:56:37,570   INFO  Train:   28/40 ( 70%) [ 490/491 (100%)]  Loss: 3.003 (2.76)  LR: 5.924e-04  Time cost: 04:18/00:00 [2:50:59/51:43]  Acc_iter 13748       Data time: 0.06(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.53)
+                                                                          2025-10-04 14:57:36,098   INFO  Validation Epoch 28: Average Loss = 2.4818
+epochs:  70%|███████   | 28/40 [2:51:57<1:12:32025-10-04 14:58:26,269   INFO  Train:   29/40 ( 72%) [   0/491 (  0%)]  Loss: 2.918 (2.92)  LR: 5.922e-04  Time cost: 00:02/19:41 [2:52:47/3:56:23]  Acc_iter 13749       Data time: 1.53(1.53)  Forward time: 0.49(0.49)  Batch time: 2.01(2.01)
+2025-10-04 14:58:26,757   INFO  Train:   29/40 ( 72%) [   1/491 (  0%)]  Loss: 2.618 (2.77)  LR: 5.921e-04  Time cost: 00:02/11:49 [2:52:48/2:22:08]  Acc_iter 13750       Data time: 0.41(0.97)  Forward time: 0.46(0.47)  Batch time: 0.87(1.44)
+2025-10-04 14:58:51,397   INFO  Train:   29/40 ( 72%) [  51/491 ( 10%)]  Loss: 2.659 (2.72)  LR: 5.842e-04  Time cost: 00:27/03:52 [2:53:13/51:33]  Acc_iter 13800       Data time: 0.03(0.07)  Forward time: 0.47(0.46)  Batch time: 0.50(0.53)
+2025-10-04 14:58:51,548   INFO
+2025-10-04 14:59:16,698   INFO  Train:   29/40 ( 72%) [ 101/491 ( 21%)]  Loss: 2.574 (2.71)  LR: 5.763e-04  Time cost: 00:52/03:22 [2:53:38/49:59]  Acc_iter 13850       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 14:59:42,439   INFO  Train:   29/40 ( 72%) [ 151/491 ( 31%)]  Loss: 2.911 (2.71)  LR: 5.684e-04  Time cost: 01:18/02:55 [2:54:04/49:27]  Acc_iter 13900       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:00:08,467   INFO  Train:   29/40 ( 72%) [ 201/491 ( 41%)]  Loss: 2.639 (2.70)  LR: 5.605e-04  Time cost: 01:44/02:30 [2:54:30/49:07]  Acc_iter 13950       Data time: 0.13(0.05)  Forward time: 0.46(0.47)  Batch time: 0.58(0.52)
+2025-10-04 15:00:08,601   INFO
+2025-10-04 15:00:34,255   INFO  Train:   29/40 ( 72%) [ 251/491 ( 51%)]  Loss: 3.191 (2.71)  LR: 5.526e-04  Time cost: 02:10/02:04 [2:54:55/48:38]  Acc_iter 14000       Data time: 0.06(0.05)  Forward time: 0.46(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:01:00,297   INFO  Train:   29/40 ( 72%) [ 301/491 ( 61%)]  Loss: 3.057 (2.72)  LR: 5.448e-04  Time cost: 02:36/01:38 [2:55:21/48:16]  Acc_iter 14050       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:01:26,167   INFO  Train:   29/40 ( 72%) [ 351/491 ( 71%)]  Loss: 2.557 (2.72)  LR: 5.369e-04  Time cost: 03:02/01:12 [2:55:47/47:49]  Acc_iter 14100       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:01:26,306   INFO
+2025-10-04 15:01:52,795   INFO  Train:   29/40 ( 72%) [ 401/491 ( 82%)]  Loss: 2.723 (2.71)  LR: 5.290e-04  Time cost: 03:28/00:46 [2:56:14/47:33]  Acc_iter 14150       Data time: 0.03(0.05)  Forward time: 0.49(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:02:19,102   INFO  Train:   29/40 ( 72%) [ 451/491 ( 92%)]  Loss: 2.574 (2.71)  LR: 5.212e-04  Time cost: 03:55/00:20 [2:56:40/47:11]  Acc_iter 14200       Data time: 0.10(0.05)  Forward time: 0.48(0.47)  Batch time: 0.58(0.52)
+2025-10-04 15:02:39,495   INFO  Train:   29/40 ( 72%) [ 490/491 (100%)]  Loss: 2.275 (2.71)  LR: 5.151e-04  Time cost: 04:15/00:00 [2:57:01/46:52]  Acc_iter 14239       Data time: 0.04(0.05)  Forward time: 0.17(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 15:03:38,163   INFO  Validation Epoch 29: Average Loss = 2.4713
+epochs:  72%|███████▎  | 29/40 [2:57:59<1:06:22025-10-04 15:04:28,693   INFO  Train:   30/40 ( 75%) [   0/491 (  0%)]  Loss: 2.796 (2.80)  LR: 5.149e-04  Time cost: 00:02/21:50 [2:58:50/4:00:11]  Acc_iter 14240       Data time: 1.38(1.38)  Forward time: 0.49(0.49)  Batch time: 1.87(1.87)
+2025-10-04 15:04:33,635   INFO  Train:   30/40 ( 75%) [  10/491 (  2%)]  Loss: 2.879 (2.70)  LR: 5.134e-04  Time cost: 00:07/05:32 [2:58:55/1:02:09]  Acc_iter 14250       Data time: 0.04(0.20)  Forward time: 0.47(0.47)  Batch time: 0.51(0.66)
+2025-10-04 15:04:33,774   INFO
+2025-10-04 15:04:58,870   INFO  Train:   30/40 ( 75%) [  60/491 ( 12%)]  Loss: 2.724 (2.71)  LR: 5.055e-04  Time cost: 00:32/03:52 [2:59:20/47:55]  Acc_iter 14300       Data time: 0.03(0.07)  Forward time: 0.46(0.47)  Batch time: 0.49(0.53)
+2025-10-04 15:05:23,881   INFO  Train:   30/40 ( 75%) [ 110/491 ( 22%)]  Loss: 2.612 (2.71)  LR: 4.977e-04  Time cost: 00:57/03:18 [2:59:45/45:57]  Acc_iter 14350       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:05:49,880   INFO  Train:   30/40 ( 75%) [ 160/491 ( 33%)]  Loss: 2.454 (2.70)  LR: 4.900e-04  Time cost: 01:23/02:52 [3:00:11/45:29]  Acc_iter 14400       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:05:50,018   INFO
+2025-10-04 15:06:15,762   INFO  Train:   30/40 ( 75%) [ 210/491 ( 43%)]  Loss: 2.921 (2.68)  LR: 4.822e-04  Time cost: 01:49/02:26 [3:00:37/44:59]  Acc_iter 14450       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:06:42,033   INFO  Train:   30/40 ( 75%) [ 260/491 ( 53%)]  Loss: 2.339 (2.69)  LR: 4.744e-04  Time cost: 02:16/02:00 [3:01:03/44:39]  Acc_iter 14500       Data time: 0.08(0.05)  Forward time: 0.46(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:07:08,310   INFO  Train:   30/40 ( 75%) [ 310/491 ( 63%)]  Loss: 2.257 (2.69)  LR: 4.667e-04  Time cost: 02:42/01:34 [3:01:29/44:16]  Acc_iter 14550       Data time: 0.02(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:07:08,441   INFO
+2025-10-04 15:07:35,053   INFO  Train:   30/40 ( 75%) [ 360/491 ( 73%)]  Loss: 2.463 (2.68)  LR: 4.590e-04  Time cost: 03:09/01:08 [3:01:56/43:59]  Acc_iter 14600       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:08:01,216   INFO  Train:   30/40 ( 75%) [ 410/491 ( 84%)]  Loss: 2.692 (2.67)  LR: 4.513e-04  Time cost: 03:35/00:42 [3:02:22/43:33]  Acc_iter 14650       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:08:28,179   INFO  Train:   30/40 ( 75%) [ 460/491 ( 94%)]  Loss: 2.368 (2.67)  LR: 4.437e-04  Time cost: 04:02/00:16 [3:02:49/43:15]  Acc_iter 14700       Data time: 0.14(0.05)  Forward time: 0.48(0.47)  Batch time: 0.62(0.52)
+2025-10-04 15:08:28,282   INFO
+2025-10-04 15:08:43,618   INFO  Train:   30/40 ( 75%) [ 490/491 (100%)]  Loss: 3.051 (2.67)  LR: 4.391e-04  Time cost: 04:17/00:00 [3:03:05/42:56]  Acc_iter 14730       Data time: 0.06(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.52)
+                                                                          2025-10-04 15:09:42,800   INFO  Validation Epoch 30: Average Loss = 2.4014
+epochs:  75%|███████▌  | 30/40 [3:04:04<1:00:32025-10-04 15:10:32,907   INFO  Train:   31/40 ( 78%) [   0/491 (  0%)]  Loss: 2.404 (2.40)  LR: 4.389e-04  Time cost: 00:02/17:27 [3:04:54/2:54:33]  Acc_iter 14731       Data time: 1.39(1.39)  Forward time: 0.49(0.49)  Batch time: 1.88(1.88)
+2025-10-04 15:10:42,219   INFO  Train:   31/40 ( 78%) [  19/491 (  4%)]  Loss: 2.645 (2.57)  LR: 4.361e-04  Time cost: 00:11/04:30 [3:05:03/46:39]  Acc_iter 14750       Data time: 0.02(0.12)  Forward time: 0.46(0.47)  Batch time: 0.48(0.59)
+2025-10-04 15:11:07,741   INFO  Train:   31/40 ( 78%) [  69/491 ( 14%)]  Loss: 2.451 (2.61)  LR: 4.285e-04  Time cost: 00:36/03:42 [3:05:29/42:36]  Acc_iter 14800       Data time: 0.04(0.07)  Forward time: 0.46(0.47)  Batch time: 0.49(0.53)
+2025-10-04 15:11:33,111   INFO  Train:   31/40 ( 78%) [ 119/491 ( 24%)]  Loss: 2.510 (2.62)  LR: 4.209e-04  Time cost: 01:02/03:13 [3:05:54/41:28]  Acc_iter 14850       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:11:33,245   INFO
+2025-10-04 15:11:59,114   INFO  Train:   31/40 ( 78%) [ 169/491 ( 34%)]  Loss: 2.007 (2.62)  LR: 4.133e-04  Time cost: 01:28/02:47 [3:06:20/41:03]  Acc_iter 14900       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:12:24,642   INFO  Train:   31/40 ( 78%) [ 219/491 ( 45%)]  Loss: 2.608 (2.62)  LR: 4.058e-04  Time cost: 01:53/02:20 [3:06:46/40:27]  Acc_iter 14950       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:12:50,646   INFO  Train:   31/40 ( 78%) [ 269/491 ( 55%)]  Loss: 2.490 (2.63)  LR: 3.984e-04  Time cost: 02:19/01:55 [3:07:12/40:04]  Acc_iter 15000       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:12:50,789   INFO
+2025-10-04 15:13:17,045   INFO  Train:   31/40 ( 78%) [ 319/491 ( 65%)]  Loss: 2.172 (2.63)  LR: 3.909e-04  Time cost: 02:46/01:29 [3:07:38/39:45]  Acc_iter 15050       Data time: 0.16(0.05)  Forward time: 0.47(0.47)  Batch time: 0.63(0.52)
+2025-10-04 15:13:43,254   INFO  Train:   31/40 ( 78%) [ 369/491 ( 75%)]  Loss: 2.515 (2.62)  LR: 3.835e-04  Time cost: 03:12/01:03 [3:08:04/39:22]  Acc_iter 15100       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:14:09,692   INFO  Train:   31/40 ( 78%) [ 419/491 ( 85%)]  Loss: 2.279 (2.62)  LR: 3.761e-04  Time cost: 03:38/00:37 [3:08:31/39:00]  Acc_iter 15150       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:14:09,808   INFO
+2025-10-04 15:14:36,316   INFO  Train:   31/40 ( 78%) [ 469/491 ( 96%)]  Loss: 2.584 (2.61)  LR: 3.688e-04  Time cost: 04:05/00:11 [3:08:57/38:40]  Acc_iter 15200       Data time: 0.08(0.05)  Forward time: 0.47(0.47)  Batch time: 0.56(0.52)
+2025-10-04 15:14:47,178   INFO  Train:   31/40 ( 78%) [ 490/491 (100%)]  Loss: 3.048 (2.62)  LR: 3.657e-04  Time cost: 04:16/00:00 [3:09:08/38:28]  Acc_iter 15221       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 15:15:46,247   INFO  Validation Epoch 31: Average Loss = 2.4267
+epochs:  78%|███████▊  | 31/40 [3:10:08<54:29,2025-10-04 15:16:36,073   INFO  Train:   32/40 ( 80%) [   0/491 (  0%)]  Loss: 2.703 (2.70)  LR: 3.656e-04  Time cost: 00:01/15:22 [3:10:57/2:18:23]  Acc_iter 15222       Data time: 1.31(1.31)  Forward time: 0.49(0.49)  Batch time: 1.80(1.80)
+2025-10-04 15:16:50,054   INFO  Train:   32/40 ( 80%) [  28/491 (  6%)]  Loss: 2.549 (2.61)  LR: 3.615e-04  Time cost: 00:15/04:13 [3:11:11/40:01]  Acc_iter 15250       Data time: 0.02(0.08)  Forward time: 0.47(0.47)  Batch time: 0.49(0.55)
+2025-10-04 15:17:15,087   INFO  Train:   32/40 ( 80%) [  78/491 ( 16%)]  Loss: 2.540 (2.59)  LR: 3.543e-04  Time cost: 00:40/03:33 [3:11:36/37:27]  Acc_iter 15300       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:17:15,207   INFO
+2025-10-04 15:17:40,800   INFO  Train:   32/40 ( 80%) [ 128/491 ( 26%)]  Loss: 3.024 (2.59)  LR: 3.471e-04  Time cost: 01:06/03:07 [3:12:02/36:55]  Acc_iter 15350       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:18:06,362   INFO  Train:   32/40 ( 80%) [ 178/491 ( 36%)]  Loss: 2.684 (2.58)  LR: 3.399e-04  Time cost: 01:32/02:41 [3:12:28/36:23]  Acc_iter 15400       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:18:32,531   INFO  Train:   32/40 ( 80%) [ 228/491 ( 46%)]  Loss: 2.559 (2.58)  LR: 3.328e-04  Time cost: 01:58/02:15 [3:12:54/36:05]  Acc_iter 15450       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:18:32,634   INFO
+2025-10-04 15:18:58,675   INFO  Train:   32/40 ( 80%) [ 278/491 ( 57%)]  Loss: 2.466 (2.58)  LR: 3.257e-04  Time cost: 02:24/01:50 [3:13:20/35:44]  Acc_iter 15500       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:19:25,015   INFO  Train:   32/40 ( 80%) [ 328/491 ( 67%)]  Loss: 2.598 (2.57)  LR: 3.187e-04  Time cost: 02:50/01:24 [3:13:46/35:24]  Acc_iter 15550       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:19:51,210   INFO  Train:   32/40 ( 80%) [ 378/491 ( 77%)]  Loss: 2.264 (2.57)  LR: 3.117e-04  Time cost: 03:17/00:58 [3:14:12/35:00]  Acc_iter 15600       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:19:51,349   INFO
+2025-10-04 15:20:18,152   INFO  Train:   32/40 ( 80%) [ 428/491 ( 87%)]  Loss: 2.597 (2.57)  LR: 3.048e-04  Time cost: 03:43/00:32 [3:14:39/34:43]  Acc_iter 15650       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:20:44,687   INFO  Train:   32/40 ( 80%) [ 478/491 ( 97%)]  Loss: 2.670 (2.56)  LR: 2.979e-04  Time cost: 04:10/00:06 [3:15:06/34:20]  Acc_iter 15700       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:20:50,675   INFO  Train:   32/40 ( 80%) [ 490/491 (100%)]  Loss: 2.673 (2.56)  LR: 2.963e-04  Time cost: 04:16/00:00 [3:15:12/34:12]  Acc_iter 15712       Data time: 0.06(0.05)  Forward time: 0.17(0.47)  Batch time: 0.23(0.52)
+                                                                          2025-10-04 15:21:48,913   INFO  Validation Epoch 32: Average Loss = 2.3945
+epochs:  80%|████████  | 32/40 [3:16:10<48:24,2025-10-04 15:22:39,641   INFO  Train:   33/40 ( 82%) [   0/491 (  0%)]  Loss: 2.358 (2.36)  LR: 2.961e-04  Time cost: 00:02/23:39 [3:17:01/3:09:13]  Acc_iter 15713       Data time: 1.36(1.36)  Forward time: 0.48(0.48)  Batch time: 1.85(1.85)
+2025-10-04 15:22:57,787   INFO  Train:   33/40 ( 82%) [  37/491 (  8%)]  Loss: 2.902 (2.56)  LR: 2.911e-04  Time cost: 00:21/04:11 [3:17:19/35:53]  Acc_iter 15750       Data time: 0.03(0.07)  Forward time: 0.48(0.46)  Batch time: 0.51(0.54)
+2025-10-04 15:22:57,945   INFO
+2025-10-04 15:23:23,246   INFO  Train:   33/40 ( 82%) [  87/491 ( 18%)]  Loss: 2.140 (2.54)  LR: 2.843e-04  Time cost: 00:46/03:33 [3:17:44/33:49]  Acc_iter 15800       Data time: 0.09(0.05)  Forward time: 0.50(0.47)  Batch time: 0.59(0.52)
+2025-10-04 15:23:49,654   INFO  Train:   33/40 ( 82%) [ 137/491 ( 28%)]  Loss: 2.356 (2.53)  LR: 2.776e-04  Time cost: 01:12/03:07 [3:18:11/33:22]  Acc_iter 15850       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:24:15,122   INFO  Train:   33/40 ( 82%) [ 187/491 ( 38%)]  Loss: 2.624 (2.54)  LR: 2.709e-04  Time cost: 01:38/02:39 [3:18:36/32:37]  Acc_iter 15900       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:24:15,251   INFO
+2025-10-04 15:24:41,234   INFO  Train:   33/40 ( 82%) [ 237/491 ( 48%)]  Loss: 2.580 (2.53)  LR: 2.643e-04  Time cost: 02:04/02:12 [3:19:02/32:10]  Acc_iter 15950       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:25:07,452   INFO  Train:   33/40 ( 82%) [ 287/491 ( 58%)]  Loss: 2.065 (2.54)  LR: 2.578e-04  Time cost: 02:30/01:46 [3:19:29/31:45]  Acc_iter 16000       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:25:34,007   INFO  Train:   33/40 ( 82%) [ 337/491 ( 69%)]  Loss: 2.675 (2.53)  LR: 2.513e-04  Time cost: 02:57/01:20 [3:19:55/31:23]  Acc_iter 16050       Data time: 0.14(0.05)  Forward time: 0.48(0.47)  Batch time: 0.62(0.52)
+2025-10-04 15:25:34,121   INFO
+2025-10-04 15:26:00,308   INFO  Train:   33/40 ( 82%) [ 387/491 ( 79%)]  Loss: 2.378 (2.52)  LR: 2.449e-04  Time cost: 03:23/00:54 [3:20:21/30:57]  Acc_iter 16100       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:26:26,407   INFO  Train:   33/40 ( 82%) [ 437/491 ( 89%)]  Loss: 2.367 (2.53)  LR: 2.385e-04  Time cost: 03:49/00:28 [3:20:48/30:30]  Acc_iter 16150       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:26:52,960   INFO  Train:   33/40 ( 82%) [ 487/491 ( 99%)]  Loss: 2.791 (2.53)  LR: 2.322e-04  Time cost: 04:16/00:02 [3:21:14/30:06]  Acc_iter 16200       Data time: 0.06(0.05)  Forward time: 0.46(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:26:53,061   INFO
+2025-10-04 15:26:54,250   INFO  Train:   33/40 ( 82%) [ 490/491 (100%)]  Loss: 2.654 (2.53)  LR: 2.318e-04  Time cost: 04:17/00:00 [3:21:15/30:03]  Acc_iter 16203       Data time: 0.05(0.05)  Forward time: 0.16(0.47)  Batch time: 0.22(0.52)
+                                                                          2025-10-04 15:27:53,306   INFO  Validation Epoch 33: Average Loss = 2.3295
+epochs:  82%|████████▎ | 33/40 [3:22:15<42:24,2025-10-04 15:28:43,097   INFO  Train:   34/40 ( 85%) [   0/491 (  0%)]  Loss: 2.656 (2.66)  LR: 2.317e-04  Time cost: 00:01/15:11 [3:23:04/1:46:22]  Acc_iter 16204       Data time: 1.33(1.33)  Forward time: 0.49(0.49)  Batch time: 1.82(1.82)
+2025-10-04 15:29:05,787   INFO  Train:   34/40 ( 85%) [  46/491 (  9%)]  Loss: 2.279 (2.48)  LR: 2.260e-04  Time cost: 00:24/03:52 [3:23:27/29:31]  Acc_iter 16250       Data time: 0.03(0.06)  Forward time: 0.47(0.46)  Batch time: 0.49(0.53)
+2025-10-04 15:29:31,574   INFO  Train:   34/40 ( 85%) [  96/491 ( 20%)]  Loss: 2.784 (2.47)  LR: 2.198e-04  Time cost: 00:50/03:24 [3:23:53/28:53]  Acc_iter 16300       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:29:57,175   INFO  Train:   34/40 ( 85%) [ 146/491 ( 30%)]  Loss: 2.460 (2.48)  LR: 2.137e-04  Time cost: 01:15/02:58 [3:24:18/28:20]  Acc_iter 16350       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 15:29:57,288   INFO
+2025-10-04 15:30:23,021   INFO  Train:   34/40 ( 85%) [ 196/491 ( 40%)]  Loss: 2.422 (2.49)  LR: 2.077e-04  Time cost: 01:41/02:32 [3:24:44/27:54]  Acc_iter 16400       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:30:48,769   INFO  Train:   34/40 ( 85%) [ 246/491 ( 50%)]  Loss: 2.369 (2.50)  LR: 2.017e-04  Time cost: 02:07/02:06 [3:25:10/27:27]  Acc_iter 16450       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:31:15,049   INFO  Train:   34/40 ( 85%) [ 296/491 ( 60%)]  Loss: 2.428 (2.50)  LR: 1.958e-04  Time cost: 02:33/01:40 [3:25:36/27:06]  Acc_iter 16500       Data time: 0.05(0.05)  Forward time: 0.49(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:31:15,178   INFO
+2025-10-04 15:31:41,386   INFO  Train:   34/40 ( 85%) [ 346/491 ( 70%)]  Loss: 2.546 (2.50)  LR: 1.900e-04  Time cost: 03:00/01:15 [3:26:03/26:44]  Acc_iter 16550       Data time: 0.05(0.05)  Forward time: 0.49(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:32:07,649   INFO  Train:   34/40 ( 85%) [ 396/491 ( 81%)]  Loss: 2.790 (2.50)  LR: 1.842e-04  Time cost: 03:26/00:49 [3:26:29/26:21]  Acc_iter 16600       Data time: 0.07(0.05)  Forward time: 0.50(0.47)  Batch time: 0.57(0.52)
+2025-10-04 15:32:34,112   INFO  Train:   34/40 ( 85%) [ 446/491 ( 91%)]  Loss: 2.243 (2.49)  LR: 1.785e-04  Time cost: 03:52/00:23 [3:26:55/25:58]  Acc_iter 16650       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:32:34,225   INFO
+2025-10-04 15:32:58,178   INFO  Train:   34/40 ( 85%) [ 490/491 (100%)]  Loss: 2.395 (2.49)  LR: 1.736e-04  Time cost: 04:16/00:00 [3:27:19/25:42]  Acc_iter 16694       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.20(0.52)
+                                                                          2025-10-04 15:33:57,232   INFO  Validation Epoch 34: Average Loss = 2.2912
+epochs:  85%|████████▌ | 34/40 [3:28:18<36:21,2025-10-04 15:34:47,022   INFO  Train:   35/40 ( 88%) [   0/491 (  0%)]  Loss: 2.765 (2.77)  LR: 1.735e-04  Time cost: 00:02/16:35 [3:29:08/1:39:30]  Acc_iter 16695       Data time: 1.32(1.32)  Forward time: 0.48(0.48)  Batch time: 1.80(1.80)
+2025-10-04 15:34:49,482   INFO  Train:   35/40 ( 88%) [   5/491 (  1%)]  Loss: 2.432 (2.47)  LR: 1.729e-04  Time cost: 00:04/06:03 [3:29:11/36:39]  Acc_iter 16700       Data time: 0.02(0.33)  Forward time: 0.47(0.47)  Batch time: 0.49(0.79)
+2025-10-04 15:35:14,385   INFO  Train:   35/40 ( 88%) [  55/491 ( 11%)]  Loss: 2.181 (2.48)  LR: 1.674e-04  Time cost: 00:29/03:48 [3:29:36/25:17]  Acc_iter 16750       Data time: 0.04(0.07)  Forward time: 0.46(0.46)  Batch time: 0.50(0.53)
+2025-10-04 15:35:39,802   INFO  Train:   35/40 ( 88%) [ 105/491 ( 21%)]  Loss: 2.976 (2.46)  LR: 1.619e-04  Time cost: 00:54/03:19 [3:30:01/24:28]  Acc_iter 16800       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:35:39,922   INFO
+2025-10-04 15:36:05,737   INFO  Train:   35/40 ( 88%) [ 155/491 ( 32%)]  Loss: 2.730 (2.45)  LR: 1.565e-04  Time cost: 01:20/02:53 [3:30:27/24:04]  Acc_iter 16850       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:36:31,597   INFO  Train:   35/40 ( 88%) [ 205/491 ( 42%)]  Loss: 2.915 (2.46)  LR: 1.512e-04  Time cost: 01:46/02:28 [3:30:53/23:38]  Acc_iter 16900       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:36:57,559   INFO  Train:   35/40 ( 88%) [ 255/491 ( 52%)]  Loss: 2.312 (2.45)  LR: 1.460e-04  Time cost: 02:12/02:02 [3:31:19/23:13]  Acc_iter 16950       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 15:36:57,690   INFO
+2025-10-04 15:37:24,491   INFO  Train:   35/40 ( 88%) [ 305/491 ( 62%)]  Loss: 2.388 (2.45)  LR: 1.408e-04  Time cost: 02:39/01:36 [3:31:46/22:56]  Acc_iter 17000       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:37:50,502   INFO  Train:   35/40 ( 88%) [ 355/491 ( 72%)]  Loss: 2.458 (2.45)  LR: 1.358e-04  Time cost: 03:05/01:10 [3:32:12/22:30]  Acc_iter 17050       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.55(0.52)
+2025-10-04 15:38:17,125   INFO  Train:   35/40 ( 88%) [ 405/491 ( 82%)]  Loss: 2.462 (2.45)  LR: 1.308e-04  Time cost: 03:32/00:44 [3:32:38/22:07]  Acc_iter 17100       Data time: 0.07(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:38:17,247   INFO
+2025-10-04 15:38:44,471   INFO  Train:   35/40 ( 88%) [ 455/491 ( 93%)]  Loss: 2.998 (2.44)  LR: 1.259e-04  Time cost: 03:59/00:18 [3:33:06/21:48]  Acc_iter 17150       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.53)
+2025-10-04 15:39:02,640   INFO  Train:   35/40 ( 88%) [ 490/491 (100%)]  Loss: 2.570 (2.44)  LR: 1.225e-04  Time cost: 04:17/00:00 [3:33:24/21:28]  Acc_iter 17185       Data time: 0.05(0.05)  Forward time: 0.16(0.47)  Batch time: 0.21(0.53)
+                                                                          2025-10-04 15:40:01,454   INFO  Validation Epoch 35: Average Loss = 2.2599
+epochs:  88%|████████▊ | 35/40 [3:34:23<30:18,2025-10-04 15:40:51,236   INFO  Train:   36/40 ( 90%) [   0/491 (  0%)]  Loss: 2.406 (2.41)  LR: 1.224e-04  Time cost: 00:02/18:37 [3:35:12/1:33:08]  Acc_iter 17186       Data time: 1.35(1.35)  Forward time: 0.51(0.51)  Batch time: 1.86(1.86)
+2025-10-04 15:40:58,170   INFO  Train:   36/40 ( 90%) [  14/491 (  3%)]  Loss: 2.415 (2.40)  LR: 1.210e-04  Time cost: 00:09/04:52 [3:35:19/24:58]  Acc_iter 17200       Data time: 0.02(0.14)  Forward time: 0.47(0.47)  Batch time: 0.49(0.61)
+2025-10-04 15:41:22,964   INFO  Train:   36/40 ( 90%) [  64/491 ( 13%)]  Loss: 2.786 (2.45)  LR: 1.163e-04  Time cost: 00:34/03:43 [3:35:44/20:50]  Acc_iter 17250       Data time: 0.04(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:41:23,103   INFO
+2025-10-04 15:41:48,464   INFO  Train:   36/40 ( 90%) [ 114/491 ( 23%)]  Loss: 2.349 (2.44)  LR: 1.117e-04  Time cost: 00:59/03:15 [3:36:10/20:11]  Acc_iter 17300       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:42:14,061   INFO  Train:   36/40 ( 90%) [ 164/491 ( 33%)]  Loss: 2.158 (2.43)  LR: 1.071e-04  Time cost: 01:25/02:48 [3:36:35/19:41]  Acc_iter 17350       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:42:39,777   INFO  Train:   36/40 ( 90%) [ 214/491 ( 44%)]  Loss: 2.746 (2.45)  LR: 1.026e-04  Time cost: 01:50/02:22 [3:37:01/19:15]  Acc_iter 17400       Data time: 0.05(0.05)  Forward time: 0.46(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:42:39,873   INFO
+2025-10-04 15:43:05,951   INFO  Train:   36/40 ( 90%) [ 264/491 ( 54%)]  Loss: 2.494 (2.45)  LR: 9.820e-05  Time cost: 02:16/01:57 [3:37:27/18:52]  Acc_iter 17450       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:43:32,011   INFO  Train:   36/40 ( 90%) [ 314/491 ( 64%)]  Loss: 2.337 (2.46)  LR: 9.389e-05  Time cost: 02:43/01:31 [3:37:53/18:28]  Acc_iter 17500       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:43:58,400   INFO  Train:   36/40 ( 90%) [ 364/491 ( 74%)]  Loss: 2.322 (2.44)  LR: 8.967e-05  Time cost: 03:09/01:05 [3:38:20/18:05]  Acc_iter 17550       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:43:58,542   INFO
+2025-10-04 15:44:24,891   INFO  Train:   36/40 ( 90%) [ 414/491 ( 84%)]  Loss: 2.485 (2.44)  LR: 8.554e-05  Time cost: 03:35/00:40 [3:38:46/17:41]  Acc_iter 17600       Data time: 0.07(0.05)  Forward time: 0.48(0.47)  Batch time: 0.55(0.52)
+2025-10-04 15:44:51,585   INFO  Train:   36/40 ( 90%) [ 464/491 ( 95%)]  Loss: 2.580 (2.44)  LR: 8.150e-05  Time cost: 04:02/00:14 [3:39:13/17:18]  Acc_iter 17650       Data time: 0.07(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.52)
+2025-10-04 15:45:04,744   INFO  Train:   36/40 ( 90%) [ 490/491 (100%)]  Loss: 2.572 (2.44)  LR: 7.943e-05  Time cost: 04:15/00:00 [3:39:26/17:03]  Acc_iter 17676       Data time: 0.05(0.05)  Forward time: 0.16(0.47)  Batch time: 0.21(0.52)
+                                                                          2025-10-04 15:46:02,937   INFO  Validation Epoch 36: Average Loss = 2.2750
+epochs:  90%|█████████ | 36/40 [3:40:24<24:12,2025-10-04 15:46:53,445   INFO  Train:   37/40 ( 92%) [   0/491 (  0%)]  Loss: 2.398 (2.40)  LR: 7.935e-05  Time cost: 00:02/21:41 [3:41:15/1:26:47]  Acc_iter 17677       Data time: 1.15(1.15)  Forward time: 0.48(0.48)  Batch time: 1.64(1.64)
+2025-10-04 15:47:04,839   INFO  Train:   37/40 ( 92%) [  23/491 (  5%)]  Loss: 2.040 (2.43)  LR: 7.755e-05  Time cost: 00:14/04:33 [3:41:26/18:55]  Acc_iter 17700       Data time: 0.02(0.10)  Forward time: 0.47(0.46)  Batch time: 0.48(0.56)
+2025-10-04 15:47:04,975   INFO
+2025-10-04 15:47:30,073   INFO  Train:   37/40 ( 92%) [  73/491 ( 15%)]  Loss: 2.107 (2.42)  LR: 7.369e-05  Time cost: 00:39/03:41 [3:41:51/16:43]  Acc_iter 17750       Data time: 0.03(0.06)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 15:47:55,711   INFO  Train:   37/40 ( 92%) [ 123/491 ( 25%)]  Loss: 2.421 (2.42)  LR: 6.992e-05  Time cost: 01:04/03:12 [3:42:17/16:03]  Acc_iter 17800       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:48:21,565   INFO  Train:   37/40 ( 92%) [ 173/491 ( 35%)]  Loss: 2.402 (2.43)  LR: 6.625e-05  Time cost: 01:30/02:45 [3:42:43/15:34]  Acc_iter 17850       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:48:21,704   INFO
+2025-10-04 15:48:47,815   INFO  Train:   37/40 ( 92%) [ 223/491 ( 45%)]  Loss: 2.183 (2.43)  LR: 6.267e-05  Time cost: 01:57/02:20 [3:43:09/15:09]  Acc_iter 17900       Data time: 0.04(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:49:13,919   INFO  Train:   37/40 ( 92%) [ 273/491 ( 56%)]  Loss: 2.659 (2.44)  LR: 5.918e-05  Time cost: 02:23/01:53 [3:43:35/14:43]  Acc_iter 17950       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:49:40,237   INFO  Train:   37/40 ( 92%) [ 323/491 ( 66%)]  Loss: 2.509 (2.44)  LR: 5.579e-05  Time cost: 02:49/01:27 [3:44:01/14:18]  Acc_iter 18000       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:49:40,365   INFO
+2025-10-04 15:50:07,693   INFO  Train:   37/40 ( 92%) [ 373/491 ( 76%)]  Loss: 2.092 (2.43)  LR: 5.249e-05  Time cost: 03:16/01:02 [3:44:29/13:57]  Acc_iter 18050       Data time: 0.06(0.05)  Forward time: 0.46(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:50:34,626   INFO  Train:   37/40 ( 92%) [ 423/491 ( 86%)]  Loss: 2.200 (2.43)  LR: 4.929e-05  Time cost: 03:43/00:35 [3:44:56/13:33]  Acc_iter 18100       Data time: 0.08(0.05)  Forward time: 0.47(0.47)  Batch time: 0.54(0.53)
+2025-10-04 15:51:00,920   INFO  Train:   37/40 ( 92%) [ 473/491 ( 96%)]  Loss: 2.647 (2.43)  LR: 4.618e-05  Time cost: 04:10/00:09 [3:45:22/13:06]  Acc_iter 18150       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.53)
+2025-10-04 15:51:01,021   INFO
+2025-10-04 15:51:09,586   INFO  Train:   37/40 ( 92%) [ 490/491 (100%)]  Loss: 2.386 (2.43)  LR: 4.515e-05  Time cost: 04:18/00:00 [3:45:31/12:56]  Acc_iter 18167       Data time: 0.05(0.05)  Forward time: 0.17(0.47)  Batch time: 0.22(0.53)
+                                                                          2025-10-04 15:52:07,871   INFO  Validation Epoch 37: Average Loss = 2.2285
+epochs:  92%|█████████▎| 37/40 [3:46:29<18:10,2025-10-04 15:52:58,399   INFO  Train:   38/40 ( 95%) [   0/491 (  0%)]  Loss: 2.666 (2.67)  LR: 4.509e-05  Time cost: 00:02/23:26 [3:47:20/1:10:20]  Acc_iter 18168       Data time: 1.47(1.47)  Forward time: 0.49(0.49)  Batch time: 1.96(1.96)
+2025-10-04 15:53:14,004   INFO  Train:   38/40 ( 95%) [  32/491 (  7%)]  Loss: 2.262 (2.38)  LR: 4.318e-05  Time cost: 00:18/04:16 [3:47:35/13:26]  Acc_iter 18200       Data time: 0.02(0.08)  Forward time: 0.47(0.46)  Batch time: 0.49(0.55)
+2025-10-04 15:53:39,279   INFO  Train:   38/40 ( 95%) [  82/491 ( 17%)]  Loss: 2.365 (2.43)  LR: 4.027e-05  Time cost: 00:43/03:35 [3:48:00/12:13]  Acc_iter 18250       Data time: 0.02(0.06)  Forward time: 0.46(0.46)  Batch time: 0.48(0.52)
+2025-10-04 15:54:05,037   INFO  Train:   38/40 ( 95%) [ 132/491 ( 27%)]  Loss: 2.213 (2.43)  LR: 3.746e-05  Time cost: 01:09/03:07 [3:48:26/11:40]  Acc_iter 18300       Data time: 0.06(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:54:05,169   INFO
+2025-10-04 15:54:30,517   INFO  Train:   38/40 ( 95%) [ 182/491 ( 37%)]  Loss: 2.610 (2.42)  LR: 3.474e-05  Time cost: 01:34/02:40 [3:48:52/11:10]  Acc_iter 18350       Data time: 0.04(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:54:56,170   INFO  Train:   38/40 ( 95%) [ 232/491 ( 47%)]  Loss: 2.285 (2.41)  LR: 3.213e-05  Time cost: 02:00/02:14 [3:49:17/10:42]  Acc_iter 18400       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:55:22,142   INFO  Train:   38/40 ( 95%) [ 282/491 ( 57%)]  Loss: 2.243 (2.41)  LR: 2.961e-05  Time cost: 02:26/01:48 [3:49:43/10:16]  Acc_iter 18450       Data time: 0.04(0.05)  Forward time: 0.49(0.47)  Batch time: 0.53(0.52)
+2025-10-04 15:55:22,281   INFO
+2025-10-04 15:55:49,077   INFO  Train:   38/40 ( 95%) [ 332/491 ( 68%)]  Loss: 2.545 (2.41)  LR: 2.720e-05  Time cost: 02:53/01:22 [3:50:10/09:54]  Acc_iter 18500       Data time: 0.02(0.05)  Forward time: 0.47(0.47)  Batch time: 0.49(0.52)
+2025-10-04 15:56:14,917   INFO  Train:   38/40 ( 95%) [ 382/491 ( 78%)]  Loss: 2.396 (2.41)  LR: 2.489e-05  Time cost: 03:19/00:56 [3:50:36/09:27]  Acc_iter 18550       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 15:56:41,625   INFO  Train:   38/40 ( 95%) [ 432/491 ( 88%)]  Loss: 2.374 (2.42)  LR: 2.267e-05  Time cost: 03:46/00:30 [3:51:03/09:03]  Acc_iter 18600       Data time: 0.02(0.05)  Forward time: 0.55(0.47)  Batch time: 0.57(0.52)
+2025-10-04 15:56:41,762   INFO
+2025-10-04 15:57:08,360   INFO  Train:   38/40 ( 95%) [ 482/491 ( 98%)]  Loss: 2.470 (2.41)  LR: 2.056e-05  Time cost: 04:12/00:04 [3:51:30/08:38]  Acc_iter 18650       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.52(0.52)
+2025-10-04 15:57:12,388   INFO  Train:   38/40 ( 95%) [ 490/491 (100%)]  Loss: 3.026 (2.41)  LR: 2.023e-05  Time cost: 04:16/00:00 [3:51:34/08:34]  Acc_iter 18658       Data time: 0.07(0.05)  Forward time: 0.16(0.47)  Batch time: 0.23(0.52)
+                                                                         2025-10-04 15:58:11,547   INFO  Validation Epoch 38: Average Loss = 2.2178
+epochs:  95%|█████████▌| 38/40 [3:52:33<12:07,2025-10-04 15:59:01,755   INFO  Train:   39/40 ( 98%) [   0/491 (  0%)]  Loss: 2.193 (2.19)  LR: 2.019e-05  Time cost: 00:02/18:58 [3:53:23/37:56]  Acc_iter 18659       Data time: 1.31(1.31)  Forward time: 0.50(0.50)  Batch time: 1.81(1.81)
+2025-10-04 15:59:22,051   INFO  Train:   39/40 ( 98%) [  41/491 (  8%)]  Loss: 2.281 (2.42)  LR: 1.855e-05  Time cost: 00:22/04:02 [3:53:43/08:26]  Acc_iter 18700       Data time: 0.02(0.08)  Forward time: 0.48(0.46)  Batch time: 0.50(0.54)
+2025-10-04 15:59:47,255   INFO  Train:   39/40 ( 98%) [  91/491 ( 19%)]  Loss: 2.340 (2.39)  LR: 1.664e-05  Time cost: 00:47/03:27 [3:54:08/07:43]  Acc_iter 18750       Data time: 0.04(0.06)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 15:59:47,392   INFO
+2025-10-04 16:00:12,903   INFO  Train:   39/40 ( 98%) [ 141/491 ( 29%)]  Loss: 2.304 (2.39)  LR: 1.483e-05  Time cost: 01:13/03:01 [3:54:34/07:15]  Acc_iter 18800       Data time: 0.03(0.05)  Forward time: 0.48(0.47)  Batch time: 0.51(0.52)
+2025-10-04 16:00:38,690   INFO  Train:   39/40 ( 98%) [ 191/491 ( 39%)]  Loss: 2.141 (2.38)  LR: 1.313e-05  Time cost: 01:39/02:35 [3:55:00/06:48]  Acc_iter 18850       Data time: 0.03(0.05)  Forward time: 0.46(0.47)  Batch time: 0.49(0.52)
+2025-10-04 16:01:04,758   INFO  Train:   39/40 ( 98%) [ 241/491 ( 49%)]  Loss: 2.297 (2.39)  LR: 1.153e-05  Time cost: 02:05/02:09 [3:55:26/06:23]  Acc_iter 18900       Data time: 0.03(0.05)  Forward time: 0.45(0.47)  Batch time: 0.49(0.52)
+2025-10-04 16:01:04,857   INFO
+2025-10-04 16:01:30,871   INFO  Train:   39/40 ( 98%) [ 291/491 ( 59%)]  Loss: 2.371 (2.40)  LR: 1.003e-05  Time cost: 02:31/01:43 [3:55:52/05:58]  Acc_iter 18950       Data time: 0.02(0.05)  Forward time: 0.48(0.47)  Batch time: 0.50(0.52)
+2025-10-04 16:01:57,054   INFO  Train:   39/40 ( 98%) [ 341/491 ( 69%)]  Loss: 2.332 (2.40)  LR: 8.638e-06  Time cost: 02:57/01:17 [3:56:18/05:32]  Acc_iter 19000       Data time: 0.05(0.05)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 16:02:23,170   INFO  Train:   39/40 ( 98%) [ 391/491 ( 80%)]  Loss: 2.242 (2.40)  LR: 7.347e-06  Time cost: 03:23/00:51 [3:56:44/05:07]  Acc_iter 19050       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.53(0.52)
+2025-10-04 16:02:23,301   INFO
+2025-10-04 16:02:50,016   INFO  Train:   39/40 ( 98%) [ 441/491 ( 90%)]  Loss: 2.605 (2.41)  LR: 6.161e-06  Time cost: 03:50/00:26 [3:57:11/04:42]  Acc_iter 19100       Data time: 0.06(0.05)  Forward time: 0.47(0.47)  Batch time: 0.52(0.52)
+2025-10-04 16:03:16,037   INFO  Train:   39/40 ( 98%) [ 490/491 (100%)]  Loss: 2.608 (2.41)  LR: 5.099e-06  Time cost: 04:16/00:00 [3:57:37/04:17]  Acc_iter 19149       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.20(0.52)
+                                                                          2025-10-04 16:04:14,443   INFO  Validation Epoch 39: Average Loss = 2.2091
+epochs:  98%|█████████▊| 39/40 [3:58:36<06:03,2025-10-04 16:05:05,149   INFO  Train:   40/40 (100%) [   0/491 (  0%)]  Loss: 2.431 (2.43)  LR: 5.078e-06  Time cost: 00:02/20:38 [3:59:26/20:38]  Acc_iter 19150       Data time: 1.33(1.33)  Forward time: 0.50(0.50)  Batch time: 1.83(1.83)
+2025-10-04 16:05:29,664   INFO  Train:   40/40 (100%) [  50/491 ( 10%)]  Loss: 2.182 (2.39)  LR: 4.100e-06  Time cost: 00:27/03:53 [3:59:51/03:53]  Acc_iter 19200       Data time: 0.05(0.06)  Forward time: 0.47(0.46)  Batch time: 0.51(0.52)
+2025-10-04 16:05:29,798   INFO
+2025-10-04 16:05:55,097   INFO  Train:   40/40 (100%) [ 100/491 ( 20%)]  Loss: 2.143 (2.36)  LR: 3.226e-06  Time cost: 00:52/03:23 [4:00:16/03:23]  Acc_iter 19250       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.52)
+2025-10-04 16:06:20,764   INFO  Train:   40/40 (100%) [ 150/491 ( 31%)]  Loss: 2.191 (2.36)  LR: 2.457e-06  Time cost: 01:18/02:56 [4:00:42/02:56]  Acc_iter 19300       Data time: 0.04(0.05)  Forward time: 0.46(0.47)  Batch time: 0.50(0.51)
+2025-10-04 16:06:46,405   INFO  Train:   40/40 (100%) [ 200/491 ( 41%)]  Loss: 2.173 (2.37)  LR: 1.793e-06  Time cost: 01:43/02:30 [4:01:08/02:30]  Acc_iter 19350       Data time: 0.03(0.05)  Forward time: 0.47(0.47)  Batch time: 0.50(0.51)
+2025-10-04 16:06:46,522   INFO
+2025-10-04 16:07:12,239   INFO  Train:   40/40 (100%) [ 250/491 ( 51%)]  Loss: 2.374 (2.37)  LR: 1.234e-06  Time cost: 02:09/02:04 [4:01:33/02:04]  Acc_iter 19400       Data time: 0.05(0.05)  Forward time: 0.48(0.47)  Batch time: 0.53(0.51)
+2025-10-04 16:07:37,888   INFO  Train:   40/40 (100%) [ 300/491 ( 61%)]  Loss: 2.394 (2.37)  LR: 7.794e-07  Time cost: 02:35/01:38 [4:01:59/01:38]  Acc_iter 19450       Data time: 0.04(0.04)  Forward time: 0.47(0.47)  Batch time: 0.51(0.51)
+2025-10-04 16:08:03,526   INFO  Train:   40/40 (100%) [ 350/491 ( 71%)]  Loss: 2.136 (2.38)  LR: 4.302e-07  Time cost: 03:00/01:12 [4:02:25/01:12]  Acc_iter 19500       Data time: 0.05(0.04)  Forward time: 0.47(0.47)  Batch time: 0.52(0.51)
+2025-10-04 16:08:03,622   INFO
+2025-10-04 16:08:29,584   INFO  Train:   40/40 (100%) [ 400/491 ( 81%)]  Loss: 2.069 (2.39)  LR: 1.861e-07  Time cost: 03:26/00:46 [4:02:51/00:46]  Acc_iter 19550       Data time: 0.04(0.04)  Forward time: 0.47(0.47)  Batch time: 0.51(0.52)
+2025-10-04 16:08:55,647   INFO  Train:   40/40 (100%) [ 450/491 ( 92%)]  Loss: 2.835 (2.39)  LR: 4.722e-08  Time cost: 03:53/00:21 [4:03:17/00:21]  Acc_iter 19600       Data time: 0.03(0.04)  Forward time: 0.47(0.47)  Batch time: 0.50(0.52)
+2025-10-04 16:09:15,968   INFO  Train:   40/40 (100%) [ 490/491 (100%)]  Loss: 2.644 (2.39)  LR: 1.187e-08  Time cost: 04:13/00:00 [4:03:37/00:00]  Acc_iter 19640       Data time: 0.04(0.05)  Forward time: 0.16(0.47)  Batch time: 0.20(0.52)
+train:   0%|          | 0/491 [04:13<?, ?it/s]
+                                                                          2025-10-04 16:10:15,090   INFO  Validation Epoch 40: Average Loss = 2.2115
+epochs: 100%|██████████| 40/40 [4:04:36<00:00, 366.92s/it]                

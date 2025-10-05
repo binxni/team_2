@@ -1,0 +1,57 @@
+[33m[W 2025-10-05 03:24:23,391][0m Trial 3 failed with parameters: {'optim.lr': 0.002552951604697378, 'optim.weight_decay': 0.00010838581269344756, 'model.score_thresh': 0.19548647782429918} because of the following error: KeyboardInterrupt().[0m
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/_optimize.py", line 201, in _run_trial
+    value_or_values = func(trial)
+  File "optuna_wandb_tuner.py", line 156, in objective
+    train_process = subprocess.run(
+  File "/usr/lib/python3.8/subprocess.py", line 495, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/usr/lib/python3.8/subprocess.py", line 1028, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/usr/lib/python3.8/subprocess.py", line 1868, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.8/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt
+[33m[W 2025-10-05 03:24:23,398][0m Trial 3 failed with value None.[0m
+Traceback (most recent call last):
+  File "optuna_wandb_tuner.py", line 320, in main
+    study.optimize(objective, n_trials=args.num_trials)
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/study.py", line 490, in optimize
+    _optimize(
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/_optimize.py", line 63, in _optimize
+    _optimize_sequential(
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/_optimize.py", line 160, in _optimize_sequential
+    frozen_trial_id = _run_trial(study, func, catch)
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/_optimize.py", line 258, in _run_trial
+    raise func_err
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/_optimize.py", line 201, in _run_trial
+    value_or_values = func(trial)
+  File "optuna_wandb_tuner.py", line 156, in objective
+    train_process = subprocess.run(
+  File "/usr/lib/python3.8/subprocess.py", line 495, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+  File "/usr/lib/python3.8/subprocess.py", line 1028, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+  File "/usr/lib/python3.8/subprocess.py", line 1868, in _communicate
+    ready = selector.select(timeout)
+  File "/usr/lib/python3.8/selectors.py", line 415, in select
+    fd_event_list = self._selector.poll(timeout)
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "optuna_wandb_tuner.py", line 338, in <module>
+    main()
+  File "optuna_wandb_tuner.py", line 322, in main
+    print("Interrupted by user. Current best value:", study.best_value, file=sys.stderr)
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/study.py", line 134, in best_value
+    best_value = self.best_trial.value
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/study.py", line 156, in best_trial
+    return self._get_best_trial(deepcopy=True)
+  File "/usr/local/lib/python3.8/dist-packages/optuna/study/study.py", line 308, in _get_best_trial
+    best_trial = self._storage.get_best_trial(self._study_id)
+  File "/usr/local/lib/python3.8/dist-packages/optuna/storages/_in_memory.py", line 252, in get_best_trial
+    raise ValueError("No trials are completed yet.")
+ValueError: No trials are completed yet.

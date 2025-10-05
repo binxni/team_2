@@ -1,0 +1,13 @@
+{"time":"2025-10-04T16:10:26.600864736Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-04T16:10:27.056530294Z","level":"INFO","msg":"stream: created new stream","id":"b7764bs7"}
+{"time":"2025-10-04T16:10:27.056602132Z","level":"INFO","msg":"handler: started","stream_id":"b7764bs7"}
+{"time":"2025-10-04T16:10:27.056690266Z","level":"INFO","msg":"stream: started","id":"b7764bs7"}
+{"time":"2025-10-04T16:10:27.056707867Z","level":"INFO","msg":"writer: started","stream_id":"b7764bs7"}
+{"time":"2025-10-04T16:10:27.056718836Z","level":"INFO","msg":"sender: started","stream_id":"b7764bs7"}
+{"time":"2025-10-04T17:33:13.270003057Z","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/subin-park017-soongsil-university/team2/b7764bs7/file_stream","body":"\n<html><head>\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<title>502 Server Error</title>\n</head>\n<body text=#000000 bgcolor=#ffffff>\n<h1>Error: Server Error</h1>\n<h2>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.</h2>\n<h2></h2>\n</body></html>\n"}
+{"time":"2025-10-04T20:14:47.212772465Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"updating run metadata","runtime_seconds":0.001945893}],"total_operations":1}}
+{"time":"2025-10-04T20:14:47.983388653Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-10-04T20:14:48.374734766Z","level":"INFO","msg":"stream: closing","id":"b7764bs7"}
+{"time":"2025-10-04T20:14:48.374757722Z","level":"INFO","msg":"handler: closed","stream_id":"b7764bs7"}
+{"time":"2025-10-04T20:14:48.374856548Z","level":"INFO","msg":"sender: closed","stream_id":"b7764bs7"}
+{"time":"2025-10-04T20:14:48.374869595Z","level":"INFO","msg":"stream: closed","id":"b7764bs7"}

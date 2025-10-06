@@ -1,6 +1,6 @@
 DATASET: 'CustomAvDataset'
 # DATA_PATH: '../data/custom_av'
-DATA_PATH: /workspace/dataset/custom_av
+DATA_PATH: /workspace/dataset/custom_av_noise
 
 POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]
 
@@ -23,7 +23,7 @@ INFO_PATH: {
 
 POINT_FEATURE_ENCODING: {
     encoding_type: absolute_coordinates_encoding,
-    used_feature_list: ['x', 'y', 'z', 'intensity'],
+    used_feature_list: ['x', 'y', 'z'],
     src_feature_list: ['x', 'y', 'z', 'intensity'],
 
 }
@@ -64,22 +64,22 @@ DATA_PROCESSOR:
         'test': True
       }
 
-    # 비 노이즈 시뮬레이션 추가
-    - NAME: rain_noise_simulation
-      APPLY_PROBABILITY: 0.6                    # 60% 확률로 적용
-      RAIN_INTENSITY_RANGE: [0.3, 1.2]         # 비 강도 범위
-      BASE_NOISE_DENSITY: 0.005                # 기본 노이즈 밀도
-      Z_BIAS_RANGE: [0.0, 6.0]                 # 노이즈 Z 범위
-      RAIN_INTENSITY_VALUES: [0.02, 0.25]      # 빗방울 intensity 범위
-      MAX_ATTENUATION_DISTANCE: 50.0           # 감쇠 적용 최대 거리
-      BASE_ATTENUATION_RATE: 0.08              # 기본 감쇠율
-      MAX_ATTENUATION_PROB: 0.25               # 최대 감쇠 확률
-      INTENSITY_REDUCTION_FACTOR: 0.15         # Intensity 감소 계수
+    # # 비 노이즈 시뮬레이션 추가
+    # - NAME: rain_noise_simulation
+    #   APPLY_PROBABILITY: 0.6                    # 60% 확률로 적용
+    #   RAIN_INTENSITY_RANGE: [0.3, 1.2]         # 비 강도 범위
+    #   BASE_NOISE_DENSITY: 0.005                # 기본 노이즈 밀도
+    #   Z_BIAS_RANGE: [0.0, 6.0]                 # 노이즈 Z 범위
+    #   RAIN_INTENSITY_VALUES: [0.02, 0.25]      # 빗방울 intensity 범위
+    #   MAX_ATTENUATION_DISTANCE: 50.0           # 감쇠 적용 최대 거리
+    #   BASE_ATTENUATION_RATE: 0.08              # 기본 감쇠율
+    #   MAX_ATTENUATION_PROB: 0.25               # 최대 감쇠 확률
+    #   INTENSITY_REDUCTION_FACTOR: 0.15         # Intensity 감소 계수
     
-    # 추가 포인트 손실 시뮬레이션
-    - NAME: weather_point_dropout
-      APPLY_PROBABILITY: 0.4                   # 40% 확률로 적용
-      DROPOUT_RATIO_RANGE: [0.03, 0.12]        # 3-12% 포인트 제거
+    # # 추가 포인트 손실 시뮬레이션
+    # - NAME: weather_point_dropout
+    #   APPLY_PROBABILITY: 0.4                   # 40% 확률로 적용
+    #   DROPOUT_RATIO_RANGE: [0.03, 0.12]        # 3-12% 포인트 제거
 
 
     - NAME: transform_points_to_voxels

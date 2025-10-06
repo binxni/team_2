@@ -13,23 +13,23 @@ DATA_CONFIG:
                 'train': True,
                 'test': True
             }
-        # 비 노이즈 시뮬레이션 추가
-        -   NAME: rain_noise_simulation
-            APPLY_PROBABILITY: 0.6                    # 60% 확률로 적용
-            RAIN_INTENSITY_RANGE: [0.3, 1.2]         # 비 강도 범위
-            BASE_NOISE_DENSITY: 0.005                # 기본 노이즈 밀도
-            NOISE_RADIUS: 2.0                        # 원점 기준 노이즈 생성 반경 (미터)
-            Z_BIAS_RANGE: [0.0, 6.0]                 # 노이즈 Z 범위
-            RAIN_INTENSITY_VALUES: [0.02, 0.25]      # 빗방울 intensity 범위
-            MAX_ATTENUATION_DISTANCE: 50.0           # 감쇠 적용 최대 거리
-            BASE_ATTENUATION_RATE: 0.08              # 기본 감쇠율
-            MAX_ATTENUATION_PROB: 0.25               # 최대 감쇠 확률
-            INTENSITY_REDUCTION_FACTOR: 0.15         # Intensity 감소 계수
+        # # 비 노이즈 시뮬레이션 추가
+        # -   NAME: rain_noise_simulation
+        #     APPLY_PROBABILITY: 0.8                    # 60% 확률로 적용
+        #     RAIN_INTENSITY_RANGE: [0.1, 2.5]         # 비 강도 범위
+        #     BASE_NOISE_DENSITY: 0.01                # 기본 노이즈 밀도
+        #     NOISE_RADIUS: 3.0                        # 원점 기준 노이즈 생성 반경 (미터)
+        #     Z_BIAS_RANGE: [0.0, 6.0]                 # 노이즈 Z 범위
+        #     RAIN_INTENSITY_VALUES: [0.02, 0.25]      # 빗방울 intensity 범위
+        #     MAX_ATTENUATION_DISTANCE: 70.0           # 감쇠 적용 최대 거리
+        #     BASE_ATTENUATION_RATE: 0.1              # 기본 감쇠율
+        #     MAX_ATTENUATION_PROB: 0.35               # 최대 감쇠 확률
+        #     INTENSITY_REDUCTION_FACTOR: 0.25         # Intensity 감소 계수
             
-            # 추가 포인트 손실 시뮬레이션
-        -   NAME: weather_point_dropout
-            APPLY_PROBABILITY: 0.4                   # 40% 확률로 적용
-            DROPOUT_RATIO_RANGE: [0.03, 0.12]        # 3-12% 포인트 제거
+        #     # 추가 포인트 손실 시뮬레이션
+        # -   NAME: weather_point_dropout
+        #     APPLY_PROBABILITY: 0.6                   # 40% 확률로 적용
+        #     DROPOUT_RATIO_RANGE: [0.08, 0.35]        # 3-12% 포인트 제거
 
         -   NAME: transform_points_to_voxels
             VOXEL_SIZE: [ 0.25, 0.25, 8.0 ]

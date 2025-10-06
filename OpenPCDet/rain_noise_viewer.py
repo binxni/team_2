@@ -409,6 +409,10 @@ class RainNoiseViewer:
             print("[ERROR] Failed to create Open3D window.")
             return
         
+        # 배경색을 검정색으로 설정
+        opt = vis.get_render_option()
+        opt.background_color = np.asarray([0, 0, 0])  # 검정색 배경
+        
         # 키 콜백 등록
         vis.register_key_callback(ord("D"), self.next_frame)
         vis.register_key_callback(ord("A"), self.prev_frame)

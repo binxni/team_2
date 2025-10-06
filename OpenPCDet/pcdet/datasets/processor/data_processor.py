@@ -321,12 +321,7 @@ class DataProcessor(object):
         return data_dict
 
     def _generate_rain_droplet_noise(self, points, rain_intensity, config):
-        """빗방울로 인한 허위 반사점 생성"""
-        # 원본 포인트의 공간 범위 계산
-        x_min, x_max = points[:, 0].min(), points[:, 0].max()
-        y_min, y_max = points[:, 1].min(), points[:, 1].max()
-        z_min, z_max = points[:, 2].min(), points[:, 2].max()
-        
+        """빗방울로 인한 허위 반사점 생성 (원점 기준 반경 내에서만)"""
         # 노이즈 포인트 개수 계산
         base_noise_density = config.get('BASE_NOISE_DENSITY', 0.002)
         noise_density = base_noise_density * rain_intensity
@@ -335,24 +330,41 @@ class DataProcessor(object):
         if num_noise_points == 0:
             return np.array([]).reshape(0, points.shape[1])
         
-        # 3D 공간에서 랜덤 노이즈 포인트 생성
-        noise_x = np.random.uniform(x_min, x_max, num_noise_points)
-        noise_y = np.random.uniform(y_min, y_max, num_noise_points)
+        # 노이즈 생성 반경 설정 (기본값: 2.0m)
+        noise_radius = config.get('NOISE_RADIUS', 2.0)
         
-        # Z축은 주로 지상 위쪽에 집중 (비는 위에서 아래로)
-        z_bias_range = config.get('Z_BIAS_RANGE', [0.5, 8.0])
-        noise_z = np.random.uniform(z_bias_range[0], z_bias_range[1], num_noise_points)
+        # 원점 기준 반경 내에서만 노이즈 포인트 생성
+        generated_points = []
+        attempts = 0
+        max_attempts = num_noise_points * 10  # 무한 루프 방지
         
-        # 빗방울의 낮은 intensity 시뮬레이션
-        rain_intensity_range = config.get('RAIN_INTENSITY_VALUES', [0.05, 0.3])
-        noise_intensity = np.random.uniform(
-            rain_intensity_range[0], 
-            rain_intensity_range[1], 
-            num_noise_points
-        )
+        while len(generated_points) < num_noise_points and attempts < max_attempts:
+            # 원점 기준 반경 내에서 랜덤 포인트 생성
+            angle = np.random.uniform(0, 2 * np.pi)
+            radius = np.random.uniform(0, noise_radius)
+            
+            noise_x = radius * np.cos(angle)
+            noise_y = radius * np.sin(angle)
+            
+            # Z축은 주로 지상 위쪽에 집중 (비는 위에서 아래로)
+            z_bias_range = config.get('Z_BIAS_RANGE', [0.5, 8.0])
+            noise_z = np.random.uniform(z_bias_range[0], z_bias_range[1])
+            
+            # 빗방울의 낮은 intensity 시뮬레이션
+            rain_intensity_range = config.get('RAIN_INTENSITY_VALUES', [0.05, 0.3])
+            noise_intensity = np.random.uniform(
+                rain_intensity_range[0], 
+                rain_intensity_range[1]
+            )
+            
+            generated_points.append([noise_x, noise_y, noise_z, noise_intensity])
+            attempts += 1
+        
+        if len(generated_points) == 0:
+            return np.array([]).reshape(0, points.shape[1])
         
         # 노이즈 포인트 구성 [x, y, z, intensity]
-        noise_points = np.column_stack([noise_x, noise_y, noise_z, noise_intensity])
+        noise_points = np.array(generated_points)
         
         return noise_points
 

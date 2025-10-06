@@ -279,6 +279,146 @@ class DataProcessor(object):
             transforms.append(transform.numpy())
         data_dict["img_aug_matrix"] = transforms
         return data_dict
+    
+    # pcdet/datasets/processor/data_processor.py에 추가
+
+    def rain_noise_simulation(self, data_dict=None, config=None):
+        """비 노이즈 시뮬레이션을 위한 데이터 프로세서"""
+        if data_dict is None:
+            return partial(self.rain_noise_simulation, config=config)
+        
+        # 학습 모드에서만 적용
+        if not self.training:
+            return data_dict
+        
+        # 설정된 확률로만 적용
+        if np.random.random() > config.get('APPLY_PROBABILITY', 0.5):
+            return data_dict
+        
+        points = data_dict['points']
+        
+        # 1. 비 강도 설정 (랜덤)
+        rain_intensity = np.random.uniform(
+            config.RAIN_INTENSITY_RANGE[0], 
+            config.RAIN_INTENSITY_RANGE[1]
+        )
+        
+        # 2. 허위 반사점 생성 (빗방울)
+        noise_points = self._generate_rain_droplet_noise(points, rain_intensity, config)
+        
+        # 3. 거리별 포인트 감쇠 시뮬레이션
+        points = self._apply_distance_attenuation(points, rain_intensity, config)
+        
+        # 4. Intensity 감소 시뮬레이션
+        points = self._apply_intensity_attenuation(points, rain_intensity, config)
+        
+        # 5. 최종 포인트 결합
+        if len(noise_points) > 0:
+            data_dict['points'] = np.concatenate([points, noise_points], axis=0)
+        else:
+            data_dict['points'] = points
+        
+        return data_dict
+
+    def _generate_rain_droplet_noise(self, points, rain_intensity, config):
+        """빗방울로 인한 허위 반사점 생성"""
+        # 원본 포인트의 공간 범위 계산
+        x_min, x_max = points[:, 0].min(), points[:, 0].max()
+        y_min, y_max = points[:, 1].min(), points[:, 1].max()
+        z_min, z_max = points[:, 2].min(), points[:, 2].max()
+        
+        # 노이즈 포인트 개수 계산
+        base_noise_density = config.get('BASE_NOISE_DENSITY', 0.002)
+        noise_density = base_noise_density * rain_intensity
+        num_noise_points = int(len(points) * noise_density)
+        
+        if num_noise_points == 0:
+            return np.array([]).reshape(0, points.shape[1])
+        
+        # 3D 공간에서 랜덤 노이즈 포인트 생성
+        noise_x = np.random.uniform(x_min, x_max, num_noise_points)
+        noise_y = np.random.uniform(y_min, y_max, num_noise_points)
+        
+        # Z축은 주로 지상 위쪽에 집중 (비는 위에서 아래로)
+        z_bias_range = config.get('Z_BIAS_RANGE', [0.5, 8.0])
+        noise_z = np.random.uniform(z_bias_range[0], z_bias_range[1], num_noise_points)
+        
+        # 빗방울의 낮은 intensity 시뮬레이션
+        rain_intensity_range = config.get('RAIN_INTENSITY_VALUES', [0.05, 0.3])
+        noise_intensity = np.random.uniform(
+            rain_intensity_range[0], 
+            rain_intensity_range[1], 
+            num_noise_points
+        )
+        
+        # 노이즈 포인트 구성 [x, y, z, intensity]
+        noise_points = np.column_stack([noise_x, noise_y, noise_z, noise_intensity])
+        
+        return noise_points
+
+    def _apply_distance_attenuation(self, points, rain_intensity, config):
+        """거리별 포인트 감쇠 시뮬레이션"""
+        # 원점으로부터의 거리 계산
+        distances = np.sqrt(points[:, 0]**2 + points[:, 1]**2 + points[:, 2]**2)
+        
+        # 거리별 감쇠 확률 계산
+        max_distance = config.get('MAX_ATTENUATION_DISTANCE', 70.0)
+        base_attenuation = config.get('BASE_ATTENUATION_RATE', 0.05)
+        
+        # 비 강도에 따른 감쇠율 조정
+        attenuation_rate = base_attenuation * rain_intensity
+        
+        # 거리에 비례한 감쇠 확률 (멀수록 더 많이 제거)
+        attenuation_probs = np.clip(
+            attenuation_rate * (distances / max_distance), 
+            0.0, 
+            config.get('MAX_ATTENUATION_PROB', 0.3)
+        )
+        
+        # 랜덤 샘플링으로 포인트 제거
+        keep_mask = np.random.random(len(points)) > attenuation_probs
+        
+        return points[keep_mask]
+
+    def _apply_intensity_attenuation(self, points, rain_intensity, config):
+        """Intensity 감소 시뮬레이션"""
+        if points.shape[1] < 4:  # intensity 채널이 없으면 스킵
+            return points
+        
+        # 거리별 intensity 감소
+        distances = np.sqrt(points[:, 0]**2 + points[:, 1]**2)
+        
+        # 비 강도에 따른 intensity 감소율
+        intensity_reduction = config.get('INTENSITY_REDUCTION_FACTOR', 0.1) * rain_intensity
+        
+        # 거리별 차등 적용
+        reduction_factors = 1.0 - (intensity_reduction * distances / 50.0)
+        reduction_factors = np.clip(reduction_factors, 0.3, 1.0)  # 최소 30%는 유지
+        
+        points[:, 3] *= reduction_factors
+        
+        return points
+
+    def weather_point_dropout(self, data_dict=None, config=None):
+        """날씨로 인한 포인트 손실 시뮬레이션"""
+        if data_dict is None:
+            return partial(self.weather_point_dropout, config=config)
+        
+        if not self.training or np.random.random() > config.get('APPLY_PROBABILITY', 0.3):
+            return data_dict
+        
+        points = data_dict['points']
+        
+        # 균등 드롭아웃
+        dropout_ratio = np.random.uniform(*config.DROPOUT_RATIO_RANGE)
+        keep_indices = np.random.choice(
+            len(points), 
+            int(len(points) * (1 - dropout_ratio)), 
+            replace=False
+        )
+        
+        data_dict['points'] = points[keep_indices]
+        return data_dict
 
     def forward(self, data_dict):
         """

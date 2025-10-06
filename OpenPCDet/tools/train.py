@@ -53,7 +53,7 @@ def parse_config():
     parser.add_argument('--use_amp', action='store_true', help='use mix precision training')
     
     # wandb arguments
-    parser.add_argument('--wandb_project', type=str, default='OpenPCDet', help='wandb project name')
+    parser.add_argument('--wandb_project', type=str, default='AI_challenge', help='wandb project name')
     parser.add_argument('--wandb_entity', type=str, default=None, help='wandb entity (team) name')
     parser.add_argument('--wandb_run_name', type=str, default=None, help='wandb run name')
     parser.add_argument('--wandb_tags', type=str, nargs='+', default=None, help='wandb tags')

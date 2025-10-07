@@ -65,7 +65,7 @@ class CustomAvDataset(DatasetTemplate):
         return np.array(gt_boxes, dtype=np.float32), np.array(gt_names)
 
     def get_lidar(self, idx):
-        lidar_file = self.root_path / 'points' / ('%s.npy' % idx)
+        lidar_file = self.root_path / 'points_filter' / ('%s.npy' % idx)
         if not lidar_file.exists():
             raise FileNotFoundError(f'Point file not found: {lidar_file}')
         point_features = np.load(lidar_file)
@@ -340,6 +340,6 @@ if __name__ == '__main__':
         create_custom_av_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'custom_av_aligned64_filter',
-            save_path=ROOT_DIR / 'data' / 'custom_av_aligned64_filter',
+            data_path=ROOT_DIR / 'data' / 'custom_av_64',
+            save_path=ROOT_DIR / 'data' / 'custom_av_64'/ 'points_filters_pkl' ,
         )

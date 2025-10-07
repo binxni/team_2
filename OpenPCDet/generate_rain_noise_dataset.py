@@ -25,17 +25,17 @@ OUTPUT_DIR = "/home/ailab/git/Team_2/Subin/OpenPCDet/data/custom_av_noise/points
 
 # 기본 노이즈 설정 (dataset_change.yaml과 동일)
 DEFAULT_NOISE_CONFIG = {
-    'APPLY_PROBABILITY': 0.9,                    # 모든 프레임에 적용
-    'RAIN_INTENSITY_RANGE': [0.1, 2.5],         # 비 강도 범위
+    'APPLY_PROBABILITY': 0.95,                    # 모든 프레임에 적용
+    'RAIN_INTENSITY_RANGE': [1.0, 2.5],         # 비 강도 범위
     'BASE_NOISE_DENSITY': 0.01,                 # 기본 노이즈 밀도
-    'NOISE_RADIUS': 3.0,                        # 원점 기준 노이즈 생성 반경 (미터)
-    'Z_BIAS_RANGE': [0.0, 6.0],                 # 노이즈 Z 범위
-    'RAIN_INTENSITY_VALUES': [0.02, 0.25],      # 빗방울 intensity 범위
+    'NOISE_RADIUS': 5.0,                        # 원점 기준 노이즈 생성 반경 (미터)
+    'Z_BIAS_RANGE': [-2.0, 4.0],                 # 노이즈 Z 범위
+    'RAIN_INTENSITY_VALUES': [0.02, 0.35],      # 빗방울 intensity 범위
     'MAX_ATTENUATION_DISTANCE': 70.0,           # 감쇠 적용 최대 거리
-    'BASE_ATTENUATION_RATE': 0.1,              # 기본 감쇠율
-    'MAX_ATTENUATION_PROB': 0.35,               # 최대 감쇠 확률
-    'INTENSITY_REDUCTION_FACTOR': 0.25,         # Intensity 감소 계수
-    'DROPOUT_RATIO_RANGE': [0.08, 0.35],        # 포인트 드롭아웃 범위
+    'BASE_ATTENUATION_RATE': 0.32,              # 기본 감쇠율
+    'MAX_ATTENUATION_PROB': 0.65,               # 최대 감쇠 확률
+    'INTENSITY_REDUCTION_FACTOR': 0.45,         # Intensity 감소 계수
+    'DROPOUT_RATIO_RANGE': [0.3, 0.65],        # 포인트 드롭아웃 범위
 }
 
 class RainNoiseDatasetGenerator:

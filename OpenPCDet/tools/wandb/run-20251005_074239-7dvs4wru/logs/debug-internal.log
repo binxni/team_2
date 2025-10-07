@@ -1,0 +1,11 @@
+{"time":"2025-10-05T07:42:40.162883688Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-05T07:42:40.472605076Z","level":"INFO","msg":"stream: created new stream","id":"7dvs4wru"}
+{"time":"2025-10-05T07:42:40.472664801Z","level":"INFO","msg":"handler: started","stream_id":"7dvs4wru"}
+{"time":"2025-10-05T07:42:40.472756002Z","level":"INFO","msg":"stream: started","id":"7dvs4wru"}
+{"time":"2025-10-05T07:42:40.472769975Z","level":"INFO","msg":"writer: started","stream_id":"7dvs4wru"}
+{"time":"2025-10-05T07:42:40.472790148Z","level":"INFO","msg":"sender: started","stream_id":"7dvs4wru"}
+{"time":"2025-10-05T07:51:56.503270231Z","level":"INFO","msg":"stream: closing","id":"7dvs4wru"}
+{"time":"2025-10-05T07:51:57.095052992Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-10-05T07:51:57.316463791Z","level":"INFO","msg":"handler: closed","stream_id":"7dvs4wru"}
+{"time":"2025-10-05T07:51:57.316628259Z","level":"INFO","msg":"sender: closed","stream_id":"7dvs4wru"}
+{"time":"2025-10-05T07:51:57.316642944Z","level":"INFO","msg":"stream: closed","id":"7dvs4wru"}

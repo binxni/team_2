@@ -19,6 +19,8 @@ pcdet/datasets/custom/__init__.py
 pcdet/datasets/custom/custom_dataset.py
 pcdet/datasets/custom_av/__init__.py
 pcdet/datasets/custom_av/custom_av_dataset.py
+pcdet/datasets/custom_av_aligned64_filter/__init__.py
+pcdet/datasets/custom_av_aligned64_filter/custom_av_aligned64_filter_dataset.py
 pcdet/datasets/custom_infra/__init__.py
 pcdet/datasets/custom_infra/custom_infra_dataset.py
 pcdet/datasets/kitti/__init__.py
@@ -59,6 +61,7 @@ pcdet/models/backbones_2d/map_to_bev/__init__.py
 pcdet/models/backbones_2d/map_to_bev/conv2d_collapse.py
 pcdet/models/backbones_2d/map_to_bev/height_compression.py
 pcdet/models/backbones_2d/map_to_bev/pointpillar_scatter.py
+pcdet/models/backbones_2d/map_to_bev/range_view_scatter.py
 pcdet/models/backbones_3d/__init__.py
 pcdet/models/backbones_3d/dsvt.py
 pcdet/models/backbones_3d/pointnet2_backbone.py
@@ -95,6 +98,8 @@ pcdet/models/backbones_image/__init__.py
 pcdet/models/backbones_image/swin.py
 pcdet/models/backbones_image/img_neck/__init__.py
 pcdet/models/backbones_image/img_neck/generalized_lss.py
+pcdet/models/backbones_rv/__init__.py
+pcdet/models/backbones_rv/range_sparse_backbone.py
 pcdet/models/dense_heads/__init__.py
 pcdet/models/dense_heads/anchor_head_multi.py
 pcdet/models/dense_heads/anchor_head_single.py
@@ -124,6 +129,7 @@ pcdet/models/detectors/point_rcnn.py
 pcdet/models/detectors/pointpillar.py
 pcdet/models/detectors/pv_rcnn.py
 pcdet/models/detectors/pv_rcnn_plusplus.py
+pcdet/models/detectors/range_sparse_net.py
 pcdet/models/detectors/second_net.py
 pcdet/models/detectors/second_net_iou.py
 pcdet/models/detectors/transfusion.py
@@ -135,6 +141,7 @@ pcdet/models/model_utils/centernet_utils.py
 pcdet/models/model_utils/dsvt_utils.py
 pcdet/models/model_utils/model_nms_utils.py
 pcdet/models/model_utils/mppnet_utils.py
+pcdet/models/model_utils/range_sparse_utils.py
 pcdet/models/model_utils/swin_utils.py
 pcdet/models/model_utils/transfusion_utils.py
 pcdet/models/roi_heads/__init__.py

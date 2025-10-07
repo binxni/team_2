@@ -66,7 +66,8 @@ class CustomAvDataset(DatasetTemplate):
 
     def get_lidar(self, idx):
         lidar_file = self.root_path / 'points' / ('%s.npy' % idx)
-        assert lidar_file.exists()
+        if not lidar_file.exists():
+            raise FileNotFoundError(f'Point file not found: {lidar_file}')
         point_features = np.load(lidar_file)
         return point_features
 

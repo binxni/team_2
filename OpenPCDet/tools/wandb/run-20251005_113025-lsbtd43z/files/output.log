@@ -1,0 +1,232 @@
+2025-10-05 11:30:26,715   INFO  Weights & Biases initialized with project: team2
+2025-10-05 11:30:26,716   INFO  Wandb run name: centerpoint_pillar_LIDSOR_aligned_default_20251005_113024
+2025-10-05 11:30:26,716   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-10-05 11:30:28,160   INFO  Database filter by min points Vehicle: 355763 => 348483
+2025-10-05 11:30:28,183   INFO  Database filter by min points Pedestrian: 156429 => 151480
+2025-10-05 11:30:28,187   INFO  Database filter by min points Cyclist: 13498 => 13252
+2025-10-05 11:30:28,207   INFO  Loading Custom AV dataset.
+2025-10-05 11:30:28,364   INFO  Total samples for Custom AV dataset: 13320
+2025-10-05 11:30:28,366   INFO  Loading Custom AV dataset.
+2025-10-05 11:30:28,379   INFO  Total samples for Custom AV dataset: 1481
+2025-10-05 11:30:28,808   INFO  ----------- Model CenterPoint created, param count: 5224011 -----------
+2025-10-05 11:30:28,809   INFO  DistributedDataParallel(
+  (module): CenterPoint(
+    (vfe): PillarVFE(
+      (pfn_layers): ModuleList(
+        (0): PFNLayer(
+          (linear): Linear(in_features=10, out_features=32, bias=False)
+          (norm): BatchNorm1d(32, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+        (1): PFNLayer(
+          (linear): Linear(in_features=64, out_features=64, bias=False)
+          (norm): BatchNorm1d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+        )
+      )
+    )
+    (backbone_3d): None
+    (map_to_bev_module): PointPillarScatter()
+    (pfe): None
+    (backbone_2d): BaseBEVBackbone(
+      (blocks): ModuleList(
+        (0): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), bias=False)
+          (2): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(64, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+        )
+        (1): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(64, 128, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(128, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+        (2): Sequential(
+          (0): ZeroPad2d((1, 1, 1, 1))
+          (1): Conv2d(128, 256, kernel_size=(3, 3), stride=(2, 2), bias=False)
+          (2): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (3): ReLU()
+          (4): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (5): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (6): ReLU()
+          (7): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (8): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (9): ReLU()
+          (10): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (11): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (12): ReLU()
+          (13): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (14): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (15): ReLU()
+          (16): Conv2d(256, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+          (17): BatchNorm2d(256, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (18): ReLU()
+        )
+      )
+      (deblocks): ModuleList(
+        (0): Sequential(
+          (0): ConvTranspose2d(64, 128, kernel_size=(1, 1), stride=(1, 1), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (1): Sequential(
+          (0): ConvTranspose2d(128, 128, kernel_size=(2, 2), stride=(2, 2), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+        (2): Sequential(
+          (0): ConvTranspose2d(256, 128, kernel_size=(4, 4), stride=(4, 4), bias=False)
+          (1): BatchNorm2d(128, eps=0.001, momentum=0.01, affine=True, track_running_stats=True)
+          (2): ReLU()
+        )
+      )
+    )
+    (dense_head): CenterHead(
+      (shared_conv): Sequential(
+        (0): Conv2d(384, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+        (2): ReLU()
+      )
+      (heads_list): ModuleList(
+        (0): SeparateHead(
+          (center): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (center_z): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 1, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (dim): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (rot): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 2, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+          (hm): Sequential(
+            (0): Sequential(
+              (0): Conv2d(64, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+              (1): BatchNorm2d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+              (2): ReLU()
+            )
+            (1): Conv2d(64, 3, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+          )
+        )
+      )
+      (hm_loss_func): FocalLossCenterNet()
+      (reg_loss_func): RegLossCenterNet()
+    )
+    (point_head): None
+    (roi_head): None
+  )
+)
+2025-10-05 11:30:28,812   INFO  **********************Start training custom_av/centerpoint_pillar_LIDSOR_aligned(default)**********************
+epochs:   0%|                                                                                                                      | 0/80 [00:00<?, ?it/s]/workspace/OpenPCDet/tools/../pcdet/utils/commu_utils.py:66: UserWarning: TypedStorage is deprecated. It will be removed in the future and UntypedStorage will be the only storage class. This should only matter to you if you are using storages directly.  To access UntypedStorage directly, use tensor.untyped_storage() instead of tensor.storage()
+  storage = torch.ByteStorage.from_buffer(buffer)                                                                                | 0/1110 [00:00<?, ?it/s]
+2025-10-05 11:33:09,110   INFO  Train:    1/80 (  1%) [   0/1110 (  0%)]  Loss: 65.87 (65.9)  LR: 3.000e-04  Time cost: 00:16/4:59:47 [02:40/399:43:13]  Acc_iter 1           Data time: 14.29(14.29)  Forward time: 2.35(2.35)  Batch time: 16.63(16.63)
+2025-10-05 11:35:57,707   INFO  Train:    1/80 (  1%) [  49/1110 (  4%)]  Loss: 8.952 (14.9)  LR: 3.000e-04  Time cost: 03:04/1:05:21 [05:28/91:07:07]  Acc_iter 50          Data time: 0.32(2.72)  Forward time: 1.07(0.98)  Batch time: 1.39(3.70)
+2025-10-05 11:38:05,242   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 11:38:45,396   INFO  Train:    1/80 (  1%) [  99/1110 (  9%)]  Loss: 7.571 (11.5)  LR: 3.001e-04  Time cost: 05:52/59:23 [08:16/86:51:02]  Acc_iter 100         Data time: 0.05(2.53)  Forward time: 0.47(1.00)  Batch time: 0.52(3.53)
+2025-10-05 11:41:41,284   INFO  Train:    1/80 (  1%) [ 149/1110 ( 13%)]  Loss: 7.150 (10.2)  LR: 3.001e-04  Time cost: 08:48/56:25 [11:12/86:44:35]  Acc_iter 150         Data time: 0.03(2.22)  Forward time: 0.46(1.30)  Batch time: 0.48(3.53)
+2025-10-05 11:41:41,449   INFO
+2025-10-05 11:43:03,513   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 11:44:25,067   INFO  Train:    1/80 (  1%) [ 199/1110 ( 18%)]  Loss: 7.008 (9.52)  LR: 3.002e-04  Time cost: 11:32/52:32 [13:56/85:10:31]  Acc_iter 200         Data time: 0.02(1.91)  Forward time: 0.47(1.55)  Batch time: 0.49(3.46)
+2025-10-05 11:47:25,906   INFO  Train:    1/80 (  1%) [ 249/1110 ( 22%)]  Loss: 7.294 (9.05)  LR: 3.003e-04  Time cost: 14:33/50:06 [16:57/85:53:40]  Acc_iter 250         Data time: 0.01(1.70)  Forward time: 0.48(1.79)  Batch time: 0.49(3.49)
+2025-10-05 11:48:03,816   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 11:50:10,839   INFO  Train:    1/80 (  1%) [ 299/1110 ( 27%)]  Loss: 6.296 (8.70)  LR: 3.005e-04  Time cost: 17:17/46:45 [19:42/85:03:13]  Acc_iter 300         Data time: 0.48(1.62)  Forward time: 0.47(1.84)  Batch time: 0.95(3.46)
+2025-10-05 11:50:10,986   INFO
+2025-10-05 11:53:01,476   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 11:53:04,655   INFO  Train:    1/80 (  1%) [ 349/1110 ( 31%)]  Loss: 6.529 (8.43)  LR: 3.006e-04  Time cost: 20:11/43:54 [22:35/85:03:49]  Acc_iter 350         Data time: 0.63(1.62)  Forward time: 1.52(1.84)  Batch time: 2.14(3.46)
+2025-10-05 11:56:02,828   INFO  Train:    1/80 (  1%) [ 399/1110 ( 36%)]  Loss: 6.163 (8.21)  LR: 3.008e-04  Time cost: 23:09/41:10 [25:34/85:19:36]  Acc_iter 400         Data time: 2.55(1.62)  Forward time: 8.01(1.86)  Batch time: 10.56(3.48)
+2025-10-05 11:57:56,385   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 11:58:51,240   INFO  Train:    1/80 (  1%) [ 449/1110 ( 40%)]  Loss: 6.576 (8.04)  LR: 3.011e-04  Time cost: 25:58/38:09 [28:22/84:59:16]  Acc_iter 450         Data time: 2.61(1.59)  Forward time: 0.47(1.87)  Batch time: 3.08(3.46)
+2025-10-05 11:58:51,399   INFO
+2025-10-05 12:01:45,263   INFO  Train:    1/80 (  1%) [ 499/1110 ( 45%)]  Loss: 6.458 (7.90)  LR: 3.013e-04  Time cost: 28:52/35:16 [31:16/84:58:57]  Acc_iter 500         Data time: 0.02(1.64)  Forward time: 0.49(1.83)  Batch time: 0.51(3.47)
+2025-10-05 12:02:54,873   INFO  Save latest model to /workspace/OpenPCDet/output/custom_av/centerpoint_pillar_LIDSOR_aligned/default/ckpt/latest_model
+2025-10-05 12:04:42,898   INFO  Train:    1/80 (  1%) [ 549/1110 ( 49%)]  Loss: 6.839 (7.76)  LR: 3.016e-04  Time cost: 31:49/32:28 [34:14/85:07:50]  Acc_iter 550         Data time: 3.06(1.68)  Forward time: 0.47(1.79)  Batch time: 3.53(3.47)
+epochs:   0%|                                                                                                                | 0/80 [34:29<?, ?it/s]
+Traceback (most recent call last):
+  File "/workspace/OpenPCDet/tools/train.py", line 295, in <module>
+    main()
+  File "/workspace/OpenPCDet/tools/train.py", line 232, in main
+    train_model(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 251, in train_model
+    result = train_one_epoch(
+  File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 92, in train_one_epoch
+    batch = next(dataloader_iter)
+  File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 631, in __next__
+    data = self._next_data()
+  File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1329, in _next_data
+    idx, data = self._get_data()
+  File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1285, in _get_data
+    success, data = self._try_get_data()
+  File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1133, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+  File "/usr/lib/python3.8/queue.py", line 179, in get
+    self.not_empty.wait(remaining)
+  File "/usr/lib/python3.8/threading.py", line 306, in wait
+    gotit = waiter.acquire(True, timeout)
+KeyboardInterrupt
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/OpenPCDet/tools/train.py", line 295, in <module>
+[rank0]:     main()
+[rank0]:   File "/workspace/OpenPCDet/tools/train.py", line 232, in main
+[rank0]:     train_model(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 251, in train_model
+[rank0]:     result = train_one_epoch(
+[rank0]:   File "/workspace/OpenPCDet/tools/train_utils/train_utils.py", line 92, in train_one_epoch
+[rank0]:     batch = next(dataloader_iter)
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 631, in __next__
+[rank0]:     data = self._next_data()
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1329, in _next_data
+[rank0]:     idx, data = self._get_data()
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1285, in _get_data
+[rank0]:     success, data = self._try_get_data()
+[rank0]:   File "/usr/local/lib/python3.8/dist-packages/torch/utils/data/dataloader.py", line 1133, in _try_get_data
+[rank0]:     data = self._data_queue.get(timeout=timeout)
+[rank0]:   File "/usr/lib/python3.8/queue.py", line 179, in get
+[rank0]:     self.not_empty.wait(remaining)
+[rank0]:   File "/usr/lib/python3.8/threading.py", line 306, in wait
+[rank0]:     gotit = waiter.acquire(True, timeout)
+[rank0]: KeyboardInterrupt

@@ -1,0 +1,24 @@
+{
+  "os":  "Linux-5.15.0-139-generic-x86_64-with-glibc2.29",
+  "python":  "CPython 3.8.10",
+  "startedAt":  "2025-10-05T07:56:26.379261Z",
+  "args":  [
+    "--launcher",
+    "pytorch",
+    "--cfg_file",
+    "cfgs/custom_av/centerpoint_pillar_LIDSOR_aligned.yaml",
+    "--extra_tag",
+    "aligned"
+  ],
+  "program":  "/workspace/OpenPCDet/tools/train.py",
+  "codePath":  "train.py",
+  "codePathLocal":  "train.py",
+  "git":  {
+    "remote":  "https://github.com/binxni/team_2.git"
+  },
+  "email":  "subin.park017@gmail.com",
+  "root":  "/workspace/OpenPCDet/tools",
+  "host":  "b7db4a6adde0",
+  "executable":  "/usr/bin/python",
+  "writerId":  "1c0r2ubpqgx54ykb6qrzlhn7s1nj9hw0"
+}

@@ -110,6 +110,103 @@ class DataProcessor(object):
 
         return data_dict
 
+    def points_to_range_view(self, data_dict=None, config=None):
+        if data_dict is None:
+            return partial(self.points_to_range_view, config=config)
+
+        points = data_dict.get('points', None)
+        if points is None or points.shape[0] == 0:
+            return data_dict
+
+        ring_index = config.get('RING_INDEX', 4)
+        if ring_index >= points.shape[1]:
+            raise ValueError(
+                f"RING_INDEX={ring_index} exceeds available point features ({points.shape[1]})."
+            )
+
+        rings = points[:, ring_index].astype(np.int32)
+        if np.any(rings < 0):
+            raise ValueError("Ring indices must be non-negative integers for range-view projection.")
+
+        num_rings = int(config.get('NUM_RINGS', rings.max() + 1))
+        if num_rings <= 0:
+            raise ValueError(f"Invalid NUM_RINGS value: {num_rings}")
+
+        width = int(config.get('WIDTH', 2048))
+        if width <= 0:
+            raise ValueError(f"Invalid WIDTH value: {width}")
+
+        feature_list = list(config.get('FEATURES', ['range', 'intensity', 'x', 'y', 'z']))
+        if not feature_list:
+            raise ValueError("FEATURES list for range-view projection cannot be empty.")
+
+        fill_value = float(config.get('FILL_VALUE', 0.0))
+
+        xyz = points[:, :3]
+        ranges = np.linalg.norm(xyz, axis=1)
+        azimuth = np.arctan2(points[:, 1], points[:, 0])  # [-pi, pi]
+        cols = ((azimuth + np.pi) / (2 * np.pi) * width).astype(np.int32)
+        cols = np.clip(cols, 0, width - 1)
+
+        valid_ring_mask = rings < num_rings
+        if not np.any(valid_ring_mask):
+            return data_dict
+
+        rings_valid = rings[valid_ring_mask]
+        cols_valid = cols[valid_ring_mask]
+        ranges_valid = ranges[valid_ring_mask]
+        point_indices = np.nonzero(valid_ring_mask)[0]
+
+        lin_indices = rings_valid * width + cols_valid
+        sort_order = np.lexsort((ranges_valid, lin_indices))
+        lin_sorted = lin_indices[sort_order]
+        unique_lin, first_idx = np.unique(lin_sorted, return_index=True)
+        selected_local_idx = sort_order[first_idx]
+        selected_point_idx = point_indices[selected_local_idx]
+
+        range_image = np.full((num_rings, width, len(feature_list)), fill_value, dtype=np.float32)
+        mask = np.zeros((num_rings, width), dtype=bool)
+        index_map = np.full((num_rings, width), -1, dtype=np.int32)
+
+        row_idx = unique_lin // width
+        col_idx = unique_lin % width
+        mask[row_idx, col_idx] = True
+        index_map[row_idx, col_idx] = selected_point_idx
+
+        intensity_index = int(config.get('INTENSITY_INDEX', 3))
+        has_intensity = 0 <= intensity_index < points.shape[1]
+
+        feature_source = {
+            'x': points[selected_point_idx, 0],
+            'y': points[selected_point_idx, 1],
+            'z': points[selected_point_idx, 2],
+            'intensity': points[selected_point_idx, intensity_index] if has_intensity else None,
+            'range': ranges[selected_point_idx],
+            'depth': ranges[selected_point_idx],
+            'ring': rings[selected_point_idx].astype(np.float32),
+        }
+
+        for channel_idx, feature_name in enumerate(feature_list):
+            feature_name_lower = feature_name.lower()
+            if feature_name_lower not in feature_source:
+                raise KeyError(
+                    f"Unsupported range-view feature '{feature_name}'."
+                    " Supported: x, y, z, intensity, range, depth, ring."
+                )
+
+            feature_values = feature_source[feature_name_lower]
+            if feature_values is None:
+                raise ValueError(
+                    f"Feature '{feature_name}' requires INTENSITY_INDEX within point feature range."
+                )
+            range_image[row_idx, col_idx, channel_idx] = feature_values
+
+        data_dict['range_image'] = range_image
+        data_dict['range_mask'] = mask
+        data_dict['range_image_indices'] = index_map
+
+        return data_dict
+
     def transform_points_to_voxels_placeholder(self, data_dict=None, config=None):
         # just calculate grid size
         if data_dict is None:

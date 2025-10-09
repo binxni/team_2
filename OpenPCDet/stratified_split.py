@@ -39,8 +39,8 @@ def get_sample_classes(data_path, sample_id):
     
     return classes
 
-def stratified_split_fixed(data_path, train_ratio=0.9, random_seed=42):
-    """중복 없는 클래스 조합 기반 분할"""
+def stratified_split_by_noise(data_path, train_ratio=0.9, random_seed=42):
+    """노이즈 유무별로 분리하여 각각 클래스 조합 기반 분할"""
     random.seed(random_seed)
     np.random.seed(random_seed)
     
@@ -58,51 +58,102 @@ def stratified_split_fixed(data_path, train_ratio=0.9, random_seed=42):
     
     print(f"전체 샘플 수: {len(all_samples)}")
     
-    # 2. 전체 클래스별 분포 분석
-    class_counts = analyze_dataset_distribution(data_path, all_samples)
-    
-    print("전체 클래스별 객체 수:")
-    for class_name in ['Vehicle', 'Pedestrian', 'Cyclist']:
-        count = class_counts.get(class_name, 0)
-        print(f"  {class_name}: {count}")
-    
-    # 3. 각 샘플별로 포함된 클래스 조합 분석
-    class_combinations = defaultdict(list)
+    # 2. 노이즈 유무별로 데이터 분리
+    no_noise_samples = []
+    noise_samples = []
     
     for sample_id in all_samples:
+        sample_num = int(sample_id)
+        if 0 <= sample_num <= 14810:
+            no_noise_samples.append(sample_id)
+        elif 14811 <= sample_num <= 29601:
+            noise_samples.append(sample_id)
+    
+    print(f"\n데이터 분리 결과:")
+    print(f"- 노이즈 없는 데이터: {len(no_noise_samples)}개 (00000000~00014810)")
+    print(f"- 노이즈 있는 데이터: {len(noise_samples)}개 (00014811~00029601)")
+    
+    # 3. 각 그룹별로 클래스별 분포 분석
+    no_noise_class_counts = analyze_dataset_distribution(data_path, no_noise_samples)
+    noise_class_counts = analyze_dataset_distribution(data_path, noise_samples)
+    
+    print("\n노이즈 없는 데이터 클래스별 객체 수:")
+    for class_name in ['Vehicle', 'Pedestrian', 'Cyclist']:
+        count = no_noise_class_counts.get(class_name, 0)
+        print(f"  {class_name}: {count}")
+    
+    print("\n노이즈 있는 데이터 클래스별 객체 수:")
+    for class_name in ['Vehicle', 'Pedestrian', 'Cyclist']:
+        count = noise_class_counts.get(class_name, 0)
+        print(f"  {class_name}: {count}")
+    
+    # 4. 노이즈 없는 데이터의 클래스 조합별 분할
+    print("\n=== 노이즈 없는 데이터 처리 ===")
+    no_noise_class_combinations = defaultdict(list)
+    
+    for sample_id in no_noise_samples:
         classes = get_sample_classes(data_path, sample_id)
         if classes:  # 빈 라벨이 아닌 경우만
             combo_key = tuple(sorted(classes))
-            class_combinations[combo_key].append(sample_id)
+            no_noise_class_combinations[combo_key].append(sample_id)
     
-    print("\n클래스 조합별 샘플 분포:")
-    total_combo_samples = 0
-    for combo, samples in sorted(class_combinations.items()):
+    print("노이즈 없는 데이터 클래스 조합별 샘플 분포:")
+    for combo, samples in sorted(no_noise_class_combinations.items()):
         print(f"  {combo}: {len(samples)} 샘플")
-        total_combo_samples += len(samples)
     
-    print(f"조합별 샘플 총합: {total_combo_samples}")
+    no_noise_train = []
+    no_noise_val = []
     
-    # 4. 각 조합별로 9:1 분할
-    train_samples = []
-    val_samples = []
-    
-    print("\n조합별 분할 결과:")
-    for combo, samples in class_combinations.items():
+    print("\n노이즈 없는 데이터 조합별 분할:")
+    for combo, samples in no_noise_class_combinations.items():
         random.shuffle(samples)
         train_size = int(len(samples) * train_ratio)
         
         combo_train = samples[:train_size]
         combo_val = samples[train_size:]
         
-        train_samples.extend(combo_train)
-        val_samples.extend(combo_val)
+        no_noise_train.extend(combo_train)
+        no_noise_val.extend(combo_val)
         
         print(f"  {combo}: Train {len(combo_train)}, Val {len(combo_val)}")
     
-    # 5. 정렬 및 중복 검증
-    train_list = sorted(train_samples)
-    val_list = sorted(val_samples)
+    # 5. 노이즈 있는 데이터의 클래스 조합별 분할
+    print("\n=== 노이즈 있는 데이터 처리 ===")
+    noise_class_combinations = defaultdict(list)
+    
+    for sample_id in noise_samples:
+        classes = get_sample_classes(data_path, sample_id)
+        if classes:  # 빈 라벨이 아닌 경우만
+            combo_key = tuple(sorted(classes))
+            noise_class_combinations[combo_key].append(sample_id)
+    
+    print("노이즈 있는 데이터 클래스 조합별 샘플 분포:")
+    for combo, samples in sorted(noise_class_combinations.items()):
+        print(f"  {combo}: {len(samples)} 샘플")
+    
+    noise_train = []
+    noise_val = []
+    
+    print("\n노이즈 있는 데이터 조합별 분할:")
+    for combo, samples in noise_class_combinations.items():
+        random.shuffle(samples)
+        train_size = int(len(samples) * train_ratio)
+        
+        combo_train = samples[:train_size]
+        combo_val = samples[train_size:]
+        
+        noise_train.extend(combo_train)
+        noise_val.extend(combo_val)
+        
+        print(f"  {combo}: Train {len(combo_train)}, Val {len(combo_val)}")
+    
+    # 6. 최종 train/val 결합
+    final_train = no_noise_train + noise_train
+    final_val = no_noise_val + noise_val
+    
+    # 정렬
+    train_list = sorted(final_train)
+    val_list = sorted(final_val)
     
     # 중복 검증
     train_set = set(train_list)
@@ -117,20 +168,28 @@ def stratified_split_fixed(data_path, train_ratio=0.9, random_seed=42):
     else:
         print("✅ 중복 없음")
     
-    print(f"\n최종 분할 결과:")
-    print(f"Train 샘플: {len(train_list)}")
-    print(f"Val 샘플: {len(val_list)}")
-    print(f"총합: {len(train_list) + len(val_list)} (전체: {len(all_samples)})")
+    print(f"\n=== 최종 분할 결과 ===")
+    print(f"노이즈 없는 데이터:")
+    print(f"  - Train: {len(no_noise_train)}")
+    print(f"  - Val: {len(no_noise_val)}")
+    print(f"노이즈 있는 데이터:")
+    print(f"  - Train: {len(noise_train)}")
+    print(f"  - Val: {len(noise_val)}")
+    print(f"전체:")
+    print(f"  - Train: {len(train_list)}")
+    print(f"  - Val: {len(val_list)}")
+    print(f"  - 총합: {len(train_list) + len(val_list)} (전체: {len(all_samples)})")
     
-    # 6. 분할 후 클래스별 분포 검증
+    # 7. 분할 후 클래스별 분포 검증
     print("\n=== 분할 결과 검증 ===")
     train_class_counts = analyze_dataset_distribution(data_path, train_list)
     val_class_counts = analyze_dataset_distribution(data_path, val_list)
+    total_class_counts = analyze_dataset_distribution(data_path, all_samples)
     
     print("Train 클래스별 객체 수:")
     for class_name in ['Vehicle', 'Pedestrian', 'Cyclist']:
         train_count = train_class_counts.get(class_name, 0)
-        total_count = class_counts.get(class_name, 0)
+        total_count = total_class_counts.get(class_name, 0)
         if total_count > 0:
             ratio = train_count / total_count * 100
             print(f"  {class_name}: {train_count}/{total_count} ({ratio:.1f}%)")
@@ -138,7 +197,7 @@ def stratified_split_fixed(data_path, train_ratio=0.9, random_seed=42):
     print("Val 클래스별 객체 수:")
     for class_name in ['Vehicle', 'Pedestrian', 'Cyclist']:
         val_count = val_class_counts.get(class_name, 0)
-        total_count = class_counts.get(class_name, 0)
+        total_count = total_class_counts.get(class_name, 0)
         if total_count > 0:
             ratio = val_count / total_count * 100
             print(f"  {class_name}: {val_count}/{total_count} ({ratio:.1f}%)")
@@ -155,14 +214,14 @@ def save_split_files(data_path, train_list, val_list):
     os.makedirs(imagesets_dir, exist_ok=True)
     
     # train.txt 저장
-    train_file = os.path.join(imagesets_dir, 'train_eval.txt')
+    train_file = os.path.join(imagesets_dir, 'train.txt')
     with open(train_file, 'w') as f:
         for sample_id in train_list:
             f.write(f"{sample_id}\n")
     print(f"Train 파일 저장: {train_file}")
     
     # val.txt 저장  
-    val_file = os.path.join(imagesets_dir, 'val_eval.txt')
+    val_file = os.path.join(imagesets_dir, 'val.txt')
     with open(val_file, 'w') as f:
         for sample_id in val_list:
             f.write(f"{sample_id}\n")
@@ -170,10 +229,10 @@ def save_split_files(data_path, train_list, val_list):
 
 if __name__ == "__main__":
     # 데이터 경로 설정
-    data_path = "/workspace/dataset/custom_av"
+    data_path = "/home/ailab/git/Team_2/Subin/OpenPCDet/data/custom_av_hybrid"
     
-    # 클래스 조합 기반 분할 수행
-    train_list, val_list = stratified_split_fixed(
+    # 클래스 조합 기반 분할 수행 (노이즈 유무별 분리)
+    train_list, val_list = stratified_split_by_noise(
         data_path=data_path,
         train_ratio=0.9,
         random_seed=42
@@ -182,4 +241,4 @@ if __name__ == "__main__":
     # 파일로 저장
     save_split_files(data_path, train_list, val_list)
     
-    print("\n클래스 조합 기반 분할이 완료되었습니다!")
+    print("\n노이즈 유무별 클래스 조합 기반 분할이 완료되었습니다!")

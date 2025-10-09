@@ -5,7 +5,7 @@ from datetime import datetime
 from collections import defaultdict, Counter
 
 # Configuration
-DATA_PATH = "/home/ailab/git/Team_2/Subin/OpenPCDet/data/custom_av"
+DATA_PATH = "/home/ailab/git/Team_2/Subin/OpenPCDet/data/custom_av_64"
 FRAME_LIST_FILE = os.path.join(DATA_PATH, "ImageSets", "train_128.txt")
 LABELS_FOLDER = os.path.join(DATA_PATH, "labels")
 OUTPUT_DIR = "/home/ailab/git/Team_2/Seokjae/OpenPCDet/dataset_analysis"  

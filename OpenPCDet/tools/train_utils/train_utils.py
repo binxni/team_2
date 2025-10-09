@@ -98,7 +98,12 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         data_timer = time.time()
         cur_data_time = data_timer - end
 
-        lr_scheduler.step(accumulated_iter, cur_epoch)
+        # Get gradient accumulation steps from config
+        gradient_accumulation_steps = optim_cfg.get('GRADIENT_ACCUMULATION_STEPS', 1)
+        
+        # Only update lr_scheduler when we actually update the optimizer
+        if (cur_it - start_it + 1) % gradient_accumulation_steps == 0 or cur_it + 1 == total_it_each_epoch:
+            lr_scheduler.step(accumulated_iter, cur_epoch)
 
         try:
             cur_lr = float(optimizer.lr)
@@ -109,16 +114,25 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
             tb_log.add_scalar('meta_data/learning_rate', cur_lr, accumulated_iter)
 
         model.train()
-        optimizer.zero_grad()
+        
+        # Initialize optimizer zero_grad only at the start of accumulation
+        if (cur_it - start_it) % gradient_accumulation_steps == 0:
+            optimizer.zero_grad()
 
         with torch.cuda.amp.autocast(enabled=use_amp):
             loss, tb_dict, disp_dict = model_func(model, batch)
+            
+            # Scale loss by accumulation steps for correct gradient averaging
+            loss = loss / gradient_accumulation_steps
 
         scaler.scale(loss).backward()
-        scaler.unscale_(optimizer)
-        clip_grad_norm_(model.parameters(), optim_cfg.GRAD_NORM_CLIP)
-        scaler.step(optimizer)
-        scaler.update()
+        
+        # Only update optimizer every gradient_accumulation_steps
+        if (cur_it - start_it + 1) % gradient_accumulation_steps == 0 or cur_it + 1 == total_it_each_epoch:
+            scaler.unscale_(optimizer)
+            clip_grad_norm_(model.parameters(), optim_cfg.GRAD_NORM_CLIP)
+            scaler.step(optimizer)
+            scaler.update()
 
         accumulated_iter += 1
  
@@ -135,13 +149,16 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         if rank == 0:
             batch_size = batch.get('batch_size', None)
             
+            # For logging, use the original loss value (before scaling by accumulation steps)
+            original_loss = loss.item() * gradient_accumulation_steps
+            
             data_time.update(avg_data_time)
             forward_time.update(avg_forward_time)
             batch_time.update(avg_batch_time)
-            losses_m.update(loss.item() , batch_size)
+            losses_m.update(original_loss, batch_size)
             
             disp_dict.update({
-                'loss': loss.item(), 'lr': cur_lr, 'd_time': f'{data_time.val:.2f}({data_time.avg:.2f})',
+                'loss': original_loss, 'lr': cur_lr, 'd_time': f'{data_time.val:.2f}({data_time.avg:.2f})',
                 'f_time': f'{forward_time.val:.2f}({forward_time.avg:.2f})', 'b_time': f'{batch_time.val:.2f}({batch_time.avg:.2f})'
             })
             
@@ -186,7 +203,7 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                 # tbar.refresh()
 
             if tb_log is not None:
-                tb_log.add_scalar('train/loss', loss, accumulated_iter)
+                tb_log.add_scalar('train/loss', original_loss, accumulated_iter)
                 tb_log.add_scalar('meta_data/learning_rate', cur_lr, accumulated_iter)
                 for key, val in tb_dict.items():
                     tb_log.add_scalar('train/' + key, val, accumulated_iter)

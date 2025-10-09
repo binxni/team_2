@@ -112,10 +112,16 @@ def main():
     gpu_list = os.environ['CUDA_VISIBLE_DEVICES'] if 'CUDA_VISIBLE_DEVICES' in os.environ.keys() else 'ALL'
     logger.info('CUDA_VISIBLE_DEVICES=%s' % gpu_list)
 
+    # Calculate and log gradient accumulation info
+    gradient_accumulation_steps = cfg.OPTIMIZATION.get('GRADIENT_ACCUMULATION_STEPS', 1)
+    effective_batch_size = total_gpus * args.batch_size * gradient_accumulation_steps
+    
     if dist_train:
-        logger.info('Training in distributed mode : total_batch_size: %d' % (total_gpus * args.batch_size))
+        logger.info('Training in distributed mode : total_batch_size: %d, gradient_accumulation_steps: %d, effective_batch_size: %d' % 
+                   (total_gpus * args.batch_size, gradient_accumulation_steps, effective_batch_size))
     else:
-        logger.info('Training with a single process')
+        logger.info('Training with a single process : batch_size: %d, gradient_accumulation_steps: %d, effective_batch_size: %d' % 
+                   (args.batch_size, gradient_accumulation_steps, effective_batch_size))
         
     for key, val in vars(args).items():
         logger.info('{:16} {}'.format(key, val))
@@ -150,7 +156,9 @@ def main():
                 'dataset': cfg.DATA_CONFIG.DATASET,
                 'class_names': cfg.CLASS_NAMES,
                 'total_gpus': total_gpus,
-                'distributed': dist_train
+                'distributed': dist_train,
+                'gradient_accumulation_steps': cfg.OPTIMIZATION.get('GRADIENT_ACCUMULATION_STEPS', 1),
+                'effective_batch_size': args.batch_size * total_gpus * cfg.OPTIMIZATION.get('GRADIENT_ACCUMULATION_STEPS', 1)
             }
         )
         
@@ -220,8 +228,12 @@ def main():
     logger.info(f'----------- Model {cfg.MODEL.NAME} created, param count: {sum([m.numel() for m in model.parameters()])} -----------')
     logger.info(model)
 
+    # Calculate effective iterations per epoch considering gradient accumulation
+    gradient_accumulation_steps = cfg.OPTIMIZATION.get('GRADIENT_ACCUMULATION_STEPS', 1)
+    effective_iters_per_epoch = len(train_loader) // gradient_accumulation_steps
+    
     lr_scheduler, lr_warmup_scheduler = build_scheduler(
-        optimizer, total_iters_each_epoch=len(train_loader), total_epochs=args.epochs,
+        optimizer, total_iters_each_epoch=effective_iters_per_epoch, total_epochs=args.epochs,
         last_epoch=last_epoch, optim_cfg=cfg.OPTIMIZATION
     )
 

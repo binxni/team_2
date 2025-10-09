@@ -1,0 +1,46 @@
+2025-10-08 13:50:56,731   INFO  Weights & Biases initialized with project: team2
+2025-10-08 13:50:56,731   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20251008_135055
+2025-10-08 13:50:56,732   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-10-08 13:50:59,456   INFO  Database filter by min points Vehicle: 714073 => 645393
+2025-10-08 13:50:59,497   INFO  Database filter by min points Pedestrian: 312923 => 274105
+2025-10-08 13:50:59,505   INFO  Database filter by min points Cyclist: 27064 => 24195
+2025-10-08 13:50:59,571   INFO  Loading Custom AV dataset.
+2025-10-08 13:51:00,099   INFO  Total samples for Custom AV dataset: 26640
+2025-10-08 13:51:00,102   INFO  Loading Custom AV dataset.
+2025-10-08 13:51:00,127   INFO  Total samples for Custom AV dataset: 2962
+Traceback (most recent call last):
+  File "/workspace/OpenPCDet/tools/train.py", line 295, in <module>
+    main()
+  File "/workspace/OpenPCDet/tools/train.py", line 186, in main
+    model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
+  File "/workspace/OpenPCDet/tools/../pcdet/models/__init__.py", line 17, in build_network
+    model = build_detector(
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/__init__.py", line 44, in build_detector
+    model = __all__[model_cfg.NAME](
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/centerpoint.py", line 7, in __init__
+    self.module_list = self.build_networks()
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 46, in build_networks
+    module, model_info_dict = getattr(self, 'build_%s' % module_name)(
+  File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 128, in build_dense_head
+    dense_head_module = dense_heads.__all__[self.model_cfg.DENSE_HEAD.NAME](
+  File "/workspace/OpenPCDet/tools/../pcdet/models/dense_heads/center_head.py", line 72, in __init__
+    assert total_classes == len(self.class_names), f'class_names_each_head={self.class_names_each_head}'
+AssertionError: class_names_each_head=[['Vehicle']]
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/workspace/OpenPCDet/tools/train.py", line 295, in <module>
+[rank0]:     main()
+[rank0]:   File "/workspace/OpenPCDet/tools/train.py", line 186, in main
+[rank0]:     model = build_network(model_cfg=cfg.MODEL, num_class=len(cfg.CLASS_NAMES), dataset=train_set)
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/__init__.py", line 17, in build_network
+[rank0]:     model = build_detector(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/__init__.py", line 44, in build_detector
+[rank0]:     model = __all__[model_cfg.NAME](
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/centerpoint.py", line 7, in __init__
+[rank0]:     self.module_list = self.build_networks()
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 46, in build_networks
+[rank0]:     module, model_info_dict = getattr(self, 'build_%s' % module_name)(
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/detectors/detector3d_template.py", line 128, in build_dense_head
+[rank0]:     dense_head_module = dense_heads.__all__[self.model_cfg.DENSE_HEAD.NAME](
+[rank0]:   File "/workspace/OpenPCDet/tools/../pcdet/models/dense_heads/center_head.py", line 72, in __init__
+[rank0]:     assert total_classes == len(self.class_names), f'class_names_each_head={self.class_names_each_head}'
+[rank0]: AssertionError: class_names_each_head=[['Vehicle']]

@@ -1,0 +1,6 @@
+{"time":"2025-10-08T13:56:19.014234976Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-08T13:56:19.492407541Z","level":"INFO","msg":"stream: created new stream","id":"os47edtv"}
+{"time":"2025-10-08T13:56:19.492500152Z","level":"INFO","msg":"handler: started","stream_id":"os47edtv"}
+{"time":"2025-10-08T13:56:19.492652489Z","level":"INFO","msg":"stream: started","id":"os47edtv"}
+{"time":"2025-10-08T13:56:19.492677502Z","level":"INFO","msg":"writer: started","stream_id":"os47edtv"}
+{"time":"2025-10-08T13:56:19.492679821Z","level":"INFO","msg":"sender: started","stream_id":"os47edtv"}

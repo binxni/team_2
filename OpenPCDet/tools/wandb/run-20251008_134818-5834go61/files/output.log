@@ -1,0 +1,7 @@
+2025-10-08 13:48:19,813   INFO  Weights & Biases initialized with project: team2
+2025-10-08 13:48:19,814   INFO  Wandb run name: centerpoint_pillar_1x_long_epoch_default_20251008_134817
+2025-10-08 13:48:19,814   INFO  ----------- Create dataloader & network & optimizer -----------
+2025-10-08 13:48:22,671   INFO  Database filter by min points Vehicle: 714073 => 645393
+2025-10-08 13:48:22,733   INFO  Database filter by min points Pedestrian: 312923 => 274105
+2025-10-08 13:48:22,743   INFO  Database filter by min points Cyclist: 27064 => 24195
+2025-10-08 13:48:22,814   INFO  Loading Custom AV dataset.

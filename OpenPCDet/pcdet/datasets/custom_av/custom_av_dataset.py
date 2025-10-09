@@ -336,10 +336,13 @@ if __name__ == '__main__':
         from easydict import EasyDict
 
         dataset_cfg = EasyDict(yaml.safe_load(open(sys.argv[2])))
-        ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
+         # 설정 파일의 DATA_PATH 직접 사용
+        data_path = Path(dataset_cfg.DATA_PATH)  # /workspace/dataset/custom_av_noise
+        save_path = data_path
+        
         create_custom_av_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],
-            data_path=ROOT_DIR / 'data' / 'custom_av',
-            save_path=ROOT_DIR / 'data' / 'custom_av',
+            data_path=data_path,
+            save_path=save_path,
         )

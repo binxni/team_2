@@ -1,0 +1,8 @@
+{"time":"2025-10-08T14:00:53.313634063Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-08T14:00:53.730871347Z","level":"INFO","msg":"stream: created new stream","id":"kx1dyr2f"}
+{"time":"2025-10-08T14:00:53.730972883Z","level":"INFO","msg":"handler: started","stream_id":"kx1dyr2f"}
+{"time":"2025-10-08T14:00:53.731099273Z","level":"INFO","msg":"stream: started","id":"kx1dyr2f"}
+{"time":"2025-10-08T14:00:53.731125538Z","level":"INFO","msg":"sender: started","stream_id":"kx1dyr2f"}
+{"time":"2025-10-08T14:00:53.731127103Z","level":"INFO","msg":"writer: started","stream_id":"kx1dyr2f"}
+{"time":"2025-10-08T17:24:24.741737865Z","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/subin-park017-soongsil-university/team2/kx1dyr2f/file_stream","body":"\n<html><head>\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<title>502 Server Error</title>\n</head>\n<body text=#000000 bgcolor=#ffffff>\n<h1>Error: Server Error</h1>\n<h2>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.</h2>\n<h2></h2>\n</body></html>\n"}
+{"time":"2025-10-09T00:29:39.314184514Z","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/subin-park017-soongsil-university/team2/kx1dyr2f/file_stream","body":"\n<html><head>\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<title>502 Server Error</title>\n</head>\n<body text=#000000 bgcolor=#ffffff>\n<h1>Error: Server Error</h1>\n<h2>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.</h2>\n<h2></h2>\n</body></html>\n"}

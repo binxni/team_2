@@ -1,0 +1,11 @@
+{"time":"2025-10-07T15:02:58.462207455Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-07T15:02:58.887623563Z","level":"INFO","msg":"stream: created new stream","id":"nve35snq"}
+{"time":"2025-10-07T15:02:58.887730317Z","level":"INFO","msg":"handler: started","stream_id":"nve35snq"}
+{"time":"2025-10-07T15:02:58.887820468Z","level":"INFO","msg":"stream: started","id":"nve35snq"}
+{"time":"2025-10-07T15:02:58.888043859Z","level":"INFO","msg":"sender: started","stream_id":"nve35snq"}
+{"time":"2025-10-07T15:02:58.888057422Z","level":"INFO","msg":"writer: started","stream_id":"nve35snq"}
+{"time":"2025-10-07T15:05:05.034276201Z","level":"INFO","msg":"stream: closing","id":"nve35snq"}
+{"time":"2025-10-07T15:05:05.618696776Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-10-07T15:05:05.958337687Z","level":"INFO","msg":"handler: closed","stream_id":"nve35snq"}
+{"time":"2025-10-07T15:05:05.958594727Z","level":"INFO","msg":"sender: closed","stream_id":"nve35snq"}
+{"time":"2025-10-07T15:05:05.958616874Z","level":"INFO","msg":"stream: closed","id":"nve35snq"}

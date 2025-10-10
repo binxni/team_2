@@ -1,7 +1,7 @@
 CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']  # 학습·추론 대상 객체 클래스 목록
 
 DATA_CONFIG:  # 데이터 로딩 및 전처리 설정 블록
-    _BASE_CONFIG_: cfgs/dataset_configs/custom_av_dataset.yaml  # 공통 데이터셋 설정 파일 경로
+    _BASE_CONFIG_: cfgs/dataset_configs/custom_av_dataset_hybrid.yaml  # 공통 데이터셋 설정 파일 경로
 
     POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]  # 포인트 클라우드 사용 공간 범위
     DATA_PROCESSOR:  # 포인트 클라우드 전처리 파이프라인 정의
@@ -48,21 +48,23 @@ MODEL:  # 모델 구성 설정
     DENSE_HEAD:  # Detection head 설정
         NAME: CenterHead  # CenterPoint 헤드 사용
         CLASS_AGNOSTIC: False  # 클래스별 분리 예측 수행
+        # IOU_REG_LOSS: True  # IoU 회귀 손실 활성화
 
         CLASS_NAMES_EACH_HEAD: [  # 헤드별 담당 클래스 목록
-            ['Vehicle', 'Pedestrian', 'Cyclist']  # 단일 헤드에서 세 클래스 모두 예측
+            ['Vehicle'], ['Pedestrian', 'Cyclist']  # 단일 헤드에서 세 클래스 모두 예측
         ]
 
         SHARED_CONV_CHANNEL: 64  # 헤드 공용 컨볼루션 채널 수
         USE_BIAS_BEFORE_NORM: True  # 정규화 전에 bias 사용
         NUM_HM_CONV: 2  # Heatmap 헤드용 컨볼루션 수
         SEPARATE_HEAD_CFG:  # 각 출력 헤드 구성을 정의
-            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']  # 헤드 출력 순서
+            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']  # 헤드 출력 순서 (IoU 추가)
             HEAD_DICT: {  # 헤드별 출력 채널과 레이어 수
                 'center': {'out_channels': 2, 'num_conv': 2},  # 평면 중심 좌표 예측 헤드 설정
                 'center_z': {'out_channels': 1, 'num_conv': 2},  # 높이 중심 예측 헤드 설정
                 'dim': {'out_channels': 3, 'num_conv': 2},  # 박스 크기 예측 헤드 설정
                 'rot': {'out_channels': 2, 'num_conv': 2},  # 회전 각도 예측 헤드 설정
+                # 'iou': {'out_channels': 1, 'num_conv': 2},  # IoU 점수 예측 헤드 설정 (Second stage)
             }
 
         TARGET_ASSIGNER_CONFIG:  # 타깃 할당 관련 설정
@@ -73,8 +75,9 @@ MODEL:  # 모델 구성 설정
 
         LOSS_CONFIG:  # 손실 함수 관련 설정
             LOSS_WEIGHTS: {  # 손실 가중치 사전
-                'cls_weight': 1.0,  # 분류 손실 가중치
+                'cls_weight': 1.3,  # 분류 손실 가중치
                 'loc_weight': 2.0,  # 회귀 손실 가중치
+                # 'iou_weight': 1.0,  # IoU 손실 가중치 (Second stage)
                 'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]  # 각 회귀 코드별 가중치
             }
 
@@ -82,6 +85,8 @@ MODEL:  # 모델 구성 설정
             SCORE_THRESH: 0.1  # 최소 점수 임계치
             POST_CENTER_LIMIT_RANGE: [-80, -80, -10.0, 80, 80, 10.0]  # 후처리 시 고려할 공간 범위
             MAX_OBJ_PER_SAMPLE: 500  # 샘플당 최대 출력 객체 수
+            # USE_IOU_TO_RECTIFY_SCORE: True  # IoU를 사용하여 점수 보정 활성화
+            # IOU_RECTIFIER: [0.5, 0.5, 0.5]  # 클래스별 IoU 보정 계수 [Vehicle, Pedestrian, Cyclist]
             NMS_CONFIG:  # NMS 설정
                 NMS_TYPE: nms_gpu  # GPU 기반 NMS 사용
                 NMS_THRESH: 0.7  # NMS IoU 임계치
@@ -95,8 +100,13 @@ MODEL:  # 모델 구성 설정
 
 
 OPTIMIZATION:  # 최적화 관련 설정
-    BATCH_SIZE_PER_GPU: 1  # GPU당 배치 크기
-    NUM_EPOCHS: 40  # 전체 학습 에포크 수
+    BATCH_SIZE_PER_GPU: 3  # GPU당 배치 크기
+    NUM_EPOCHS: 100  # 전체 학습 에포크 수
+
+    # Gradient accumulation settings
+    # Effective batch size = BATCH_SIZE_PER_GPU * num_gpus * GRADIENT_ACCUMULATION_STEPS
+    # 3 * 3 * 4 = 36 (closest to target 32)
+    GRADIENT_ACCUMULATION_STEPS: 4
 
     OPTIMIZER: adam_onecycle  # 사용하는 옵티마이저 이름
     LR: 0.003  # 초기 학습률

@@ -1,3 +1,10 @@
 OpenPCDet/data
 OpenPCDet/build
 OpenPCDet/output
+.vscode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+wandb/

@@ -272,6 +272,7 @@ class CenterHead(nn.Module):
                         mask=target_dicts['masks'][idx],
                         ind=target_dicts['inds'][idx], gt_boxes=target_dicts['target_boxes_src'][idx]
                     )
+                    iou_loss = iou_loss * self.model_cfg.LOSS_CONFIG.LOSS_WEIGHTS.get('iou_weight', 1.0)
                     loss += iou_loss
                     tb_dict['iou_loss_head_%d' % idx] = iou_loss.item()
 

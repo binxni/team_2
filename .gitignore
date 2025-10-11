@@ -4,3 +4,5 @@ OpenPCDet/output
 OpenPCDet/outputs
 OpenPCDet/requirements.txt
 .vscode
+__pycache__/
+wandb/

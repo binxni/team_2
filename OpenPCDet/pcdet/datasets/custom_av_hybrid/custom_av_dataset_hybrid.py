@@ -1,10 +1,7 @@
 import copy
 import pickle
 import os
-<<<<<<< HEAD
-=======
 from pathlib import Path
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
 
 import numpy as np
 import torch 
@@ -34,20 +31,14 @@ class CustomAvDataset(DatasetTemplate):
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if os.path.exists(split_dir) else None
 
         self.custom_av_infos = []
-<<<<<<< HEAD
-=======
         # Allow selecting which point folder to read (e.g. points vs points_lisa)
         self.point_dir = self.dataset_cfg.get('POINT_DIR', 'points_lisa')
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
         self.include_data(self.mode)
         self.map_class_to_kitti = self.dataset_cfg.MAP_CLASS_TO_KITTI
 
     def include_data(self, mode):
-<<<<<<< HEAD
         self.logger.info('Loading Custom AV dataset.')
-=======
         self.logger.info('Loading Custom AV LISA dataset.')
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
         custom_av_infos = []
 
         for info_path in self.dataset_cfg.INFO_PATH[mode]:
@@ -59,11 +50,8 @@ class CustomAvDataset(DatasetTemplate):
                 custom_av_infos.extend(infos)
 
         self.custom_av_infos.extend(custom_av_infos)
-<<<<<<< HEAD
         self.logger.info('Total samples for Custom AV dataset: %d' % (len(custom_av_infos)))
-=======
         self.logger.info('Total samples for Custom AV LISA dataset: %d' % (len(custom_av_infos)))
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
 
     def get_label(self, idx):
         label_file = self.root_path / 'labels' / ('%s.txt' % idx)
@@ -82,15 +70,10 @@ class CustomAvDataset(DatasetTemplate):
         return np.array(gt_boxes, dtype=np.float32), np.array(gt_names)
 
     def get_lidar(self, idx):
-<<<<<<< HEAD
-        lidar_file = self.root_path / 'points' / ('%s.npy' % idx)
-        assert lidar_file.exists()
-=======
         # Use the active point directory when fetching lidar frames
         lidar_file = self.root_path / self.point_dir / ('%s.npy' % idx)
         if not lidar_file.exists():
             raise FileNotFoundError(f'Point file not found: {lidar_file}')
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
         point_features = np.load(lidar_file)
         return point_features
 
@@ -100,11 +83,8 @@ class CustomAvDataset(DatasetTemplate):
             root_path=self.root_path, logger=self.logger
         )
         self.split = split
-<<<<<<< HEAD
-=======
         # Refresh point_dir if caller updated dataset_cfg between splits
         self.point_dir = self.dataset_cfg.get('POINT_DIR', self.point_dir)
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
 
         split_dir = self.root_path / 'ImageSets' / (self.split + '.txt')
         self.sample_id_list = [x.strip() for x in open(split_dir).readlines()] if split_dir.exists() else None
@@ -257,17 +237,12 @@ class CustomAvDataset(DatasetTemplate):
     def create_groundtruth_database(self, info_path=None, used_classes=None, split='train'):
         import torch
 
-<<<<<<< HEAD
-        database_save_path = Path(self.root_path) / ('gt_database' if split == 'train' else ('gt_database_%s' % split))
-        db_info_save_path = Path(self.root_path) / ('custom_av_dbinfos_%s.pkl' % split)
-=======
         point_dir_str = str(self.point_dir)
         dir_tag = point_dir_str.strip().replace(os.sep, '_')
         suffix = '' if dir_tag in ('points_lisa', '') else f'_{dir_tag}'
         db_dir_name = 'gt_database' if split == 'train' else f'gt_database_{split}'
         database_save_path = Path(self.root_path) / f'{db_dir_name}{suffix}'
         db_info_save_path = Path(self.root_path) / f'custom_av_dbinfos_{split}{suffix}.pkl'
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
 
         database_save_path.mkdir(parents=True, exist_ok=True)
         all_db_infos = {}
@@ -299,11 +274,7 @@ class CustomAvDataset(DatasetTemplate):
                     gt_points.tofile(f)
 
                 if (used_classes is None) or names[i] in used_classes:
-<<<<<<< HEAD
-                    db_path = str(filepath.relative_to(self.root_path))  # gt_database/xxxxx.bin
-=======
                     db_path = str(filepath.relative_to(self.root_path))  # gt_database*/xxxxx.bin
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
                     db_info = {'name': names[i], 'path': db_path, 'gt_idx': i,
                                'box3d_lidar': gt_boxes[i], 'num_points_in_gt': gt_points.shape[0]}
                     if names[i] in all_db_infos:
@@ -333,9 +304,6 @@ class CustomAvDataset(DatasetTemplate):
                 f.write(line)
 
 
-<<<<<<< HEAD
-def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, workers=4):
-=======
 def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, workers=4, point_dirs=None):  # pkl 만드는 함수
     data_path = Path(data_path)
     save_path = Path(save_path)
@@ -350,7 +318,6 @@ def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, worke
 
     dataset_cfg.POINT_DIR = str(raw_point_dirs[0])
 
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
     dataset = CustomAvDataset(
         dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path,
         training=False, logger=common_utils.create_logger()
@@ -358,33 +325,6 @@ def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, worke
     train_split, val_split = 'train', 'val'
     num_features = len(dataset_cfg.POINT_FEATURE_ENCODING.src_feature_list)
 
-<<<<<<< HEAD
-    train_filename = save_path / ('custom_av_infos_%s.pkl' % train_split)
-    val_filename = save_path / ('custom_av_infos_%s.pkl' % val_split)
-
-    print('------------------------Start to generate data infos------------------------')
-
-    dataset.set_split(train_split)
-    custom_av_infos_train = dataset.get_infos(
-        class_names, num_workers=workers, has_label=True, num_features=num_features
-    )
-    with open(train_filename, 'wb') as f:
-        pickle.dump(custom_av_infos_train, f)
-    print('custom_av info train file is saved to %s' % train_filename)
-
-    dataset.set_split(val_split)
-    custom_av_infos_val = dataset.get_infos(
-        class_names, num_workers=workers, has_label=True, num_features=num_features
-    )
-    with open(val_filename, 'wb') as f:
-        pickle.dump(custom_av_infos_val, f)
-    print('custom_av info val file is saved to %s' % val_filename)
-
-    print('------------------------Start create groundtruth database for data augmentation------------------------')
-    dataset.set_split(train_split)
-    dataset.create_groundtruth_database(train_filename, split=train_split)
-    print('------------------------Data preparation done------------------------')
-=======
     print('------------------------Start to generate data infos------------------------')
 
     for point_dir in raw_point_dirs:
@@ -425,7 +365,6 @@ def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, worke
         dataset.set_split(train_split)
         dataset.create_groundtruth_database(train_filename, split=train_split)
         print('------------------------Data preparation done------------------------')
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
 
 
 if __name__ == '__main__':
@@ -441,11 +380,6 @@ if __name__ == '__main__':
         create_custom_av_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],
-<<<<<<< HEAD
-            data_path=ROOT_DIR / 'data' / 'custom_av_hybrid',
-            save_path=ROOT_DIR / 'data' / 'custom_av_hybrid',
-=======
             data_path=ROOT_DIR / 'data' / 'custom_av_64' ,
             save_path=ROOT_DIR / 'data' / 'custom_av_64' / 'points_hybrid',
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
         )

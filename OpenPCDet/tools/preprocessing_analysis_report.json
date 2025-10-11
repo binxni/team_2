@@ -1,0 +1,50 @@
+{
+  "density": {
+    "avg_points_clear": 113128.06242821431,
+    "avg_points_adverse": 113128.06242821431,
+    "point_reduction_rate": 0.0,
+    "std_clear": 16304.428673050523,
+    "std_adverse": 16304.428673050523
+  },
+  "intensity": {
+    "clear_mean": 0.2703403830528259,
+    "clear_std": 0.16570335626602173,
+    "adverse_mean": 0.19940629601478577,
+    "adverse_std": 0.154969722032547,
+    "mean_shift": 0.07093408703804016,
+    "std_ratio": 0.9352238178253174,
+    "kl_divergence": 0.2180497105709968
+  },
+  "points_per_object": {
+    "clear": {},
+    "adverse": {}
+  },
+  "noise": {
+    "clear": 0.023526319628831928,
+    "adverse": 0.022947836868051096
+  },
+  "class_imbalance": {},
+  "memory": {
+    "clear": {
+      "max_memory_mb": 12.20379638671875,
+      "avg_memory_mb": 6.904788966565815,
+      "coefficient_variation": 0.14412364468273767,
+      "oom_risk": "Low"
+    },
+    "adverse": {
+      "max_memory_mb": 12.20379638671875,
+      "avg_memory_mb": 6.904788966565815,
+      "coefficient_variation": 0.14412364468273767,
+      "oom_risk": "Low"
+    }
+  },
+  "annotation_quality": {
+    "clear": {
+      "error": "No annotations found"
+    },
+    "adverse": {
+      "error": "No annotations found"
+    }
+  },
+  "warnings": []
+}

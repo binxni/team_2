@@ -1,0 +1,16 @@
+[optuna] train.py exited with 1
+[optuna] train stderr:
+Traceback (most recent call last):
+  File "tools/train.py", line 295, in <module>
+    main()
+  File "tools/train.py", line 78, in main
+    args, cfg = parse_config()
+  File "tools/train.py", line 65, in parse_config
+    cfg_from_yaml_file(args.cfg_file, cfg)
+  File "/workspace/OpenPCDet/pcdet/config.py", line 78, in cfg_from_yaml_file
+    merge_new_config(config=config, new_config=new_config)
+  File "/workspace/OpenPCDet/pcdet/config.py", line 66, in merge_new_config
+    merge_new_config(config[key], val)
+  File "/workspace/OpenPCDet/pcdet/config.py", line 53, in merge_new_config
+    with open(new_config['_BASE_CONFIG_'], 'r') as f:
+FileNotFoundError: [Errno 2] No such file or directory: 'cfgs/dataset_configs/custom_av_dataset.yaml'

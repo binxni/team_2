@@ -1,0 +1,15 @@
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_setup.py:_flush():81] Current SDK version is 0.22.1
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_setup.py:_flush():81] Configure stats pid to 200682
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_setup.py:_flush():81] Loading settings from /root/.config/wandb/settings
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_setup.py:_flush():81] Loading settings from /workspace/OpenPCDet/tools/wandb/settings
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_setup.py:_flush():81] Loading settings from environment variables
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_init.py:setup_run_log_directory():705] Logging user logs to /workspace/OpenPCDet/tools/wandb/run-20251005_045757-wvi3y1af/logs/debug.log
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_init.py:setup_run_log_directory():706] Logging internal logs to /workspace/OpenPCDet/tools/wandb/run-20251005_045757-wvi3y1af/logs/debug-internal.log
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_init.py:init():832] calling init triggers
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_init.py:init():837] wandb.init called with sweep_config: {}
+config: {'cfg_file': 'cfgs/custom_av/centerpoint_pillar_LIDSOR.yaml', 'batch_size': 3, 'epochs': 80, 'workers': 4, 'extra_tag': 'default', 'sync_bn': False, 'fix_random_seed': False, 'ckpt_save_interval': 1, 'max_ckpt_save_num': 30, 'merge_all_iters_to_one_epoch': False, 'use_amp': False, 'model_name': 'CenterPoint', 'dataset': 'CustomAvDataset', 'class_names': ['Vehicle', 'Pedestrian', 'Cyclist'], 'total_gpus': 4, 'distributed': True, '_wandb': {}}
+2025-10-05 04:57:57,226 INFO    MainThread:200682 [wandb_init.py:init():880] starting backend
+2025-10-05 04:57:57,465 INFO    MainThread:200682 [wandb_init.py:init():883] sending inform_init request
+2025-10-05 04:57:57,494 INFO    MainThread:200682 [wandb_init.py:init():891] backend started and connected
+2025-10-05 04:57:57,499 INFO    MainThread:200682 [wandb_init.py:init():961] updated telemetry
+2025-10-05 04:57:57,535 INFO    MainThread:200682 [wandb_init.py:init():985] communicating run to backend with 90.0 second timeout

@@ -1,0 +1,345 @@
+_wandb:
+    value:
+        cli_version: 0.22.1
+        e:
+            4es4zvhsx0l4nrs6rg4c3hsc10xihpz7:
+                args:
+                    - --launcher
+                    - none
+                    - --cfg_file=/workspace/OpenPCDet/tools/cfgs/custom_av/centerpoint_pillar_LIDSOR.yaml
+                    - --extra_tag=optuna_trial_000
+                    - --set
+                    - OPTIMIZATION.LR
+                    - "0.0011844319751820387"
+                    - OPTIMIZATION.WEIGHT_DECAY
+                    - "0.004123206532618728"
+                    - MODEL.DENSE_HEAD.POST_PROCESSING.SCORE_THRESH
+                    - "0.1598"
+                codePath: train.py
+                codePathLocal: train.py
+                cpu_count: 12
+                cpu_count_logical: 24
+                cudaVersion: "12.2"
+                disk:
+                    /:
+                        total: "982819848192"
+                        used: "685378338816"
+                email: subin.park017@gmail.com
+                executable: /usr/bin/python
+                git:
+                    remote: https://github.com/binxni/team_2.git
+                gpu: NVIDIA GeForce RTX 3090
+                gpu_count: 4
+                gpu_nvidia:
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-13f2b1e7-b134-51e8-395d-5f8b65d523d7
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-32a91200-1da2-3fb5-5194-9ac3e094bc89
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-024b8218-e848-e394-0299-04649e80cb53
+                    - architecture: Ampere
+                      cudaCores: 10496
+                      memoryTotal: "25769803776"
+                      name: NVIDIA GeForce RTX 3090
+                      uuid: GPU-dd174675-6460-696d-3586-9f1efa993ef5
+                host: b7db4a6adde0
+                memory:
+                    total: "134733357056"
+                os: Linux-5.15.0-139-generic-x86_64-with-glibc2.29
+                program: /workspace/OpenPCDet/tools/train.py
+                python: CPython 3.8.10
+                root: /workspace/OpenPCDet/tools
+                startedAt: "2025-10-04T12:03:37.206374Z"
+                writerId: 4es4zvhsx0l4nrs6rg4c3hsc10xihpz7
+        m: []
+        python_version: 3.8.10
+        t:
+            "1":
+                - 1
+                - 5
+                - 41
+                - 53
+                - 79
+            "2":
+                - 1
+                - 5
+                - 41
+                - 53
+                - 79
+            "3":
+                - 13
+                - 16
+            "4": 3.8.10
+            "5": 0.22.1
+            "12": 0.22.1
+            "13": linux-x86_64
+CLASS_NAMES:
+    value:
+        - Vehicle
+        - Pedestrian
+        - Cyclist
+DATA_CONFIG:
+    value:
+        _BASE_CONFIG_: cfgs/dataset_configs/custom_av_dataset.yaml
+        DATA_AUGMENTOR:
+            AUG_CONFIG_LIST:
+                - DATABASE_WITH_FAKELIDAR: false
+                  DB_INFO_PATH:
+                    - custom_av_dbinfos_train.pkl
+                  LIMIT_WHOLE_SCENE: true
+                  NAME: gt_sampling
+                  NUM_POINT_FEATURES: 4
+                  PREPARE:
+                    filter_by_min_points:
+                        - Vehicle:5
+                        - Pedestrian:5
+                        - Cyclist:5
+                  REMOVE_EXTRA_WIDTH:
+                    - 0
+                    - 0
+                    - 0
+                  SAMPLE_GROUPS:
+                    - Vehicle:15
+                    - Pedestrian:10
+                    - Cyclist:10
+                  USE_ROAD_PLANE: false
+                - ALONG_AXIS_LIST:
+                    - x
+                    - "y"
+                  NAME: random_world_flip
+                - NAME: random_world_rotation
+                  WORLD_ROT_ANGLE:
+                    - -0.78539816
+                    - 0.78539816
+                - NAME: random_world_scaling
+                  WORLD_SCALE_RANGE:
+                    - 0.95
+                    - 1.05
+            DISABLE_AUG_LIST:
+                - placeholder
+        DATA_PATH: ../data/custom_av
+        DATA_PROCESSOR:
+            - NAME: mask_points_and_boxes_outside_range
+              REMOVE_OUTSIDE_BOXES: true
+            - NAME: shuffle_points
+              SHUFFLE_ENABLED:
+                test: true
+                train: true
+            - MAX_NUMBER_OF_VOXELS:
+                test: 150000
+                train: 150000
+              MAX_POINTS_PER_VOXEL: 20
+              NAME: transform_points_to_voxels_selective
+              VOXEL_SIZE:
+                - 0.25
+                - 0.25
+                - 8
+        DATA_SPLIT:
+            test: val
+            train: train
+        DATASET: CustomAvDataset
+        INFO_PATH:
+            test:
+                - custom_av_infos_val.pkl
+            train:
+                - custom_av_infos_train.pkl
+        MAP_CLASS_TO_KITTI:
+            Cyclist: Cyclist
+            Pedestrian: Pedestrian
+            Vehicle: Car
+        POINT_CLOUD_RANGE:
+            - -70
+            - -70
+            - -4
+            - 70
+            - 70
+            - 4
+        POINT_FEATURE_ENCODING:
+            encoding_type: absolute_coordinates_encoding
+            src_feature_list:
+                - x
+                - "y"
+                - z
+                - intensity
+            used_feature_list:
+                - x
+                - "y"
+                - z
+                - intensity
+EXP_GROUP_PATH:
+    value: workspace/OpenPCDet/tools/cfgs/custom_av
+LOCAL_RANK:
+    value: 0
+MODEL:
+    value:
+        BACKBONE_2D:
+            LAYER_NUMS:
+                - 3
+                - 5
+                - 5
+            LAYER_STRIDES:
+                - 1
+                - 2
+                - 2
+            NAME: BaseBEVBackbone
+            NUM_FILTERS:
+                - 64
+                - 128
+                - 256
+            NUM_UPSAMPLE_FILTERS:
+                - 128
+                - 128
+                - 128
+            UPSAMPLE_STRIDES:
+                - 1
+                - 2
+                - 4
+        DENSE_HEAD:
+            CLASS_AGNOSTIC: false
+            CLASS_NAMES_EACH_HEAD:
+                - - Vehicle
+                  - Pedestrian
+                  - Cyclist
+            LOSS_CONFIG:
+                LOSS_WEIGHTS:
+                    cls_weight: 1
+                    code_weights:
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                        - 1
+                    loc_weight: 2
+            NAME: CenterHead
+            NUM_HM_CONV: 2
+            POST_PROCESSING:
+                MAX_OBJ_PER_SAMPLE: 500
+                NMS_CONFIG:
+                    NMS_POST_MAXSIZE: 500
+                    NMS_PRE_MAXSIZE: 4096
+                    NMS_THRESH: 0.7
+                    NMS_TYPE: nms_gpu
+                POST_CENTER_LIMIT_RANGE:
+                    - -80
+                    - -80
+                    - -10
+                    - 80
+                    - 80
+                    - 10
+                SCORE_THRESH: 0.1598
+            SEPARATE_HEAD_CFG:
+                HEAD_DICT:
+                    center:
+                        num_conv: 2
+                        out_channels: 2
+                    center_z:
+                        num_conv: 2
+                        out_channels: 1
+                    dim:
+                        num_conv: 2
+                        out_channels: 3
+                    rot:
+                        num_conv: 2
+                        out_channels: 2
+                HEAD_ORDER:
+                    - center
+                    - center_z
+                    - dim
+                    - rot
+            SHARED_CONV_CHANNEL: 64
+            TARGET_ASSIGNER_CONFIG:
+                FEATURE_MAP_STRIDE: 1
+                GAUSSIAN_OVERLAP: 0.1
+                MIN_RADIUS: 2
+                NUM_MAX_OBJS: 500
+            USE_BIAS_BEFORE_NORM: true
+        MAP_TO_BEV:
+            NAME: PointPillarScatter
+            NUM_BEV_FEATURES: 64
+        NAME: CenterPoint
+        POST_PROCESSING:
+            EVAL_METRIC: waymo
+            RECALL_THRESH_LIST:
+                - 0.3
+                - 0.5
+                - 0.7
+        VFE:
+            NAME: PillarVFE
+            NUM_FILTERS:
+                - 64
+                - 64
+            USE_ABSLOTE_XYZ: true
+            USE_NORM: true
+            WITH_DISTANCE: false
+OPTIMIZATION:
+    value:
+        BATCH_SIZE_PER_GPU: 3
+        DECAY_STEP_LIST:
+            - 35
+            - 45
+        DIV_FACTOR: 10
+        GRAD_NORM_CLIP: 10
+        LR: 0.0011844319751820387
+        LR_CLIP: 1e-07
+        LR_DECAY: 0.1
+        LR_WARMUP: false
+        MOMENTUM: 0.9
+        MOMS:
+            - 0.95
+            - 0.85
+        NUM_EPOCHS: 40
+        OPTIMIZER: adam_onecycle
+        PCT_START: 0.4
+        WARMUP_EPOCH: 1
+        WEIGHT_DECAY: 0.004123206532618728
+ROOT_DIR:
+    value: /workspace/OpenPCDet
+TAG:
+    value: centerpoint_pillar_LIDSOR
+batch_size:
+    value: 3
+cfg_file:
+    value: /workspace/OpenPCDet/tools/cfgs/custom_av/centerpoint_pillar_LIDSOR.yaml
+ckpt_save_interval:
+    value: 1
+class_names:
+    value:
+        - Vehicle
+        - Pedestrian
+        - Cyclist
+dataset:
+    value: CustomAvDataset
+distributed:
+    value: false
+epochs:
+    value: 40
+extra_tag:
+    value: optuna_trial_000
+fix_random_seed:
+    value: false
+max_ckpt_save_num:
+    value: 30
+merge_all_iters_to_one_epoch:
+    value: false
+model_name:
+    value: CenterPoint
+sync_bn:
+    value: false
+total_gpus:
+    value: 1
+use_amp:
+    value: false
+workers:
+    value: 4

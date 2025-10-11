@@ -36,7 +36,7 @@ def parse_config():
     parser.add_argument('--fix_random_seed', action='store_true', default=False, help='')
     parser.add_argument('--ckpt_save_interval', type=int, default=1, help='number of training epochs')
     parser.add_argument('--local_rank', type=int, default=None, help='local rank for distributed training')
-    parser.add_argument('--max_ckpt_save_num', type=int, default=30, help='max number of saved checkpoint')
+    parser.add_argument('--max_ckpt_save_num', type=int, default=40, help='max number of saved checkpoint')
     parser.add_argument('--merge_all_iters_to_one_epoch', action='store_true', default=False, help='')
     parser.add_argument('--set', dest='set_cfgs', default=None, nargs=argparse.REMAINDER,
                         help='set extra config keys if needed')
@@ -53,7 +53,7 @@ def parse_config():
     parser.add_argument('--use_amp', action='store_true', help='use mix precision training')
     
     # wandb arguments
-    parser.add_argument('--wandb_project', type=str, default='OpenPCDet', help='wandb project name')
+    parser.add_argument('--wandb_project', type=str, default='team2', help='wandb project name')
     parser.add_argument('--wandb_entity', type=str, default=None, help='wandb entity (team) name')
     parser.add_argument('--wandb_run_name', type=str, default=None, help='wandb run name')
     parser.add_argument('--wandb_tags', type=str, nargs='+', default=None, help='wandb tags')

@@ -1,0 +1,14 @@
+{"time":"2025-10-07T15:11:14.362514074Z","level":"INFO","msg":"stream: starting","core version":"0.22.1"}
+{"time":"2025-10-07T15:11:14.822697183Z","level":"INFO","msg":"stream: created new stream","id":"mf2lik3s"}
+{"time":"2025-10-07T15:11:14.822809072Z","level":"INFO","msg":"handler: started","stream_id":"mf2lik3s"}
+{"time":"2025-10-07T15:11:14.823030414Z","level":"INFO","msg":"stream: started","id":"mf2lik3s"}
+{"time":"2025-10-07T15:11:14.823058567Z","level":"INFO","msg":"writer: started","stream_id":"mf2lik3s"}
+{"time":"2025-10-07T15:11:14.82306885Z","level":"INFO","msg":"sender: started","stream_id":"mf2lik3s"}
+{"time":"2025-10-07T21:31:00.992383179Z","level":"INFO","msg":"api: retrying HTTP error","status":502,"url":"https://api.wandb.ai/files/subin-park017-soongsil-university/team2/mf2lik3s/file_stream","body":"\n<html><head>\n<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n<title>502 Server Error</title>\n</head>\n<body text=#000000 bgcolor=#ffffff>\n<h1>Error: Server Error</h1>\n<h2>The server encountered a temporary error and could not complete your request.<p>Please try again in 30 seconds.</h2>\n<h2></h2>\n</body></html>\n"}
+{"time":"2025-10-07T22:55:34.113737509Z","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/graphql\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"}
+{"time":"2025-10-08T07:59:06.344782182Z","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"updating run metadata","runtime_seconds":0.002560956}],"total_operations":1}}
+{"time":"2025-10-08T07:59:07.59574266Z","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-10-08T07:59:07.948295386Z","level":"INFO","msg":"stream: closing","id":"mf2lik3s"}
+{"time":"2025-10-08T07:59:07.948317624Z","level":"INFO","msg":"handler: closed","stream_id":"mf2lik3s"}
+{"time":"2025-10-08T07:59:07.94838293Z","level":"INFO","msg":"sender: closed","stream_id":"mf2lik3s"}
+{"time":"2025-10-08T07:59:07.948391352Z","level":"INFO","msg":"stream: closed","id":"mf2lik3s"}

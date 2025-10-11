@@ -8,3 +8,8 @@ __pycache__/
 *.pyd
 *.log
 wandb/
+OpenPCDet/outputs
+OpenPCDet/requirements.txt
+.vscode
+__pycache__/
+wandb/

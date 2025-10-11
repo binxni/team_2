@@ -6,6 +6,11 @@ import torch
 import torchvision
 from ...utils import box_utils, common_utils
 
+try:
+    import open3d as o3d
+except ImportError:  # pragma: no cover - open3d is optional in some envs
+    o3d = None
+
 tv = None
 try:
     import cumm.tensorview as tv
@@ -102,6 +107,103 @@ class DataProcessor(object):
             shuffle_idx = np.random.permutation(points.shape[0])
             points = points[shuffle_idx]
             data_dict['points'] = points
+
+        return data_dict
+
+    def points_to_range_view(self, data_dict=None, config=None):
+        if data_dict is None:
+            return partial(self.points_to_range_view, config=config)
+
+        points = data_dict.get('points', None)
+        if points is None or points.shape[0] == 0:
+            return data_dict
+
+        ring_index = config.get('RING_INDEX', 4)
+        if ring_index >= points.shape[1]:
+            raise ValueError(
+                f"RING_INDEX={ring_index} exceeds available point features ({points.shape[1]})."
+            )
+
+        rings = points[:, ring_index].astype(np.int32)
+        if np.any(rings < 0):
+            raise ValueError("Ring indices must be non-negative integers for range-view projection.")
+
+        num_rings = int(config.get('NUM_RINGS', rings.max() + 1))
+        if num_rings <= 0:
+            raise ValueError(f"Invalid NUM_RINGS value: {num_rings}")
+
+        width = int(config.get('WIDTH', 2048))
+        if width <= 0:
+            raise ValueError(f"Invalid WIDTH value: {width}")
+
+        feature_list = list(config.get('FEATURES', ['range', 'intensity', 'x', 'y', 'z']))
+        if not feature_list:
+            raise ValueError("FEATURES list for range-view projection cannot be empty.")
+
+        fill_value = float(config.get('FILL_VALUE', 0.0))
+
+        xyz = points[:, :3]
+        ranges = np.linalg.norm(xyz, axis=1)
+        azimuth = np.arctan2(points[:, 1], points[:, 0])  # [-pi, pi]
+        cols = ((azimuth + np.pi) / (2 * np.pi) * width).astype(np.int32)
+        cols = np.clip(cols, 0, width - 1)
+
+        valid_ring_mask = rings < num_rings
+        if not np.any(valid_ring_mask):
+            return data_dict
+
+        rings_valid = rings[valid_ring_mask]
+        cols_valid = cols[valid_ring_mask]
+        ranges_valid = ranges[valid_ring_mask]
+        point_indices = np.nonzero(valid_ring_mask)[0]
+
+        lin_indices = rings_valid * width + cols_valid
+        sort_order = np.lexsort((ranges_valid, lin_indices))
+        lin_sorted = lin_indices[sort_order]
+        unique_lin, first_idx = np.unique(lin_sorted, return_index=True)
+        selected_local_idx = sort_order[first_idx]
+        selected_point_idx = point_indices[selected_local_idx]
+
+        range_image = np.full((num_rings, width, len(feature_list)), fill_value, dtype=np.float32)
+        mask = np.zeros((num_rings, width), dtype=bool)
+        index_map = np.full((num_rings, width), -1, dtype=np.int32)
+
+        row_idx = unique_lin // width
+        col_idx = unique_lin % width
+        mask[row_idx, col_idx] = True
+        index_map[row_idx, col_idx] = selected_point_idx
+
+        intensity_index = int(config.get('INTENSITY_INDEX', 3))
+        has_intensity = 0 <= intensity_index < points.shape[1]
+
+        feature_source = {
+            'x': points[selected_point_idx, 0],
+            'y': points[selected_point_idx, 1],
+            'z': points[selected_point_idx, 2],
+            'intensity': points[selected_point_idx, intensity_index] if has_intensity else None,
+            'range': ranges[selected_point_idx],
+            'depth': ranges[selected_point_idx],
+            'ring': rings[selected_point_idx].astype(np.float32),
+        }
+
+        for channel_idx, feature_name in enumerate(feature_list):
+            feature_name_lower = feature_name.lower()
+            if feature_name_lower not in feature_source:
+                raise KeyError(
+                    f"Unsupported range-view feature '{feature_name}'."
+                    " Supported: x, y, z, intensity, range, depth, ring."
+                )
+
+            feature_values = feature_source[feature_name_lower]
+            if feature_values is None:
+                raise ValueError(
+                    f"Feature '{feature_name}' requires INTENSITY_INDEX within point feature range."
+                )
+            range_image[row_idx, col_idx, channel_idx] = feature_values
+
+        data_dict['range_image'] = range_image
+        data_dict['range_mask'] = mask
+        data_dict['range_image_indices'] = index_map
 
         return data_dict
 
@@ -276,6 +378,85 @@ class DataProcessor(object):
             data_dict['voxel_coords'] = coordinates
             data_dict['voxel_num_points'] = num_points
         return data_dict
+
+    def lidsor_filter(self, data_dict=None, config=None):
+        if data_dict is None:  # 함수 초기화 시 config를 캡처하도록 partial 반환
+            return partial(self.lidsor_filter, config=config)
+
+        if o3d is None:  # Open3D가 없으면 필터를 사용할 수 없으므로 즉시 알림
+            raise ImportError("Open3D is required for the LIDSOR filter but is not installed.")
+
+        points = data_dict.get('points', None)  # 필터 대상 포인트 클라우드를 조회
+        if points is None or points.shape[0] == 0:  # 포인트가 없으면 그대로 반환
+            return data_dict
+
+        enabled_cfg = config.get('ENABLED', None)  # split별 사용 여부 설정값 읽기
+        if enabled_cfg is not None:  # ENABLED가 지정돼 있으면 조건에 따라 조기 종료
+            if isinstance(enabled_cfg, dict):  # train/test 별로 제어하는 경우
+                if not enabled_cfg.get(self.mode, True):  # 현재 모드가 비활성화면 종료
+                    return data_dict
+            elif not enabled_cfg:  # 단일 불리언이 False면 종료
+                return data_dict
+
+        mean_k = int(config.get('MEAN_K', 50))  # KNN 이웃 수(평균 거리 계산에 사용)
+        std_mul = float(config.get('STD_MUL', 0.15))  # 표준편차 배수 계수
+        range_multiplier = float(config.get('RANGE_MULTIPLIER', 0.05))  # 거리 기반 스케일 팩터
+        distance_threshold = float(config.get('DISTANCE_THRESHOLD', np.inf))  # 최대 거리 제한
+        intensity_threshold = config.get('INTENSITY_THRESHOLD', None)  # 강도 임계값
+        intensity_index = int(config.get('INTENSITY_INDEX', 3))  # 강도 컬럼 위치
+
+        num_points = points.shape[0]  # 전체 포인트 수 계산
+        k = min(mean_k, num_points)  # 실제 사용 이웃 수(포인트 수보다 크면 축소)
+        if k <= 1:  # 유효한 이웃이 없으면 필터가 의미가 없으므로 그대로 반환
+            return data_dict
+
+        xyz = points[:, :3].astype(np.float64, copy=False)  # KDTree용 좌표 배열 생성
+        cloud = o3d.geometry.PointCloud()  # Open3D 포인트클라우드 객체 준비
+        cloud.points = o3d.utility.Vector3dVector(xyz)  # 좌표 데이터를 Open3D 형식으로 주입
+        kdtree = o3d.geometry.KDTreeFlann(cloud)  # KNN 탐색용 KDTree 구성
+
+        mean_distances = np.zeros(num_points, dtype=np.float64)  # 포인트별 평균 이웃 거리 버퍼
+        for idx in range(num_points):  # 모든 포인트에 대해 반복하며 KNN 거리 계산
+            _, _, dists = kdtree.search_knn_vector_3d(cloud.points[idx], k)  # 자기 포함 KNN 조회
+            if len(dists) <= 1:  # 자기 자신만 반환되면 다음 포인트로 건너뜀
+                continue
+            neighbours = np.sqrt(np.asarray(dists[1:], dtype=np.float64))  # 제곱거리를 실제 거리로 변환
+            if neighbours.size == 0:  # 이웃이 없으면 평균을 저장하지 않음
+                continue
+            mean_distances[idx] = neighbours.mean()  # 계산된 평균 이웃 거리를 기록
+
+        valid_mask = mean_distances > 0  # 평균 거리가 유효하게 계산된 포인트만 선택
+        if not np.any(valid_mask):  # 유효 포인트가 없으면 필터링을 생략
+            return data_dict
+
+        stats = mean_distances[valid_mask]  # 유효 포인트들에 대한 통계 배열 준비
+        mean_val = stats.mean()  # 전체 평균 이웃 거리
+        std_val = stats.std(ddof=1) if stats.size > 1 else 0.0  # 표준편차(샘플 분모 n-1)
+        base_threshold = mean_val + std_mul * std_val  # 기본 임계값 계산
+
+        ranges = np.linalg.norm(xyz, axis=1)  # 각 포인트의 원점 기준 거리
+        dynamic_thresholds = base_threshold * range_multiplier * ranges  # 거리 비례 동적 임계값
+
+        mean_condition = mean_distances > dynamic_thresholds  # 평균 거리가 임계값을 넘는지 검사
+
+        if intensity_threshold is None or intensity_index >= points.shape[1]:  # 강도 조건 사용 여부 판별
+            intensity_condition = np.ones(num_points, dtype=bool)  # 사용하지 않으면 항상 True
+        else:
+            intensity_vals = points[:, intensity_index]  # 강도 값 추출
+            intensity_condition = intensity_vals < intensity_threshold  # 강도 조건 평가
+
+        if not np.isfinite(distance_threshold):  # 거리 제한을 사용하지 않는 경우
+            distance_condition = np.ones(num_points, dtype=bool)  # 모두 통과시킴
+        else:
+            distance_condition = ranges < distance_threshold  # 거리 조건 평가
+
+        noise_mask = mean_condition & intensity_condition & distance_condition  # 세 조건을 모두 만족하는 포인트만 노이즈로 간주
+        if not np.any(noise_mask):  # 노이즈가 한 개도 없으면 그대로 반환
+            return data_dict
+
+        keep_mask = ~noise_mask  # 유지할 포인트 마스크 계산
+        data_dict['points'] = points[keep_mask]  # 노이즈 포인트를 제거한 배열로 교체
+        return data_dict  # 필터링된 데이터 반환
 
     def voxel_mean_downsample(self, data_dict=None, config=None):
         if data_dict is None:

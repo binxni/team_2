@@ -1,0 +1,116 @@
+CLASS_NAMES: ['Vehicle', 'Pedestrian', 'Cyclist']  # 학습·추론 대상 객체 클래스 목록
+
+DATA_CONFIG:  # 데이터 로딩 및 전처리 설정 블록
+    _BASE_CONFIG_: cfgs/dataset_configs/custom_av_dataset_lisa.yaml  # 공통 데이터셋 설정 파일 경로
+
+    POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]  # 포인트 클라우드 사용 공간 범위
+    DATA_PROCESSOR:  # 포인트 클라우드 전처리 파이프라인 정의
+        -   NAME: mask_points_and_boxes_outside_range  # 범위 밖 포인트/박스 제거 단계
+            REMOVE_OUTSIDE_BOXES: True  # 박스가 범위 밖이면 함께 제거
+
+        -   NAME: shuffle_points  # 포인트 순서 섞기 단계
+            SHUFFLE_ENABLED: {  # 섞기 활성 여부 설정
+                'train': True,  # 학습 시에는 포인트 순서를 섞음
+                'test': True  # 평가 시에도 섞어 편향 방지
+            }
+
+        -   NAME: transform_points_to_voxels_selective # 선택적 복셀 변환 단계
+            VOXEL_SIZE: [ 0.25, 0.25, 8.0 ]  # 복셀 격자 크기 (x, y, z)
+            MAX_POINTS_PER_VOXEL: 20  # 한 복셀에 허용되는 최대 포인트 수
+            MAX_NUMBER_OF_VOXELS: {  # 복셀 수 상한 설정
+                'train': 150000,  # 학습 시 최대 복셀 개수
+                'test': 150000  # 평가 시 최대 복셀 개수
+            }
+
+
+MODEL:  # 모델 구성 설정
+    NAME: CenterPoint  # 사용 모델 아키텍처 이름
+
+    VFE:  # Voxel/Pillar Feature Encoder 설정
+        NAME: PillarVFE  # Pillar 기반 VFE 사용
+        WITH_DISTANCE: False  # 거리 채널 미사용
+        USE_ABSLOTE_XYZ: True  # 절대 좌표값을 입력에 포함
+        USE_NORM: True  # 포인트 수 정규화 사용
+        NUM_FILTERS: [ 64, 64 ]  # VFE 층별 출력 채널 수
+
+    MAP_TO_BEV:  # BEV 맵으로 투영하는 단계 설정
+        NAME: PointPillarScatter  # 포인트 필러 산란 모듈 사용
+        NUM_BEV_FEATURES: 64  # BEV 피처 채널 수
+
+    BACKBONE_2D:  # BEV 2D 백본 네트워크 설정
+        NAME: BaseBEVBackbone  # 기본 BEV 백본 사용
+        LAYER_NUMS: [ 3, 5, 5 ]  # 각 스테이지의 블록 수
+        LAYER_STRIDES: [ 1, 2, 2 ]  # 스테이지별 스트라이드
+        NUM_FILTERS: [ 64, 128, 256 ]  # 스테이지별 출력 채널 수
+        UPSAMPLE_STRIDES: [ 1, 2, 4 ]  # 업샘플 경로 스트라이드
+        NUM_UPSAMPLE_FILTERS: [ 128, 128, 128 ]  # 업샘플 경로 채널 수
+
+    DENSE_HEAD:  # Detection head 설정
+        NAME: CenterHead  # CenterPoint 헤드 사용
+        CLASS_AGNOSTIC: False  # 클래스별 분리 예측 수행
+
+        CLASS_NAMES_EACH_HEAD: [  # 헤드별 담당 클래스 목록
+            ['Vehicle', 'Pedestrian', 'Cyclist']  # 단일 헤드에서 세 클래스 모두 예측
+        ]
+
+        SHARED_CONV_CHANNEL: 64  # 헤드 공용 컨볼루션 채널 수
+        USE_BIAS_BEFORE_NORM: True  # 정규화 전에 bias 사용
+        NUM_HM_CONV: 2  # Heatmap 헤드용 컨볼루션 수
+        SEPARATE_HEAD_CFG:  # 각 출력 헤드 구성을 정의
+            HEAD_ORDER: ['center', 'center_z', 'dim', 'rot']  # 헤드 출력 순서
+            HEAD_DICT: {  # 헤드별 출력 채널과 레이어 수
+                'center': {'out_channels': 2, 'num_conv': 2},  # 평면 중심 좌표 예측 헤드 설정
+                'center_z': {'out_channels': 1, 'num_conv': 2},  # 높이 중심 예측 헤드 설정
+                'dim': {'out_channels': 3, 'num_conv': 2},  # 박스 크기 예측 헤드 설정
+                'rot': {'out_channels': 2, 'num_conv': 2},  # 회전 각도 예측 헤드 설정
+            }
+
+        TARGET_ASSIGNER_CONFIG:  # 타깃 할당 관련 설정
+            FEATURE_MAP_STRIDE: 1  # 피처맵 stride 값
+            NUM_MAX_OBJS: 500  # 하나의 샘플에서 최대 타깃 개수
+            GAUSSIAN_OVERLAP: 0.1  # 타깃 가우시안 오버랩 허용치
+            MIN_RADIUS: 2  # 최소 가우시안 반경
+
+        LOSS_CONFIG:  # 손실 함수 관련 설정
+            LOSS_WEIGHTS: {  # 손실 가중치 사전
+                'cls_weight': 1.0,  # 분류 손실 가중치
+                'loc_weight': 2.0,  # 회귀 손실 가중치
+                'code_weights': [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]  # 각 회귀 코드별 가중치
+            }
+
+        POST_PROCESSING:  # Head 내부 후처리 설정
+            SCORE_THRESH: 0.1  # 최소 점수 임계치
+            POST_CENTER_LIMIT_RANGE: [-80, -80, -10.0, 80, 80, 10.0]  # 후처리 시 고려할 공간 범위
+            MAX_OBJ_PER_SAMPLE: 500  # 샘플당 최대 출력 객체 수
+            NMS_CONFIG:  # NMS 설정
+                NMS_TYPE: nms_gpu  # GPU 기반 NMS 사용
+                NMS_THRESH: 0.7  # NMS IoU 임계치
+                NMS_PRE_MAXSIZE: 4096  # NMS 전에 고려할 최대 후보 수
+                NMS_POST_MAXSIZE: 500  # NMS 후 남길 최대 후보 수
+
+    POST_PROCESSING:  # 모델 전역 후처리 설정
+        RECALL_THRESH_LIST: [0.3, 0.5, 0.7]  # 리콜 평가 임계값 목록
+
+        EVAL_METRIC: waymo  # 평가 지표 유형(웨이모 포맷)
+
+
+OPTIMIZATION:  # 최적화 관련 설정
+    BATCH_SIZE_PER_GPU: 3  # GPU당 배치 크기
+    NUM_EPOCHS: 80  # 전체 학습 에포크 수
+
+    OPTIMIZER: adam_onecycle  # 사용하는 옵티마이저 이름
+    LR: 0.003  # 초기 학습률
+    WEIGHT_DECAY: 0.01  # 가중치 감쇠 계수
+    MOMENTUM: 0.9  # 모멘텀 값 (1cycle 옵티마이저용)
+
+    MOMS: [0.95, 0.85]  # 1cycle에서 사용하는 모멘텀(베타) 범위
+    PCT_START: 0.4  # 학습률 상승 구간 비율
+    DIV_FACTOR: 10  # 초기 학습률을 최대 학습률과 비교하는 분모
+    DECAY_STEP_LIST: [35, 45]  # 추가 학습률 감소 스텝
+    LR_DECAY: 0.1  # 단계 감소 배율
+    LR_CLIP: 0.0000001  # 학습률 하한 클리핑 값
+
+    LR_WARMUP: False  # 워밍업 사용 여부
+    WARMUP_EPOCH: 1  # 워밍업 에포크 수 (사용 시)
+
+    GRAD_NORM_CLIP: 10  # 그래디언트 클리핑 임계값

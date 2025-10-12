@@ -4,6 +4,7 @@ import os
 import copy
 import numpy as np
 from skimage import io
+from pathlib import Path
 import torch
 import SharedArray
 import torch.distributed as dist
@@ -391,6 +392,33 @@ class DataBaseSampler(object):
                 obj_points = copy.deepcopy(gt_database_data[start_offset:end_offset])
             else:
                 file_path = self.root_path / info['path']
+
+                # Fallback: handle mismatched GT database folder names
+                if not Path(file_path).exists():
+                    alt_candidates = []
+                    fp_str = str(file_path)
+                    # Common swap: gt_database_train_new <-> gt_database
+                    if 'gt_database_train_new' in fp_str:
+                        alt_candidates.append(Path(fp_str.replace('gt_database_train_new', 'gt_database')))
+                    elif 'gt_database' in fp_str:
+                        alt_candidates.append(Path(fp_str.replace('gt_database', 'gt_database_train_new')))
+
+                    for alt in alt_candidates:
+                        if alt.exists():
+                            if getattr(self, '_warned_db_path_fallback', False) is False and self.logger is not None:
+                                try:
+                                    self.logger.warning(
+                                        f'DatabaseSampler: missing {file_path}, using alternate {alt} instead'
+                                    )
+                                except Exception:
+                                    pass
+                            self._warned_db_path_fallback = True
+                            file_path = alt
+                            break
+                    else:
+                        raise FileNotFoundError(
+                            f'GT database object file not found: {file_path} (root: {self.root_path})'
+                        )
 
                 obj_points = np.fromfile(str(file_path), dtype=np.float32).reshape(
                     [-1, self.sampler_cfg.NUM_POINT_FEATURES])

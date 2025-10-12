@@ -5,7 +5,7 @@ OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/og_ckpt
 OpenPCDet/output/custom_av/centerpoint_pillar_1x_long_epoch/default/tensorboard
 OpenPCDet/tools/train_utils/__pycache__
 OpenPCDet/tools/result.pkl
-OpenPCDet/dataset_analysis
+# OpenPCDet/dataset_analysis
 OpenPCDet/output/
 OpenPCDet/tools/wandb/
 __pycache__/

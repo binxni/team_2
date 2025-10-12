@@ -95,8 +95,13 @@ MODEL:
 
 
 OPTIMIZATION:
-    BATCH_SIZE_PER_GPU: 1
+    BATCH_SIZE_PER_GPU: 3
     NUM_EPOCHS: 90
+    
+    # Gradient accumulation settings
+    # Effective batch size = BATCH_SIZE_PER_GPU * num_gpus * GRADIENT_ACCUMULATION_STEPS
+    # 3 * 3 * 4 = 36 (closest to target 32)
+    # GRADIENT_ACCUMULATION_STEPS: 4
 
     OPTIMIZER: adam_onecycle
     LR: 0.003

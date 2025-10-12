@@ -142,9 +142,17 @@ class DSVT(nn.Module):
                     prepool_features = prepool_features.view(pooled_voxel_num, pool_volume, -1).permute(0, 2, 1)
                     output = self.__getattr__(f'stage_{stage_id}_reduction')(prepool_features).squeeze(-1)
                 elif self.reduction_type == 'attention':
-                    prepool_features = prepool_features.view(pooled_voxel_num, pool_volume, -1).permute(0, 2, 1)
-                    key_padding_mask = torch.zeros((pooled_voxel_num, pool_volume)).to(prepool_features.device).int()
-                    output = self.__getattr__(f'stage_{stage_id}_reduction')(prepool_features, key_padding_mask)
+                    #prepool_features = prepool_features.view(pooled_voxel_num, pool_volume, -1).permute(0, 2, 1)
+                    #key_padding_mask = torch.zeros((pooled_voxel_num, pool_volume)).to(prepool_features.device).int()
+                    #output = self.__getattr__(f'stage_{stage_id}_reduction')(prepool_features, key_padding_mask)
+                    # [B, L, C]로 펼쳐서 패딩(값=0) 판별
+                    feat_in_pool = prepool_features.view(pooled_voxel_num, pool_volume, -1)         # [B, L, C]
+                    valid = (feat_in_pool.abs().sum(dim=2) > 0)                                     # [B, L] True=유효, False=패딩
+                    key_padding_mask = ~valid                                                       # [B, L] ✅ True=mask-out(Pytorch 규약)
+                    # MHA 입력 형태로 변경: [B, C, L]
+                    prepool_features = feat_in_pool.permute(0, 2, 1)
+                    # 호출
+                    output = self.__getattr__(f'stage_{stage_id}_reduction')(prepool_features, key_padding_mask)    
                 else:
                     raise NotImplementedError
 

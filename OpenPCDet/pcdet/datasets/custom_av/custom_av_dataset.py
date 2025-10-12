@@ -296,7 +296,7 @@ def create_custom_av_infos(dataset_cfg, class_names, data_path, save_path, worke
         dataset_cfg=dataset_cfg, class_names=class_names, root_path=data_path,
         training=False, logger=common_utils.create_logger()
     )
-    train_split, val_split = 'train', 'val'
+    train_split, val_split = 'train_new', 'val_new'
     num_features = len(dataset_cfg.POINT_FEATURE_ENCODING.src_feature_list)
 
     train_filename = save_path / ('custom_av_infos_%s.pkl' % train_split)
@@ -340,5 +340,5 @@ if __name__ == '__main__':
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],
             data_path=ROOT_DIR / 'data' / 'custom_av',
-            save_path=ROOT_DIR / 'data' / 'custom_av',
+            save_path=ROOT_DIR / 'data' / 'custom_av' / 'new_info',
         )

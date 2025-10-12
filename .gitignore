@@ -1,6 +1,7 @@
 OpenPCDet/data
 OpenPCDet/build
 OpenPCDet/output
+OpenPCDet/tools/wandb
 .vscode
 __pycache__/
 *.pyc

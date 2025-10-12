@@ -343,6 +343,6 @@ if __name__ == '__main__':
         create_custom_av_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],
-            data_path=data_path,
-            save_path=save_path,
+            data_path=ROOT_DIR / 'data' / 'custom_av',
+            save_path=ROOT_DIR / 'data' / 'custom_av' ,
         )

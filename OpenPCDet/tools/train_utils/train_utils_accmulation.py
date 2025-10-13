@@ -70,10 +70,15 @@ def validate_one_epoch(model, val_loader, model_func, cur_epoch, rank, logger=No
 def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, accumulated_iter, optim_cfg,
                     rank, tbar, total_it_each_epoch, dataloader_iter, tb_log=None, leave_pbar=False, 
                     use_logger_to_record=False, logger=None, logger_iter_interval=50, cur_epoch=None, 
-                    total_epochs=None, ckpt_save_dir=None, ckpt_save_time_interval=300, show_gpu_stat=False, use_amp=False, use_wandb=False):
+                    total_epochs=None, ckpt_save_dir=None, ckpt_save_time_interval=300, show_gpu_stat=False, 
+                    use_amp=False, use_wandb=False):
+    
     if total_it_each_epoch == len(train_loader):
         dataloader_iter = iter(train_loader)
 
+    # Gradient Accumulation 설정 (config에서 읽거나 기본값 1)
+    accumulation_steps = optim_cfg.get('GRAD_ACCUMULATION_STEPS', 1)
+    
     ckpt_save_cnt = 1
     start_it = accumulated_iter % total_it_each_epoch
 
@@ -85,7 +90,15 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         batch_time = common_utils.AverageMeter()
         forward_time = common_utils.AverageMeter()
         losses_m = common_utils.AverageMeter()
+        
+        # Gradient accumulation 정보 출력
+        if accumulation_steps > 1:
+            logger.info(f'Using Gradient Accumulation with {accumulation_steps} steps')
+            logger.info(f'Micro batch size: {optim_cfg.BATCH_SIZE_PER_GPU}, Effective batch size: {optim_cfg.BATCH_SIZE_PER_GPU * accumulation_steps}')
 
+    # Optimizer zero_grad는 accumulation 시작 시에만
+    optimizer.zero_grad()
+    
     end = time.time()
     for cur_it in range(start_it, total_it_each_epoch):
         try:
@@ -98,11 +111,8 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         data_timer = time.time()
         cur_data_time = data_timer - end
 
-        # Get gradient accumulation steps from config
-        gradient_accumulation_steps = optim_cfg.get('GRADIENT_ACCUMULATION_STEPS', 1)
-        
-        # Only update lr_scheduler when we actually update the optimizer
-        if (cur_it - start_it + 1) % gradient_accumulation_steps == 0 or cur_it + 1 == total_it_each_epoch:
+        # Learning rate는 실제 optimizer step마다만 업데이트
+        if (cur_it + 1) % accumulation_steps == 0 or (cur_it + 1) == total_it_each_epoch:
             lr_scheduler.step(accumulated_iter, cur_epoch)
 
         try:
@@ -114,27 +124,26 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
             tb_log.add_scalar('meta_data/learning_rate', cur_lr, accumulated_iter)
 
         model.train()
-        
-        # Initialize optimizer zero_grad only at the start of accumulation
-        if (cur_it - start_it) % gradient_accumulation_steps == 0:
-            optimizer.zero_grad()
 
+        # Forward pass with mixed precision
         with torch.cuda.amp.autocast(enabled=use_amp):
             loss, tb_dict, disp_dict = model_func(model, batch)
             
-            # Scale loss by accumulation steps for correct gradient averaging
-            loss = loss / gradient_accumulation_steps
+            # Loss를 accumulation steps로 나눔 (평균 효과)
+            loss = loss / accumulation_steps
 
+        # Backward pass (gradient 누적)
         scaler.scale(loss).backward()
         
-        # Only update optimizer every gradient_accumulation_steps
-        if (cur_it - start_it + 1) % gradient_accumulation_steps == 0 or cur_it + 1 == total_it_each_epoch:
+        # Gradient accumulation이 완료되면 optimizer step 수행
+        if (cur_it + 1) % accumulation_steps == 0 or (cur_it + 1) == total_it_each_epoch:
             scaler.unscale_(optimizer)
             clip_grad_norm_(model.parameters(), optim_cfg.GRAD_NORM_CLIP)
             scaler.step(optimizer)
             scaler.update()
-
-        accumulated_iter += 1
+            optimizer.zero_grad()
+            
+            accumulated_iter += 1
  
         cur_forward_time = time.time() - data_timer
         cur_batch_time = time.time() - end
@@ -149,18 +158,30 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         if rank == 0:
             batch_size = batch.get('batch_size', None)
             
-            # For logging, use the original loss value (before scaling by accumulation steps)
-            original_loss = loss.item() * gradient_accumulation_steps
-            
             data_time.update(avg_data_time)
             forward_time.update(avg_forward_time)
             batch_time.update(avg_batch_time)
-            losses_m.update(original_loss, batch_size)
+            
+            # Loss는 원래 값으로 표시 (accumulation으로 나눈 값을 다시 곱함)
+            actual_loss = loss.item() * accumulation_steps
+            losses_m.update(actual_loss, batch_size)
+            
+            # Accumulation 진행 상황 표시
+            accum_progress = ((cur_it + 1) % accumulation_steps) if accumulation_steps > 1 else accumulation_steps
+            if accum_progress == 0:
+                accum_progress = accumulation_steps
             
             disp_dict.update({
-                'loss': original_loss, 'lr': cur_lr, 'd_time': f'{data_time.val:.2f}({data_time.avg:.2f})',
-                'f_time': f'{forward_time.val:.2f}({forward_time.avg:.2f})', 'b_time': f'{batch_time.val:.2f}({batch_time.avg:.2f})'
+                'loss': actual_loss, 
+                'lr': cur_lr, 
+                'd_time': f'{data_time.val:.2f}({data_time.avg:.2f})',
+                'f_time': f'{forward_time.val:.2f}({forward_time.avg:.2f})', 
+                'b_time': f'{batch_time.val:.2f}({batch_time.avg:.2f})'
             })
+            
+            # Gradient accumulation 정보 추가
+            if accumulation_steps > 1:
+                disp_dict['accum'] = f'{accum_progress}/{accumulation_steps}'
             
             if use_logger_to_record:
                 if accumulated_iter % logger_iter_interval == 0 or cur_it == start_it or cur_it + 1 == total_it_each_epoch:
@@ -171,7 +192,7 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                     remaining_second_each_epoch = second_each_iter * (total_it_each_epoch - cur_it)
                     remaining_second_all = second_each_iter * ((total_epochs - cur_epoch) * total_it_each_epoch - cur_it)
                     
-                    logger.info(
+                    log_str = (
                         'Train: {:>4d}/{} ({:>3.0f}%) [{:>4d}/{} ({:>3.0f}%)]  '
                         'Loss: {loss.val:#.4g} ({loss.avg:#.3g})  '
                         'LR: {lr:.3e}  '
@@ -180,16 +201,26 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                         'Acc_iter {acc_iter:<10d}  '
                         'Data time: {data_time.val:.2f}({data_time.avg:.2f})  '
                         'Forward time: {forward_time.val:.2f}({forward_time.avg:.2f})  '
-                        'Batch time: {batch_time.val:.2f}({batch_time.avg:.2f})'.format(
-                            cur_epoch+1,total_epochs, 100. * (cur_epoch+1) / total_epochs,
-                            cur_it,total_it_each_epoch, 100. * cur_it / total_it_each_epoch,
+                        'Batch time: {batch_time.val:.2f}({batch_time.avg:.2f})'
+                    )
+                    
+                    # Gradient accumulation 정보 추가
+                    if accumulation_steps > 1:
+                        log_str += '  Accum: {accum_progress}/{accum_steps}'
+                    
+                    logger.info(
+                        log_str.format(
+                            cur_epoch+1, total_epochs, 100. * (cur_epoch+1) / total_epochs,
+                            cur_it, total_it_each_epoch, 100. * cur_it / total_it_each_epoch,
                             loss=losses_m,
                             lr=cur_lr,
                             acc_iter=accumulated_iter,
                             data_time=data_time,
                             forward_time=forward_time,
-                            batch_time=batch_time
-                            )
+                            batch_time=batch_time,
+                            accum_progress=accum_progress if accumulation_steps > 1 else '',
+                            accum_steps=accumulation_steps if accumulation_steps > 1 else ''
+                        )
                     )
                     
                     if show_gpu_stat and accumulated_iter % (3 * logger_iter_interval) == 0:
@@ -200,15 +231,13 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
                 pbar.update()
                 pbar.set_postfix(dict(total_it=accumulated_iter))
                 tbar.set_postfix(disp_dict)
-                # tbar.refresh()
 
-            if tb_log is not None:
-                tb_log.add_scalar('train/loss', original_loss, accumulated_iter)
+            # Tensorboard logging (optimizer step할 때만)
+            if tb_log is not None and ((cur_it + 1) % accumulation_steps == 0 or (cur_it + 1) == total_it_each_epoch):
+                tb_log.add_scalar('train/loss', actual_loss, accumulated_iter)
                 tb_log.add_scalar('meta_data/learning_rate', cur_lr, accumulated_iter)
                 for key, val in tb_dict.items():
                     tb_log.add_scalar('train/' + key, val, accumulated_iter)
-            
-            # Note: wandb logging moved to end of epoch in train_model function
             
             # save intermediate ckpt every {ckpt_save_time_interval} seconds         
             time_past_this_epoch = pbar.format_dict['elapsed']
@@ -233,7 +262,6 @@ def train_one_epoch(model, optimizer, train_loader, model_func, lr_scheduler, ac
         return accumulated_iter, epoch_metrics
     else:
         return accumulated_iter, None
-
 
 def train_model(model, optimizer, train_loader, model_func, lr_scheduler, optim_cfg,
                 start_epoch, total_epochs, start_iter, rank, tb_log, ckpt_save_dir, train_sampler=None,

@@ -34,7 +34,7 @@ DATA_AUGMENTOR:  # 데이터 증강 설정
           DB_INFO_PATH:
               - custom_av_dbinfos_train.pkl  # 샘플링용 객체 데이터베이스 정보를 담은 메타데이터 파일
           PREPARE: {
-             filter_by_min_points: ['Vehicle:3', 'Pedestrian:3', 'Cyclist:3'],  # 라이다 포인트 수가 부족한 데이터베이스 항목 제거
+             filter_by_min_points: ['Vehicle:5', 'Pedestrian:5', 'Cyclist:5'],  # 라이다 포인트 수가 부족한 데이터베이스 항목 제거
           }
 
           SAMPLE_GROUPS: ['Vehicle:15', 'Pedestrian:10', 'Cyclist:10']  # 객체 삽입 시 클래스별 샘플링 비율

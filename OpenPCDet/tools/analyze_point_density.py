@@ -4,29 +4,56 @@ Utility to inspect point density statistics for custom_av point clouds.
 
 Example:
     python tools/analyze_point_density.py \
-        --root data/custom_av/points_test --bin-size 1.0 --top-k 10 --save-npz density_map.npz
+        --root data/custom_av/points_test --bin-size 1.0 --top-k 10 --save-npz density_map.npz \
+        --id-range 10006432-10009318 --id-range 10100400-10104398
 """
 from __future__ import annotations
 
 import argparse
 import statistics
 from collections import Counter
+import re
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Iterable, Tuple, Optional, List
 
 import numpy as np
 
+def _extract_numeric_id_from_stem(stem: str) -> Optional[int]:
+    """Extract a numeric ID from a filename stem.
 
-def _iter_point_files(root: Path) -> Iterable[Path]:
+    - If the entire stem is numeric, return it.
+    - Otherwise, return the last contiguous sequence of digits if present.
+    - If no digits are present, return None.
+    """
+    if stem.isdigit():
+        return int(stem)
+    match = None
+    for m in re.finditer(r"(\d+)", stem):
+        match = m
+    if match:
+        return int(match.group(1))
+    return None
+
+
+def _iter_point_files(root: Path, id_ranges: Optional[List[Tuple[int, int]]] = None) -> Iterable[Path]:
     for path in sorted(root.glob("*.npy")):
-        if path.is_file():
-            yield path
+        if not path.is_file():
+            continue
+        if id_ranges:
+            stem_id = _extract_numeric_id_from_stem(path.stem)
+            if stem_id is None:
+                # When filtering is requested but file has no numeric id, skip it
+                continue
+            keep = any(start <= stem_id <= end for start, end in id_ranges)
+            if not keep:
+                continue
+        yield path
 
 
 def analyze_density(
     point_files: Iterable[Path],
     bin_size: float,
-    max_files: int | None = None,
+    max_files: Optional[int] = None,
 ) -> dict:
     grid_counter: Counter[Tuple[int, int]] = Counter()
     per_frame_counts: list[int] = []
@@ -186,14 +213,47 @@ def main() -> None:
         default=None,
         help="Optional path to save the accumulated XY density map as an .npz archive.",
     )
+    parser.add_argument(
+        "--id-range",
+        dest="id_ranges",
+        action="append",
+        default=None,
+        help=(
+            "Inclusive numeric filename ranges to include, formatted as 'START-END'. "
+            "Repeat the flag to add multiple ranges. Also accepts 'START~END'."
+        ),
+    )
+
+    def _parse_id_ranges(args_ranges: Optional[List[str]]) -> Optional[List[Tuple[int, int]]]:
+        if not args_ranges:
+            return None
+        parsed: list[tuple[int, int]] = []
+        for item in args_ranges:
+            s = str(item).strip()
+            if "-" in s:
+                a, b = s.split("-", 1)
+            elif "~" in s:
+                a, b = s.split("~", 1)
+            else:
+                raise ValueError(f"Invalid --id-range '{item}'. Use START-END or START~END.")
+            try:
+                start = int(a.strip())
+                end = int(b.strip())
+            except ValueError as e:
+                raise ValueError(f"Invalid integer in --id-range '{item}'.") from e
+            if end < start:
+                start, end = end, start
+            parsed.append((start, end))
+        return parsed
 
     args = parser.parse_args()
     root = args.root
     if not root.exists():
         raise FileNotFoundError(f"Dataset directory {root} does not exist.")
+    id_ranges = _parse_id_ranges(args.id_ranges)
 
     result = analyze_density(
-        point_files=_iter_point_files(root),
+        point_files=_iter_point_files(root, id_ranges=id_ranges),
         bin_size=args.bin_size,
         max_files=args.max_files,
     )

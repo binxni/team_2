@@ -67,7 +67,8 @@ MODEL:
         CLASS_AGNOSTIC: False
 
         CLASS_NAMES_EACH_HEAD: [
-            ['Vehicle', 'Pedestrian', 'Cyclist']
+            # ['Vehicle', 'Pedestrian', 'Cyclist']
+            [["Vehicle"],["Pedestrian","Cyclist"]]
         ]
 
         SHARED_CONV_CHANNEL: 64

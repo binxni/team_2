@@ -1,0 +1,94 @@
+DATASET: 'CustomAvDataset'
+# DATA_PATH: '../data/custom_av'
+DATA_PATH: /workspace/dataset/custom_av
+
+POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]
+
+MAP_CLASS_TO_KITTI: {
+    'Vehicle': 'Car',
+    'Pedestrian': 'Pedestrian',
+    'Cyclist': 'Cyclist',
+}
+
+DATA_SPLIT: {
+    'train': train,
+    'test': val
+}
+
+INFO_PATH: {
+    'train': [custom_av_infos_train.pkl],
+    'test': [custom_av_infos_val.pkl],
+
+}
+
+POINT_FEATURE_ENCODING: {
+    encoding_type: absolute_coordinates_encoding,
+    used_feature_list: ['x', 'y', 'z', 'intensity'],
+    src_feature_list: ['x', 'y', 'z', 'intensity'],
+
+}
+
+DATA_AUGMENTOR:
+    DISABLE_AUG_LIST: ['placeholder']
+    AUG_CONFIG_LIST:
+        - NAME: gt_sampling
+          USE_ROAD_PLANE: False
+          DB_INFO_PATH:
+              - custom_av_dbinfos_train.pkl
+          PREPARE: {
+             filter_by_min_points: ['Vehicle:5', 'Pedestrian:5', 'Cyclist:5'],
+          }
+
+          SAMPLE_GROUPS: ['Vehicle:15', 'Pedestrian:10', 'Cyclist:10']
+          NUM_POINT_FEATURES: 4
+          DATABASE_WITH_FAKELIDAR: False
+          REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]
+          LIMIT_WHOLE_SCENE: True
+
+        - NAME: random_world_flip
+          ALONG_AXIS_LIST: ['x', 'y']
+
+        - NAME: random_world_rotation
+          WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]
+
+        - NAME: random_world_scaling
+          WORLD_SCALE_RANGE: [0.95, 1.05]
+
+        - NAME: random_world_translation
+          NOISE_TRANSLATE_STD: [0.5, 0.5, 0.5]
+
+DATA_PROCESSOR:
+    - NAME: mask_points_and_boxes_outside_range
+      REMOVE_OUTSIDE_BOXES: True
+
+    - NAME: shuffle_points
+      SHUFFLE_ENABLED: {
+        'train': True,
+        'test': True
+      }
+
+    # # 비 노이즈 시뮬레이션 추가
+    # - NAME: rain_noise_simulation
+    #   APPLY_PROBABILITY: 0.6                    # 60% 확률로 적용
+    #   RAIN_INTENSITY_RANGE: [0.3, 1.2]         # 비 강도 범위
+    #   BASE_NOISE_DENSITY: 0.005                # 기본 노이즈 밀도
+    #   Z_BIAS_RANGE: [0.0, 6.0]                 # 노이즈 Z 범위
+    #   RAIN_INTENSITY_VALUES: [0.02, 0.25]      # 빗방울 intensity 범위
+    #   MAX_ATTENUATION_DISTANCE: 50.0           # 감쇠 적용 최대 거리
+    #   BASE_ATTENUATION_RATE: 0.08              # 기본 감쇠율
+    #   MAX_ATTENUATION_PROB: 0.25               # 최대 감쇠 확률
+    #   INTENSITY_REDUCTION_FACTOR: 0.15         # Intensity 감소 계수
+    
+    # # 추가 포인트 손실 시뮬레이션
+    # - NAME: weather_point_dropout
+    #   APPLY_PROBABILITY: 0.4                   # 40% 확률로 적용
+    #   DROPOUT_RATIO_RANGE: [0.03, 0.12]        # 3-12% 포인트 제거
+
+
+    # - NAME: transform_points_to_voxels
+    #   VOXEL_SIZE: [0.1, 0.1, 0.15]
+    #   MAX_POINTS_PER_VOXEL: 5
+    #   MAX_NUMBER_OF_VOXELS: {
+    #     'train': 150000,
+    #     'test': 150000
+    #   }

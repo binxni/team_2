@@ -46,7 +46,7 @@ class DemoDataset(DatasetTemplate):
             test_frame_ids = [line.strip() for line in f.readlines()]
 
         self.sample_file_list = sorted(
-            [os.path.join("/workspace/dataset/points_test", f"{frame_id}{ext}") for frame_id in test_frame_ids]
+            [os.path.join("/workspace/dataset/custom_av/points", f"{frame_id}{ext}") for frame_id in test_frame_ids]
         )
 
     def __len__(self):
@@ -74,9 +74,9 @@ def parse_config():
     parser.add_argument('--ext', type=str, default='.npy', help='Specify the extension of your point cloud data file')
 
     args = parser.parse_args()
-    args.cfg_file = "cfgs/custom_av/dataset_change.yaml"
-    args.ckpt = "../output/custom_av/dataset_change/default/ckpt/checkpoint_epoch_80.pth"
-    args.data_path = "/workspace/dataset/custom_av_noise"
+    args.cfg_file = "cfgs/waymo_models/pv_rcnn_plusplus_resnet_1015.yaml"
+    args.ckpt = "../output/waymo_models/pv_rcnn_plusplus_resnet_1015/default/ckpt/checkpoint_epoch_45.pth"
+    args.data_path = "/workspace/dataset/custom_av"
 
     cfg_from_yaml_file(args.cfg_file, cfg)
     return args, cfg

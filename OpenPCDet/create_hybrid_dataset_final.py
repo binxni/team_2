@@ -70,55 +70,114 @@ def get_all_scene_files(source_folder):
     
     return scene_1_files, scene_2_files, scene_3_files, scene_4_files
 
-def generate_imagesets(id_mapping, imagesets_folder, source_imagesets_folder):
-    """Generate train.txt and val.txt based on source dataset splits and ID mapping."""
+def generate_imagesets(
+    id_mapping,
+    imagesets_folder,
+    source_imagesets_folder,
+    domain_map=None,
+    split_strategy='source',  # 'source' or 'scene'
+    scene_train_prefixes=("000", "002", "003"),  # scenes 1,3,4
+    scene_val_prefixes=("001",),  # scene 2
+):
+    """
+    Generate ImageSets files based on dataset splits and ID mapping.
+
+    Always generates:
+      - train.txt, val.txt (all hybrid frames)
+      - train_clean.txt, train_lisa.txt, val_clean.txt, val_lisa.txt (domain-specific)
+
+    If domain_map is provided (new_id -> 'clean'|'lisa'), also saves domain_map.txt
+    and creates convenience mixed lists:
+      - train_mix_21.txt (clean:lisa ≈ 2:1)
+      - train_mix_11.txt (≈ 1:1)
+      - train_mix_12.txt (≈ 1:2)
+
+    split_strategy:
+      - 'source': use original source ImageSets/train.txt and val.txt
+      - 'scene' : ignore source split; assign by scene prefix
+                  train = scene_train_prefixes, val = scene_val_prefixes
+    """
     imagesets_folder.mkdir(parents=True, exist_ok=True)
     source_imagesets_folder = Path(source_imagesets_folder)
     
-    # Read original train.txt and val.txt from custom_av_64
-    train_file = source_imagesets_folder / "train.txt"
-    val_file = source_imagesets_folder / "val.txt"
-    
+    # Read original train.txt and val.txt only if needed
     original_train_ids = set()
     original_val_ids = set()
-    
-    if train_file.exists():
-        with open(train_file, 'r') as f:
-            original_train_ids = set(line.strip() for line in f if line.strip())
-        print(f"Loaded {len(original_train_ids)} IDs from original train.txt")
-    else:
-        print("Warning: train.txt not found in source ImageSets")
-    
-    if val_file.exists():
-        with open(val_file, 'r') as f:
-            original_val_ids = set(line.strip() for line in f if line.strip())
-        print(f"Loaded {len(original_val_ids)} IDs from original val.txt")
-    else:
-        print("Warning: val.txt not found in source ImageSets")
+    if split_strategy == 'source':
+        train_file = source_imagesets_folder / "train.txt"
+        val_file = source_imagesets_folder / "val.txt"
+
+        if train_file.exists():
+            with open(train_file, 'r') as f:
+                original_train_ids = set(line.strip() for line in f if line.strip())
+            print(f"Loaded {len(original_train_ids)} IDs from original train.txt")
+        else:
+            print("Warning: train.txt not found in source ImageSets")
+        
+        if val_file.exists():
+            with open(val_file, 'r') as f:
+                original_val_ids = set(line.strip() for line in f if line.strip())
+            print(f"Loaded {len(original_val_ids)} IDs from original val.txt")
+        else:
+            print("Warning: val.txt not found in source ImageSets")
     
     # Map original IDs to new IDs based on train/val split
     new_train_ids = []
     new_val_ids = []
+    train_clean_ids = []
+    train_lisa_ids = []
+    val_clean_ids = []
+    val_lisa_ids = []
     unmapped_count = 0
-    
+
     for original_id, new_ids_list in sorted(id_mapping.items()):
-        if original_id in original_train_ids:
-            # Add all new IDs (both points and points_lisa) to train
-            new_train_ids.extend(new_ids_list)
-        elif original_id in original_val_ids:
-            # Add all new IDs (both points and points_lisa) to val
-            new_val_ids.extend(new_ids_list)
+        # Decide destination set
+        assign_to = None
+        if split_strategy == 'scene':
+            scene_prefix = original_id[:3]
+            if scene_prefix in scene_train_prefixes:
+                assign_to = 'train'
+            elif scene_prefix in scene_val_prefixes:
+                assign_to = 'val'
+            else:
+                assign_to = 'train'
         else:
-            # If original ID not found in train/val, add to train by default
+            if original_id in original_train_ids:
+                assign_to = 'train'
+            elif original_id in original_val_ids:
+                assign_to = 'val'
+            else:
+                assign_to = 'train'
+                unmapped_count += 1
+
+        if assign_to == 'train':
             new_train_ids.extend(new_ids_list)
-            unmapped_count += 1
-    
+            # Domain-specific buckets
+            for nid in new_ids_list:
+                dom = domain_map.get(nid) if domain_map else None
+                if dom == 'clean':
+                    train_clean_ids.append(nid)
+                elif dom == 'lisa':
+                    train_lisa_ids.append(nid)
+        else:
+            new_val_ids.extend(new_ids_list)
+            for nid in new_ids_list:
+                dom = domain_map.get(nid) if domain_map else None
+                if dom == 'clean':
+                    val_clean_ids.append(nid)
+                elif dom == 'lisa':
+                    val_lisa_ids.append(nid)
+
     if unmapped_count > 0:
         print(f"Warning: {unmapped_count} original IDs not found in train/val, added to train")
-    
+
     # Sort for consistent ordering
     new_train_ids.sort()
     new_val_ids.sort()
+    train_clean_ids.sort()
+    train_lisa_ids.sort()
+    val_clean_ids.sort()
+    val_lisa_ids.sort()
     
     # Write new train.txt
     train_output = imagesets_folder / "train.txt"
@@ -131,10 +190,60 @@ def generate_imagesets(id_mapping, imagesets_folder, source_imagesets_folder):
     with open(val_output, 'w') as f:
         for frame_id in new_val_ids:
             f.write(f"{frame_id}\n")
-    
+
     print(f"Generated train.txt: {len(new_train_ids)} frames")
     print(f"Generated val.txt: {len(new_val_ids)} frames")
     print(f"Total: {len(new_train_ids) + len(new_val_ids)} frames")
+    if split_strategy == 'scene':
+        print("Split strategy: scene-based (train: scenes 000,002,003; val: 001)")
+
+    # Save domain-specific lists if available
+    def _write_list(path, items):
+        with open(path, 'w') as f:
+            for x in items:
+                f.write(f"{x}\n")
+
+    if domain_map is not None:
+        _write_list(imagesets_folder / 'train_clean.txt', train_clean_ids)
+        _write_list(imagesets_folder / 'train_lisa.txt', train_lisa_ids)
+        _write_list(imagesets_folder / 'val_clean.txt', val_clean_ids)
+        _write_list(imagesets_folder / 'val_lisa.txt', val_lisa_ids)
+        print(f"Generated domain lists: train_clean({len(train_clean_ids)}), train_lisa({len(train_lisa_ids)}), val_clean({len(val_clean_ids)}), val_lisa({len(val_lisa_ids)})")
+
+        # Save domain map for reference
+        with open(imagesets_folder / 'domain_map.txt', 'w') as f:
+            for nid in sorted(domain_map.keys()):
+                f.write(f"{nid} {domain_map[nid]}\n")
+
+        # Helper to interleave with ratio a:b using all items
+        def interleave_ratio(a_list, b_list, a, b):
+            out = []
+            i = j = 0
+            len_a, len_b = len(a_list), len(b_list)
+            # Deterministic order: work on copies
+            while i < len_a or j < len_b:
+                # take up to 'a' from a_list
+                for _ in range(a):
+                    if i < len_a:
+                        out.append(a_list[i]); i += 1
+                # take up to 'b' from b_list
+                for _ in range(b):
+                    if j < len_b:
+                        out.append(b_list[j]); j += 1
+                # If one list is exhausted, keep draining the other in its chunk size
+                if i >= len_a and j >= len_b:
+                    break
+            return out
+
+        # Create mixed lists
+        mix_21 = interleave_ratio(train_clean_ids, train_lisa_ids, 2, 1)
+        mix_11 = interleave_ratio(train_clean_ids, train_lisa_ids, 1, 1)
+        mix_12 = interleave_ratio(train_clean_ids, train_lisa_ids, 1, 2)
+
+        _write_list(imagesets_folder / 'train_mix_21.txt', mix_21)
+        _write_list(imagesets_folder / 'train_mix_11.txt', mix_11)
+        _write_list(imagesets_folder / 'train_mix_12.txt', mix_12)
+        print(f"Generated mixed lists: mix_21({len(mix_21)}), mix_11({len(mix_11)}), mix_12({len(mix_12)})")
 
 def merge_points(points_files, points_lisa_files, dest_dir, labels_source, label_dest):
     """
@@ -159,7 +268,8 @@ def merge_points(points_files, points_lisa_files, dest_dir, labels_source, label
     label_dest.mkdir(parents=True, exist_ok=True)
     
     all_frame_ids = []
-    id_mapping = {}  # original_id -> [new_id_for_points, new_id_for_lisa]
+    id_mapping = {}  # original_id -> [new_ids in hybrid]
+    domain_map = {}  # new_id -> 'clean' | 'lisa'
     index = 0
     
     # Create a mapping of original frame_id to files
@@ -199,6 +309,7 @@ def merge_points(points_files, points_lisa_files, dest_dir, labels_source, label
                 shutil.copy2(label_source_file, label_dest_file)
                 all_frame_ids.append(new_frame_id)
                 id_mapping[original_frame_id].append(new_frame_id)
+                domain_map[new_frame_id] = 'clean'
             else:
                 print(f"Warning: Label not found for {original_frame_id}")
             
@@ -220,6 +331,7 @@ def merge_points(points_files, points_lisa_files, dest_dir, labels_source, label
                 shutil.copy2(label_source_file, label_dest_file)
                 all_frame_ids.append(new_frame_id)
                 id_mapping[original_frame_id].append(new_frame_id)
+                domain_map[new_frame_id] = 'lisa'
             else:
                 print(f"Warning: Label not found for {original_frame_id} (lisa)")
             
@@ -227,7 +339,7 @@ def merge_points(points_files, points_lisa_files, dest_dir, labels_source, label
     
     print(f"Merged {index} files successfully")
     print(f"Created mapping for {len(id_mapping)} original IDs")
-    return all_frame_ids, id_mapping
+    return all_frame_ids, id_mapping, domain_map
 
 def main():
     # Base paths
@@ -281,7 +393,7 @@ def main():
     print("\nStep 4: Merging points, points_lisa, and labels")
     labels_source = source_dataset / "labels"
     
-    all_frame_ids, id_mapping = merge_points(
+    all_frame_ids, id_mapping, domain_map = merge_points(
         all_points_files, 
         all_lisa_files, 
         hybrid_path / "points",
@@ -292,7 +404,15 @@ def main():
     # Step 5: Generate ImageSets
     print("\nStep 5: Generating ImageSets")
     source_imagesets = source_dataset / "ImageSets"
-    generate_imagesets(id_mapping, hybrid_path / "ImageSets", source_imagesets)
+    generate_imagesets(
+        id_mapping,
+        hybrid_path / "ImageSets",
+        source_imagesets,
+        domain_map=domain_map,
+        split_strategy='scene',  # train: scenes 1,3,4; val: scene 2
+        scene_train_prefixes=("000", "002", "003"),
+        scene_val_prefixes=("001",)
+    )
     
     # Step 6: Summary
     print("\n" + "=" * 50)

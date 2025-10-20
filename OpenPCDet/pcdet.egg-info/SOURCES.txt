@@ -19,13 +19,11 @@ pcdet/datasets/custom/__init__.py
 pcdet/datasets/custom/custom_dataset.py
 pcdet/datasets/custom_av/__init__.py
 pcdet/datasets/custom_av/custom_av_dataset.py
-<<<<<<< HEAD
+pcdet/datasets/custom_av/custom_av_dataset_known.py
 pcdet/datasets/custom_av_hybrid/__init__.py
 pcdet/datasets/custom_av_hybrid/custom_av_dataset_hybrid.py
-=======
-pcdet/datasets/custom_av_aligned64_filter/__init__.py
-pcdet/datasets/custom_av_aligned64_filter/custom_av_aligned64_filter_dataset.py
->>>>>>> 078bf74d65cea9ec4e646ed65d42ceaf314c3d38
+pcdet/datasets/custom_av_lisa/__init__.py
+pcdet/datasets/custom_av_lisa/custom_av_dataset_lisa.py
 pcdet/datasets/custom_infra/__init__.py
 pcdet/datasets/custom_infra/custom_infra_dataset.py
 pcdet/datasets/kitti/__init__.py

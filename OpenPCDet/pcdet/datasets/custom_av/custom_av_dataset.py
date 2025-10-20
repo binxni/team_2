@@ -339,7 +339,7 @@ if __name__ == '__main__':
          # 설정 파일의 DATA_PATH 직접 사용
         data_path = Path(dataset_cfg.DATA_PATH)  # /workspace/dataset/custom_av_noise
         save_path = data_path
-        
+        ROOT_DIR = (Path(__file__).resolve().parent / '../../../').resolve()
         create_custom_av_infos(
             dataset_cfg=dataset_cfg,
             class_names=['Vehicle', 'Pedestrian', 'Cyclist'],

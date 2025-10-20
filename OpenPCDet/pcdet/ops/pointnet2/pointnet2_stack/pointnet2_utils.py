@@ -211,8 +211,8 @@ class StackFarthestPointSampling(Function):
             npoint = torch.tensor(npoint, device=xyz.device).int()
 
         N, _ = xyz.size()
-        temp = torch.cuda.FloatTensor(N).fill_(1e10)
-        output = torch.cuda.IntTensor(npoint.sum().item())
+        temp = torch.full((N,), 1e10, dtype=torch.float32, device='cuda')
+        output = torch.zeros(npoint.sum().item(), dtype=torch.int32, device='cuda')
 
         pointnet2.stack_farthest_point_sampling_wrapper(xyz, temp, xyz_batch_cnt, output, npoint)
         return output

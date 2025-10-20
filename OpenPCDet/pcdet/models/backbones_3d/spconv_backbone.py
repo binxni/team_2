@@ -1,6 +1,7 @@
 from functools import partial
 
 import torch.nn as nn
+import torch.nn.functional as F
 
 from ...utils.spconv_utils import replace_feature, spconv
 
@@ -71,7 +72,7 @@ class VoxelBackBone8x(nn.Module):
     def __init__(self, model_cfg, input_channels, grid_size, **kwargs):
         super().__init__()
         self.model_cfg = model_cfg
-        norm_fn = partial(nn.BatchNorm1d, eps=1e-3, momentum=0.01)
+        norm_fn = partial(SparseBatchNorm1d, eps=1e-3, momentum=0.01, track_running_stats=True)
 
         self.sparse_shape = grid_size[::-1] + [1, 0, 0]
 
@@ -186,7 +187,7 @@ class VoxelResBackBone8x(nn.Module):
         super().__init__()
         self.model_cfg = model_cfg
         use_bias = self.model_cfg.get('USE_BIAS', None)
-        norm_fn = partial(nn.BatchNorm1d, eps=1e-3, momentum=0.01)
+        norm_fn = partial(SparseBatchNorm1d, eps=1e-3, momentum=0.01, track_running_stats=True)
 
         self.sparse_shape = grid_size[::-1] + [1, 0, 0]
 

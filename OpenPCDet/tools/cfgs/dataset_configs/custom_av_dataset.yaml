@@ -1,5 +1,5 @@
 DATASET: 'CustomAvDataset'  # 사용 중인 데이터셋 로더 클래스 이름
-DATA_PATH: '/workspace/OpenPCDet/data/custom_av_hybrid'  # 데이터셋 루트 경로
+DATA_PATH: '/workspace/OpenPCDet/data/custom_av'  # 데이터셋 루트 경로
 
 POINT_CLOUD_RANGE: [-70.0, -70.0, -4.0, 70.0, 70.0, 4.0]  # 포인트 클라우드 사용 범위 [xmin, ymin, zmin, xmax, ymax, zmax]
 
@@ -82,7 +82,7 @@ DATA_PROCESSOR:  # 증강 이후 적용할 전처리 파이프라인
         'test': True  # 평가 시에도 섞기
       }
 
-    - NAME: transform_points_to_voxels_selective  # 포인트를 복셀로 변환해 BEV 피처 추출 준비
+    - NAME: transform_points_to_voxels  # 포인트를 복셀로 변환해 BEV 피처 추출 준비
       VOXEL_SIZE: [0.1, 0.1, 0.15]  # 복셀 격자 크기 (x, y, z)
       MAX_POINTS_PER_VOXEL: 5 # 복셀 안에 포함되는 포인트 최대 개수
       MAX_NUMBER_OF_VOXELS: {

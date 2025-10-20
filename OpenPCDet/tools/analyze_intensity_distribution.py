@@ -14,12 +14,19 @@ Examples:
           --per-distance 0 30 50 70 100 \
           --save-csv intensity_hist.csv \
           --plot-png intensity_hist.png
+
+  - Analyze only specific filename ID ranges (inclusive):
+      python Subin/OpenPCDet/tools/analyze_intensity_distribution.py \
+          --root ../data/custom_av/points_test \
+          --file-range 10006432 10009318 \
+          --file-range 10100400 10100587
 """
 from __future__ import annotations
 
 import argparse
 import statistics
 from pathlib import Path
+import re
 from typing import Iterable, List, Optional, Tuple
 
 import numpy as np
@@ -29,6 +36,30 @@ def _iter_point_files(root: Path) -> Iterable[Path]:
     for path in sorted(root.glob("*.npy")):
         if path.is_file():
             yield path
+
+
+def _extract_numeric_id_from_stem(stem: str) -> Optional[int]:
+    # Prefer full-digit stems; otherwise, take the last digit run.
+    if stem.isdigit():
+        return int(stem)
+    m = re.findall(r"(\d+)", stem)
+    if not m:
+        return None
+    try:
+        return int(m[-1])
+    except Exception:
+        return None
+
+
+def _filter_files_by_id_ranges(paths: Iterable[Path], ranges: List[Tuple[int, int]]) -> Iterable[Path]:
+    for p in paths:
+        nid = _extract_numeric_id_from_stem(p.stem)
+        if nid is None:
+            continue
+        for lo, hi in ranges:
+            if lo <= nid <= hi:
+                yield p
+                break
 
 
 def _compute_hist(
@@ -252,6 +283,18 @@ def main() -> None:
     parser.add_argument("--max-files", type=int, default=None, help="Limit number of frames to process.")
     parser.add_argument("--save-csv", type=Path, default=None, help="Optional path to save histogram(s) as CSV.")
     parser.add_argument("--plot-png", type=Path, default=None, help="Optional path to save histogram plot as PNG.")
+    parser.add_argument(
+        "--file-range",
+        type=int,
+        nargs=2,
+        metavar=("START_ID", "END_ID"),
+        action="append",
+        default=None,
+        help=(
+            "Inclusive numeric filename ID range to include (can repeat). "
+            "IDs are taken from the filename stem (e.g., 10006432 in 10006432.npy)."
+        ),
+    )
 
     args = parser.parse_args()
     root = args.root
@@ -264,8 +307,17 @@ def main() -> None:
             raise ValueError("--per-distance requires at least two edge values (e.g., 0 30 60 90)")
         per_distance = sorted(per_distance)
 
+    point_files: Iterable[Path] = _iter_point_files(root)
+    if args.file_range is not None and len(args.file_range) > 0:
+        # Normalize ranges to (min, max)
+        ranges: List[Tuple[int, int]] = []
+        for a, b in args.file_range:
+            lo, hi = (a, b) if a <= b else (b, a)
+            ranges.append((lo, hi))
+        point_files = _filter_files_by_id_ranges(point_files, ranges)
+
     result = analyze_intensity(
-        point_files=_iter_point_files(root),
+        point_files=point_files,
         bins=args.bins,
         value_range=(args.range[0], args.range[1]),
         per_distance_edges=per_distance,
@@ -285,4 +337,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

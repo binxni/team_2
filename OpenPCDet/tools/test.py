@@ -46,7 +46,7 @@ class DemoDataset(DatasetTemplate):  # 테스트 데이터를 로드하기 위�
             test_frame_ids = [line.strip() for line in f.readlines()]  # 라인별 프레임 ID를 공백 제거 후 목록으로 저장
 
         self.sample_file_list = sorted(  # 정렬된 샘플 파일 경로 목록 생성
-            [os.path.join('/workspace/OpenPCDet/data/points_test', f"{frame_id}{ext}") for frame_id in test_frame_ids]
+            [os.path.join('/workspace/OpenPCDet/data/points', f"{frame_id}{ext}") for frame_id in test_frame_ids]
         )  # 각 프레임 ID에 확장자를 붙여 포인트 파일 경로 생성
 
     def __len__(self):  # 데이터셋 크기를 반환하는 매직 메서드 정의
@@ -74,9 +74,9 @@ def parse_config():  # 설정 파일과 경로를 불러오는 함수 정의
     parser.add_argument('--ext', type=str, default='.npy', help='Specify the extension of your point cloud data file')  # 포인트 파일 확장자 인자 등록
 
     args = parser.parse_args()  # 명령행에서 인자를 파싱
-    args.cfg_file = "cfgs/custom_av/centerpoint_pillar_lisa.yaml"  # 기본 설정 파일 경로를 강제로 지정
-    args.ckpt = "../output/custom_av/centerpoint_pillar_lisa/default/ckpt/checkpoint_epoch_80.pth"  # 기본 체크포인트 경로 지정
-    args.data_path = "../data/custom_av_64"  # 기본 데이터 루트 경로 지정
+    args.cfg_file = "cfgs/waymo_models/pv_rcnn_plusplus_resnet_1015.yaml"  # 기본 설정 파일 경로를 강제로 지정
+    args.ckpt = "../output/waymo_models/pv_rcnn_plusplus_resnet_1015/default/ckpt/checkpoint_epoch_54.pth"  # 기본 체크포인트 경로 지정
+    args.data_path = "../data/custom_av"  # 기본 데이터 루트 경로 지정
 
     cfg_from_yaml_file(args.cfg_file, cfg)  # YAML 설정을 로드하여 전역 cfg에 반영
     return args, cfg  # 파싱된 인자와 설정 객체를 반환

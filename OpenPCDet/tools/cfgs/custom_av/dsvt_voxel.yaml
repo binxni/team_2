@@ -124,7 +124,7 @@ MODEL:
 
 OPTIMIZATION:
     BATCH_SIZE_PER_GPU: 1
-    NUM_EPOCHS: 50
+    NUM_EPOCHS: 70
 
     OPTIMIZER: adam_onecycle
     LR: 0.003
@@ -145,4 +145,7 @@ OPTIMIZATION:
     LOSS_SCALE_FP16: 32.0
 
 
-
+HOOK:
+    DisableAugmentationHook:
+        DISABLE_AUG_LIST: ['gt_sampling','random_world_flip','random_world_rotation','random_world_scaling', 'random_world_translation']
+        NUM_LAST_EPOCHS: 10

@@ -1,0 +1,71 @@
+DATASET: 'CustomAvDataset'  # 사용 중인 데이터셋 로더 클래스 이름
+DATA_PATH: '../data/custom_av'  # 데이터셋 루트 경로
+
+POINT_CLOUD_RANGE: [ -75.2, -75.2, -2, 75.2, 75.2, 4 ]  # 포인트 클라우드 사용 범위 [xmin, ymin, zmin, xmax, ymax, zmax]
+
+MAP_CLASS_TO_KITTI: {  # 커스텀 클래스명을 KITTI 포맷으로 매핑
+    'Vehicle': 'Car',  # Vehicle → Car
+    'Pedestrian': 'Pedestrian',  # Pedestrian 그대로 유지
+    'Cyclist': 'Cyclist',  # Cyclist 그대로 유지
+}
+
+DATA_SPLIT: {  # 학습/검증에 사용할 파일 리스트 이름 지정
+    'train': train,  # 학습 split 파일명
+    'test': val  # 검증 split 파일명
+}
+
+INFO_PATH: {  # 전처리된 정보 파일(pkl) 경로 목록
+    'train': [custom_av_infos_train.pkl],  # 학습 세트 정보 파일
+    'test': [custom_av_infos_val.pkl],  # 검증 세트 정보 파일
+
+}
+
+POINT_FEATURE_ENCODING: {  # 입력 포인트 특성 구성 정의
+    encoding_type: absolute_coordinates_encoding,  # 절대좌표를 그대로 사용
+    used_feature_list: ['x', 'y', 'z', 'intensity'],  # 모델에 전달할 주요 특성 목록
+    src_feature_list: ['x', 'y', 'z', 'intensity'],  # 원본 포인트가 갖는 전체 특성 목록
+}
+
+DATA_AUGMENTOR:  # 데이터 증강 설정
+    DISABLE_AUG_LIST: ['placeholder']  # 비활성화할 증강 이름 목록; placeholder는 이후 오버라이드용 키를 유지
+    AUG_CONFIG_LIST:
+        - NAME: gt_sampling  # 클래스 균형을 맞추기 위해 데이터베이스 객체를 장면에 주입
+          USE_ROAD_PLANE: False  # 도로 평면 추정치가 없어 정렬을 생략
+          DB_INFO_PATH:
+              - custom_av_dbinfos_train.pkl  # 샘플링용 객체 데이터베이스 정보를 담은 메타데이터 파일
+          PREPARE: {
+             filter_by_min_points: ['Vehicle:5', 'Pedestrian:5', 'Cyclist:5'],  # 라이다 포인트 수가 부족한 데이터베이스 항목 제거
+          }
+
+          SAMPLE_GROUPS: ['Vehicle:15', 'Pedestrian:10', 'Cyclist:10']  # 객체 삽입 시 클래스별 샘플링 비율
+          NUM_POINT_FEATURES: 4  # 데이터베이스에 저장된 포인트 특성 수(x, y, z, intensity)
+          DATABASE_WITH_FAKELIDAR: False  # 이미 라이다 좌표계라 추가 변환(fakelidar)이 필요 없음
+          REMOVE_EXTRA_WIDTH: [0.0, 0.0, 0.0]  # 샘플링된 박스 주변 xyz 방향으로 여분 폭을 추가하지 않음
+          LIMIT_WHOLE_SCENE: True  # 장면 경계를 벗어난 위치에는 객체를 삽입하지 않음
+
+        - NAME: random_world_flip  # 좌우/전후 반전을 통해 방향성을 다양화
+          ALONG_AXIS_LIST: ['x', 'y']  # 반전이 허용된 축 목록
+
+        - NAME: random_world_rotation  # 헤딩 변화에 견고하도록 작은 요(yaw) 회전 적용
+          WORLD_ROT_ANGLE: [-0.78539816, 0.78539816]  # 회전 범위(±45°)
+
+        - NAME: random_world_scaling  # 거리 변화 상황을 가정한 전역 스케일링
+          WORLD_SCALE_RANGE: [0.95, 1.05]  # ±5% 범위에서 장면을 축소·확대
+
+DATA_PROCESSOR:  # 증강 이후 적용할 전처리 파이프라인
+    - NAME: mask_points_and_boxes_outside_range  # 범위를 벗어난 포인트/박스를 제거
+      REMOVE_OUTSIDE_BOXES: True  # 박스가 범위 밖이면 함께 제거
+
+    - NAME: shuffle_points  # 포인트 순서를 섞어 모델 편향을 방지
+      SHUFFLE_ENABLED: {
+        'train': True,  # 학습 시 섞기
+        'test': True  # 평가 시에도 섞기
+      }
+
+    - NAME: transform_points_to_voxels  # 포인트를 복셀로 변환해 BEV 피처 추출 준비
+      VOXEL_SIZE: [0.1, 0.1, 0.15]  # 복셀 격자 크기 (x, y, z)
+      MAX_POINTS_PER_VOXEL: 5 # 복셀 안에 포함되는 포인트 최대 개수
+      MAX_NUMBER_OF_VOXELS: {
+        'train': 150000,  # 학습 단계에서 사용할 최대 복셀 수
+        'test': 150000  # 평가 단계에서 사용할 최대 복셀 수
+      }

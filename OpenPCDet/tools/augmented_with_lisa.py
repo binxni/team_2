@@ -139,6 +139,60 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
         help="Denominator used when normalizing intensity (default: 255).",
     )
     parser.add_argument(
+        "--output-rmax",
+        type=float,
+        default=None,
+        help="Optional hard cap on output radial range (meters). If set, drops points with r>output-rmax.",
+    )
+    parser.add_argument(
+        "--post-thin-a",
+        type=float,
+        default=None,
+        help="Optional logistic thinning slope for distance-dependent dropout. Larger -> stronger far-range dropout.",
+    )
+    parser.add_argument(
+        "--post-thin-r0",
+        type=float,
+        default=None,
+        help="Optional logistic thinning midpoint (meters). Keep prob ~0.5 at r=r0. Requires --post-thin-a.",
+    )
+    parser.add_argument(
+        "--attenuate-intensity-beta",
+        type=float,
+        default=None,
+        help="Optional exponential distance attenuation for intensity: I' = I * exp(-beta * r) + N(0, sigma).",
+    )
+    parser.add_argument(
+        "--attenuate-intensity-noise-sigma",
+        type=float,
+        default=0.0,
+        help="Gaussian noise sigma applied after intensity attenuation (default: 0.0).",
+    )
+    parser.add_argument(
+        "--veil-near-r",
+        type=float,
+        default=None,
+        help="Near-range radius (meters) for veil/backscatter injection. Requires --veil-density > 0.",
+    )
+    parser.add_argument(
+        "--veil-near-z",
+        type=float,
+        default=None,
+        help="Minimum z (meters) for veil/backscatter region; inject points with z >= this within r <= veil-near-r.",
+    )
+    parser.add_argument(
+        "--veil-density",
+        type=float,
+        default=0.0,
+        help="Backscatter point density in points per m^3 within the near-range veil region (default: 0 = off).",
+    )
+    parser.add_argument(
+        "--veil-intensity-max",
+        type=float,
+        default=0.2,
+        help="Upper bound for injected veil point intensity (uniform [0, max]).",
+    )
+    parser.add_argument(
         "--keep-label-column",
         action="store_true",
         help="Retain the 5th column (LISA labels) in the saved output. "
@@ -270,9 +324,12 @@ def augment_single_file(
 ) -> None:
     LOGGER.debug("Loading %s", points_path.name)
     points = np.load(points_path)
-    if points.ndim != 2 or points.shape[1] < 4:
-        raise ValueError(f"{points_path} does not contain an (N,4) array; got shape {points.shape}")
+    if points.ndim != 2 or points.shape[1] < 3:
+        raise ValueError(f"{points_path} does not contain an (N,>=3) array; got shape {points.shape}")
 
+    # Ensure (N,4) by padding intensity when absent
+    if points.shape[1] == 3:
+        points = np.concatenate([points, np.ones((points.shape[0], 1), dtype=points.dtype)], axis=1)
     points = points[:, :4].astype(np.float32, copy=False)
     normalize_intensity_if_needed(points, args, points_path.name)
 
@@ -287,6 +344,77 @@ def augment_single_file(
         augmented = augmented[:, :4]
 
     augmented = augmented.astype(np.float32, copy=False)
+
+    # Optional intensity attenuation: I' = I * exp(-beta * r) + N(0, sigma)
+    if args.attenuate_intensity_beta is not None and args.attenuate_intensity_beta > 0:
+        r = np.linalg.norm(augmented[:, :3], axis=1)
+        decay = np.exp(-float(args.attenuate_intensity_beta) * r)
+        inten = augmented[:, 3] * decay
+        sig = max(0.0, float(args.attenuate_intensity_noise_sigma))
+        if sig > 0:
+            inten = inten + np.random.normal(0.0, sig, size=inten.shape)
+        # Clip to [0, 1] if normalized, otherwise to [0, max]
+        max_inten = 1.0 if (args.normalize_intensity or np.max(augmented[:, 3]) <= 1.0 + 1e-6) else float(np.max(augmented[:, 3]))
+        augmented[:, 3] = np.clip(inten, 0.0, max_inten)
+
+    # Optional near-range veil/backscatter injection
+    if args.veil_density and args.veil_density > 0 and args.veil_near_r and args.veil_near_z is not None:
+        R = float(args.veil_near_r)
+        zmin = float(args.veil_near_z)
+        if R > 0 and zmin < R:
+            # Spherical cap volume (z >= zmin within r <= R)
+            h = R - zmin
+            vol_cap = (np.pi * h * h * (3.0 * R - h)) / 3.0
+            lam = float(args.veil_density)
+            N = np.random.poisson(lam * vol_cap)
+            if N > 0:
+                # Sample N points uniformly in the spherical cap via rejection sampling in the ball
+                def sample_uniform_ball(n: int, radius: float) -> np.ndarray:
+                    # Sample unit vectors from normal distribution and radii with r ~ R * U^(1/3)
+                    vec = np.random.normal(size=(n, 3)).astype(np.float32)
+                    norm = np.linalg.norm(vec, axis=1, keepdims=True)
+                    norm[norm == 0] = 1.0
+                    vec = vec / norm
+                    rad = (np.random.rand(n, 1).astype(np.float32)) ** (1.0 / 3.0) * radius
+                    return vec * rad
+
+                pts = []
+                need = N
+                # Acceptance fraction for guidance
+                acc_frac = (h * h * (3.0 * R - h)) / (4.0 * R ** 3)
+                batch = max(need, int(need / max(acc_frac, 1e-3)))
+                while need > 0:
+                    cand = sample_uniform_ball(batch, R)
+                    mask = cand[:, 2] >= zmin
+                    ok = cand[mask]
+                    if ok.shape[0] > 0:
+                        take = ok[:need]
+                        pts.append(take)
+                        need -= take.shape[0]
+                    # Increase batch size if acceptance was too low
+                    batch = max(need, batch)
+                    if batch <= 0:
+                        break
+                if pts:
+                    veil_xyz = np.concatenate(pts, axis=0)[:N]
+                    # Low intensities
+                    inten = np.random.rand(veil_xyz.shape[0]).astype(np.float32) * float(args.veil_intensity_max)
+                    veil = np.column_stack([veil_xyz.astype(np.float32), inten.astype(np.float32)])
+                    augmented = np.concatenate([augmented, veil.astype(np.float32)], axis=0)
+
+    # Optional post-processing to better match dataset ROI/statistics
+    # 1) Distance-dependent thinning (approximate far-range dropout)
+    if args.post_thin_a is not None and args.post_thin_r0 is not None:
+        r = np.linalg.norm(augmented[:, :3], axis=1)
+        # Keep probability: high near, low far
+        keep_prob = 1.0 / (1.0 + np.exp(args.post_thin_a * (r - args.post_thin_r0)))
+        mask = np.random.rand(augmented.shape[0]) < keep_prob
+        augmented = augmented[mask]
+
+    # 2) Output radial crop
+    if args.output_rmax is not None and args.output_rmax > 0:
+        r = np.linalg.norm(augmented[:, :3], axis=1)
+        augmented = augmented[r <= float(args.output_rmax)]
 
     if args.dry_run:
         LOGGER.info("[dry-run] Would write %s", output_path.name)

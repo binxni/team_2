@@ -253,6 +253,9 @@ class DataProcessor(object):
 
         points = data_dict['points']
         voxels, coordinates, num_points = build_voxels(points)
+        # Reorder to [z, y, x] to match spconv/backbone expectations
+        if coordinates.shape[0] > 0:
+            coordinates = coordinates[:, [2, 1, 0]]
 
         if not data_dict['use_lead_xyz']:
             voxels = voxels[..., 3:]
@@ -262,6 +265,8 @@ class DataProcessor(object):
             points_yflip, points_xflip, points_xyflip = self.double_flip(points)
             for flipped_points in [points_yflip, points_xflip, points_xyflip]:
                 cur_voxels, cur_coords, cur_num = build_voxels(flipped_points)
+                if cur_coords.shape[0] > 0:
+                    cur_coords = cur_coords[:, [2, 1, 0]]
                 if not data_dict['use_lead_xyz']:
                     cur_voxels = cur_voxels[..., 3:]
                 voxels_list.append(cur_voxels)

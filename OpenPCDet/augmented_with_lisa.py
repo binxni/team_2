@@ -2,8 +2,8 @@
 """
 Apply LISA augmentation to a directory of numpy point clouds.
 
-Example
--------
+Examples
+--------
     python tools/augmented_with_lisa.py \
         --dataset-root data/custom_av_64 \
         --points-dir points \
@@ -11,6 +11,15 @@ Example
         --atm-model rain \
         --rain-rate 10.0 \
         --normalize-intensity
+
+    # With air-noise injection (0.5% clustered, truncated above z>=0.3m)
+    python tools/augmented_with_lisa.py \
+        --dataset-root data/custom_av_64 \
+        --points-dir points \
+        --output-dir points_lisa \
+        --atm-model rain --rain-rate 10.0 --normalize-intensity \
+        --air-noise-frac 0.005 --air-noise-type cluster --air-model mixture \
+        --air-min-z 0.3 --air-max-z 3.0 --air-cluster-mean 3 --air-cluster-sigma 0.1
 """
 from __future__ import annotations
 
@@ -155,6 +164,11 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
         help="Parse files and initialize LISA but skip writing outputs.",
     )
     parser.add_argument(
+        "--skip-lisa",
+        action="store_true",
+        help="Skip calling LISA. Only apply optional air-noise injection to the input points.",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Enable verbose logging.",
@@ -178,6 +192,82 @@ def parse_args(argv: Iterable[str]) -> argparse.Namespace:
         default=None,
         help="Limit the number of files processed in this run (e.g., 1000 for chunked runs).",
     )
+    # ------------------------------
+    # Air-noise injection (optional)
+    # ------------------------------
+    parser.add_argument(
+        "--air-noise-frac",
+        type=float,
+        default=0.0,
+        help="Extra air-noise points as a fraction of original point count (e.g., 0.005 for 0.5%). 0 disables.",
+    )
+    parser.add_argument(
+        "--air-noise-count",
+        type=int,
+        default=None,
+        help="Override number of air-noise points per frame. If set, this takes precedence over --air-noise-frac.",
+    )
+    parser.add_argument(
+        "--air-noise-type",
+        choices=("iid", "cluster"),
+        default="cluster",
+        help="Noise sampling mode: independent (iid) or clustered (default).",
+    )
+    parser.add_argument(
+        "--air-model",
+        choices=("mixture", "laplace", "exponential"),
+        default="mixture",
+        help="Distribution family for sampling radii/heights.",
+    )
+    parser.add_argument(
+        "--air-min-z",
+        type=float,
+        default=0.3,
+        help="Minimum z (meters) for air-noise points (height lower bound).",
+    )
+    parser.add_argument(
+        "--air-max-z",
+        type=float,
+        default=3.0,
+        help="Maximum z (meters) for air-noise points.",
+    )
+    parser.add_argument(
+        "--air-r-scale",
+        type=float,
+        default=30.0,
+        help="Mean range (meters) if using exponential for radius: r ~ Exp(scale).",
+    )
+    parser.add_argument(
+        "--air-rmin",
+        type=float,
+        default=None,
+        help="Optional: limit air-noise to >= this radial distance (meters) from LiDAR. Defaults to --rmin if not set.",
+    )
+    parser.add_argument(
+        "--air-rmax",
+        type=float,
+        default=None,
+        help="Optional: limit air-noise to <= this radial distance (meters) from LiDAR. Defaults to --rmax if not set.",
+    )
+    parser.add_argument(
+        "--air-cluster-mean",
+        type=float,
+        default=3.0,
+        help="Average points per cluster (geometric-like).",
+    )
+    parser.add_argument(
+        "--air-cluster-sigma",
+        type=float,
+        default=0.1,
+        help="Cluster spread (meters, stddev) for local Gaussian around cluster centers.",
+    )
+    parser.add_argument(
+        "--air-intensity-range",
+        type=float,
+        nargs=2,
+        default=(0.02, 0.3),
+        help="Min/Max intensity for air-noise points (assumes normalized [0,1]).",
+    )
     return parser.parse_args(list(argv))
 
 
@@ -187,6 +277,141 @@ def configure_logging(verbose: bool) -> None:
         level=level,
         format="[%(levelname)s] %(message)s",
     )
+
+
+# ------------------------------
+# Air-noise sampling utilities
+# ------------------------------
+def _sample_radius(model: str, scale: float, size: int, rmin: float, rmax: float) -> np.ndarray:
+    if model == "exponential":
+        r = np.random.exponential(scale=scale, size=size)
+    elif model == "laplace":
+        # Use folded Laplace to avoid negatives, then shift
+        b = max(1e-3, scale / 2.0)
+        r = np.abs(np.random.laplace(loc=0.0, scale=b, size=size))
+    else:  # mixture
+        w = np.random.rand(size) < 0.3
+        r = np.where(w, np.random.exponential(scale=max(1e-3, scale / 3.0), size=size), np.random.exponential(scale=scale, size=size))
+    # Truncate to [rmin, rmax] by rejection with limited retries
+    out = np.empty(size, dtype=np.float32)
+    filled = 0
+    attempts = 0
+    while filled < size and attempts < 6:
+        remain = size - filled
+        rr = r if attempts == 0 else _sample_radius(model, scale, remain, rmin, rmax)
+        m = (rr >= rmin) & (rr <= rmax)
+        take = min(remain, int(np.sum(m)))
+        if take > 0:
+            out[filled:filled + take] = rr[m][:take]
+            filled += take
+        attempts += 1
+    if filled < size:
+        # fallback: clip
+        out[filled:] = np.clip((rmin + rmax) / 2.0, rmin, rmax)
+    return out
+
+
+def _sample_height(model: str, min_z: float, max_z: float, size: int) -> np.ndarray:
+    if model == "exponential":
+        z = min_z + np.random.exponential(scale=max(1e-3, (max_z - min_z) / 3.0), size=size)
+    elif model == "laplace":
+        b = max(1e-3, (max_z - min_z) / 6.0)
+        z = (min_z + max_z) / 2.0 + np.random.laplace(loc=0.0, scale=b, size=size)
+    else:  # mixture
+        w = np.random.rand(size) < 0.4
+        z = np.empty(size, dtype=np.float32)
+        z[w] = min_z + np.random.exponential(scale=max(1e-3, (max_z - min_z) / 2.5), size=int(np.sum(w)))
+        z[~w] = (min_z + max_z) / 2.0 + np.random.laplace(loc=0.0, scale=max(1e-3, (max_z - min_z) / 6.0), size=int(np.sum(~w)))
+    # Truncate to [min_z, max_z]
+    z = np.clip(z, min_z, max_z)
+    return z.astype(np.float32)
+
+
+def _sample_theta(size: int) -> np.ndarray:
+    return np.random.uniform(-np.pi, np.pi, size=size).astype(np.float32)
+
+
+def _xyz_from_spherical(r: np.ndarray, theta: np.ndarray, z: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    # project (r, theta, z) -> (x, y, z) using planar radius r_xy = sqrt(max(r^2 - z^2, 0))
+    r2 = r.astype(np.float32) ** 2
+    rz2 = np.clip(r2 - (z.astype(np.float32) ** 2), 0.0, None)
+    rxy = np.sqrt(rz2)
+    x = rxy * np.cos(theta)
+    y = rxy * np.sin(theta)
+    return x.astype(np.float32), y.astype(np.float32), z.astype(np.float32)
+
+
+def _iid_noise(n: int, rmin: float, rmax: float, min_z: float, max_z: float, r_scale: float, model: str) -> np.ndarray:
+    r = _sample_radius(model, r_scale, n, rmin, rmax)
+    th = _sample_theta(n)
+    z = _sample_height(model, min_z, max_z, n)
+    x, y, z = _xyz_from_spherical(r, th, z)
+    return np.stack([x, y, z], axis=1)
+
+
+def sample_air_noise(
+    n: int,
+    *,
+    rmin: float,
+    rmax: float,
+    min_z: float,
+    max_z: float,
+    r_scale: float,
+    mode: str,
+    model: str,
+    cluster_mean: float,
+    cluster_sigma: float,
+    inten_range: tuple[float, float],
+) -> np.ndarray:
+    # Sample 3D locations
+    if mode == "iid":
+        xyz = _iid_noise(n, rmin, rmax, min_z, max_z, r_scale, model)
+    else:
+        # Clustered: choose centers iid, then add local Gaussian noise
+        mean_k = max(1.0, float(cluster_mean))
+        p = min(1.0, max(1e-3, 1.0 / mean_k))
+        # approximate number of clusters
+        k = max(1, int(np.ceil(n / mean_k)))
+        sizes = np.random.geometric(p, size=k)
+        total = int(np.sum(sizes))
+        if total < n:
+            sizes[0] += (n - total)
+        elif total > n:
+            # trim the last cluster size to match exactly n
+            over = total - n
+            sizes[-1] = max(1, sizes[-1] - over)
+        centers = _iid_noise(int(sizes.size), rmin, rmax, min_z, max_z, r_scale, model)
+        xyz_list = []
+        for i, sz in enumerate(sizes):
+            center = centers[i]
+            local = np.random.normal(loc=0.0, scale=cluster_sigma, size=(int(sz), 3)).astype(np.float32)
+            pts = center.reshape(1, 3).astype(np.float32) + local
+            # Enforce z bounds and r bounds by clipping and filtering
+            pts[:, 2] = np.clip(pts[:, 2], min_z, max_z)
+            r = np.sqrt(np.sum(pts * pts, axis=1))
+            keep = (r >= rmin) & (r <= rmax)
+            if not np.all(keep):
+                pts = pts[keep]
+                # If dropped too many, top-up iid
+                need = int(sz) - pts.shape[0]
+                if need > 0:
+                    extra = _iid_noise(need, rmin, rmax, min_z, max_z, r_scale, model)
+                    pts = np.vstack([pts, extra])
+            xyz_list.append(pts.astype(np.float32))
+        xyz = np.vstack(xyz_list)
+        if xyz.shape[0] > n:
+            xyz = xyz[:n]
+        elif xyz.shape[0] < n:
+            extra = _iid_noise(n - xyz.shape[0], rmin, rmax, min_z, max_z, r_scale, model)
+            xyz = np.vstack([xyz, extra])
+
+    # Intensities
+    i_min, i_max = float(inten_range[0]), float(inten_range[1])
+    if i_max < i_min:
+        i_min, i_max = i_max, i_min
+    inten = np.random.uniform(i_min, i_max, size=(xyz.shape[0], 1)).astype(np.float32)
+    noise = np.concatenate([xyz.astype(np.float32), inten], axis=1)
+    return noise
 
 
 def build_lisa(args: argparse.Namespace) -> Lisa:
@@ -279,17 +504,44 @@ def augment_single_file(
     points = points[:, :4].astype(np.float32, copy=False)
     normalize_intensity_if_needed(points, args, points_path.name)
 
-    if lisa.atm_model in ATM_MODELS_MC:
-        if args.rain_rate is None:
-            raise ValueError("--rain-rate must be provided for rain/snow models.")
-        augmented = lisa.augment(points, args.rain_rate)
+    if args.skip_lisa:
+        augmented = points.copy()
     else:
-        augmented = lisa.augment(points)
+        if lisa.atm_model in ATM_MODELS_MC:
+            if args.rain_rate is None:
+                raise ValueError("--rain-rate must be provided for rain/snow models.")
+            augmented = lisa.augment(points, args.rain_rate)
+        else:
+            augmented = lisa.augment(points)
 
     if not args.keep_label_column and augmented.shape[1] > 4:
         augmented = augmented[:, :4]
 
     augmented = augmented.astype(np.float32, copy=False)
+
+    # Inject air-noise points if requested
+    if (args.air_noise_count is not None and args.air_noise_count > 0) or (args.air_noise_frac and args.air_noise_frac > 0):
+        n_base = points.shape[0]
+        n_extra = int(args.air_noise_count) if (args.air_noise_count is not None and args.air_noise_count > 0) else int(max(0, round(args.air_noise_frac * n_base)))
+        if n_extra > 0:
+            rmin_use = float(args.air_rmin) if args.air_rmin is not None else float(args.rmin)
+            rmax_use = float(args.air_rmax) if args.air_rmax is not None else float(args.rmax)
+            noise = sample_air_noise(
+                n_extra,
+                rmin=rmin_use,
+                rmax=rmax_use,
+                min_z=float(args.air_min_z),
+                max_z=float(args.air_max_z),
+                r_scale=float(args.air_r_scale),
+                mode=str(args.air_noise_type),
+                model=str(args.air_model),
+                cluster_mean=float(args.air_cluster_mean),
+                cluster_sigma=float(args.air_cluster_sigma),
+                inten_range=tuple(args.air_intensity_range),
+            ).astype(np.float32)
+
+            # Concatenate to augmented cloud
+            augmented = np.concatenate([augmented, noise], axis=0)
 
     if args.dry_run:
         LOGGER.info("[dry-run] Would write %s", output_path.name)
@@ -375,10 +627,27 @@ def main(argv: Iterable[str]) -> int:
             "normalize_intensity": args.normalize_intensity,
             "intensity_max": args.intensity_max,
             "rain_rate": args.rain_rate,
+            "skip_lisa": args.skip_lisa,
             "keep_label_column": args.keep_label_column,
             "dry_run": args.dry_run,
             "overwrite": args.overwrite,
             "verbose": args.verbose,
+            # also pass range constraints used by noise sampler
+            "rmin": args.rmin,
+            "rmax": args.rmax,
+            "air_rmin": args.air_rmin,
+            "air_rmax": args.air_rmax,
+            # pass through air-noise configs
+            "air_noise_frac": args.air_noise_frac,
+            "air_noise_count": args.air_noise_count,
+            "air_noise_type": args.air_noise_type,
+            "air_model": args.air_model,
+            "air_min_z": args.air_min_z,
+            "air_max_z": args.air_max_z,
+            "air_r_scale": args.air_r_scale,
+            "air_cluster_mean": args.air_cluster_mean,
+            "air_cluster_sigma": args.air_cluster_sigma,
+            "air_intensity_range": args.air_intensity_range,
         }
         tasks = [
             (file_idx, str(path), str(output_dir / path.name))

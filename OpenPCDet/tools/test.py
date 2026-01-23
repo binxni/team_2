@@ -41,13 +41,25 @@ class DemoDataset(DatasetTemplate):
         self.root_path = root_path
         self.ext = ext
 
-        test_frame_ids_filename = os.path.join(root_path, "ImageSets/test.txt")
-        with open(test_frame_ids_filename, 'r') as f:
-            test_frame_ids = [line.strip() for line in f.readlines()]
-
-        self.sample_file_list = sorted(
-            [os.path.join(root_path, f"points/{frame_id}{ext}") for frame_id in test_frame_ids]
-        )
+        # points_test 폴더처럼 point cloud 파일이 바로 있는 경우
+        if os.path.isdir(root_path):
+            # points_test/00000000.npy, ...
+            files = sorted(glob.glob(os.path.join(root_path, f'*{ext}')))
+            if files:
+                self.sample_file_list = files
+            else:
+                # points/00000000.npy 형태 (ImageSets/test.txt 기반)
+                test_frame_ids_filename = os.path.join(root_path, "ImageSets/test.txt")
+                if os.path.exists(test_frame_ids_filename):
+                    with open(test_frame_ids_filename, 'r') as f:
+                        test_frame_ids = [line.strip() for line in f.readlines()]
+                    self.sample_file_list = sorted(
+                        [os.path.join(root_path, f"points/{frame_id}{ext}") for frame_id in test_frame_ids]
+                    )
+                else:
+                    raise RuntimeError(f"No point cloud files found in {root_path} and no ImageSets/test.txt found.")
+        else:
+            raise RuntimeError(f"{root_path} is not a directory.")
 
     def __len__(self):
         return len(self.sample_file_list)
